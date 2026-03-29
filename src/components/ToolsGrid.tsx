@@ -1,7 +1,8 @@
 import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap } from "lucide-react";
 import ToolCard from "./ToolCard";
+import { Button } from "@/components/ui/button";
 
-const tools = [
+export const tools = [
   {
     title: "Universal Media Converter",
     description: "The ultimate tool to convert video and image formats using WebAssembly engine",
@@ -124,7 +125,7 @@ const tools = [
   },
 ];
 
-const categoryConfig: Record<string, { icon: any, gradient: string }> = {
+export const categoryConfig: Record<string, { icon: any, gradient: string }> = {
   "Video Studio": { icon: Video, gradient: "from-blue-500 to-indigo-500" },
   "Image Studio": { icon: ImageIcon, gradient: "from-orange-500 to-rose-500" },
   "Audio Lab": { icon: Music, gradient: "from-emerald-500 to-teal-500" },
@@ -132,50 +133,115 @@ const categoryConfig: Record<string, { icon: any, gradient: string }> = {
   "Utility Belt": { icon: Wrench, gradient: "from-slate-400 to-slate-600" }
 };
 
-const ToolsGrid = () => {
-  const categories = Array.from(new Set(tools.map(t => t.category)));
+interface ToolsGridProps {
+  searchQuery?: string;
+  selectedCategory?: string | null;
+  onClearFilters?: () => void;
+}
+
+const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }: ToolsGridProps) => {
+  const filteredTools = tools.filter(tool => {
+    const matchesQuery = 
+      tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tool.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = selectedCategory ? tool.category === selectedCategory : true;
+    
+    return matchesQuery && matchesCategory;
+  });
+
+  const isFiltering = searchQuery.length > 0 || selectedCategory !== null;
+  const categories = Array.from(new Set(filteredTools.map(t => t.category)));
+
+  if (filteredTools.length === 0) {
+    return (
+      <div className="py-32 text-center animate-in fade-in zoom-in-95 duration-700">
+        <div className="h-24 w-24 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-10 border border-primary/20 shadow-2xl">
+           <Zap className="h-10 w-10 text-primary animate-pulse" />
+        </div>
+        <h3 className="text-4xl font-black uppercase italic tracking-tighter mb-4">No artifacts found</h3>
+        <p className="text-muted-foreground font-medium mb-10 max-w-md mx-auto opacity-60 italic">Your search criteria didn't match any of our local processing tools.</p>
+        <Button onClick={onClearFilters} variant="outline" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs border-primary/20 hover:bg-primary/5 transition-all">
+          Clear Calibration
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-32 relative">
-      {categories.map(category => {
-        const config = categoryConfig[category] || { icon: Sparkles, gradient: "from-primary to-accent" };
-        const Icon = config.icon;
+      {isFiltering ? (
+        <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="flex items-center gap-6 mb-16 px-2">
+            <div className={`p-4 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-black/20`}>
+               <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <div className="flex flex-col">
+              <h2 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+                Search <span className="opacity-80 font-display">Results</span>
+              </h2>
+              <div className="h-1 w-24 bg-gradient-to-r from-primary/50 to-transparent rounded-full mt-2" />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredTools.map((tool) => (
+              <div key={tool.to} className="relative group/card-wrapper w-full h-full animate-in zoom-in-95 duration-500">
+                <div className="absolute -inset-1 bg-gradient-to-tr from-primary/20 to-accent/10 rounded-[1.5rem] opacity-0 group-hover/card-wrapper:opacity-100 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110" />
+                <ToolCard {...tool} />
+                <div className="absolute top-4 right-4 flex gap-1.5 pointer-events-none z-50">
+                  {tool.tags.map(tag => (
+                     <span key={tag} className="text-[10px] bg-primary/20 text-primary font-black px-2 py-0.5 rounded-lg border border-primary/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md">
+                       {tag}
+                     </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : (
+        categories.map(category => {
+          const config = categoryConfig[category] || { icon: Sparkles, gradient: "from-primary to-accent" };
+          const Icon = config.icon;
 
-        return (
-          <section key={category} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <div className="flex items-center gap-6 mb-16 px-2">
-              <div className={`p-4 rounded-2xl bg-gradient-to-br ${config.gradient} shadow-lg shadow-black/20`}>
-                 <Icon className="h-8 w-8 text-white" />
+          return (
+            <section key={category} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+              <div className="flex items-center gap-6 mb-16 px-2">
+                <div className={`p-4 rounded-2xl bg-gradient-to-br ${config.gradient} shadow-lg shadow-black/20`}>
+                   <Icon className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <h2 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`}>
+                    {category.split(' ')[0]} <span className="opacity-80 font-display">{category.split(' ')[1]}</span>
+                  </h2>
+                  <div className="h-1 w-24 bg-gradient-to-r from-primary/50 to-transparent rounded-full mt-2" />
+                </div>
+                <div className="h-[1px] grow bg-border/40 opacity-20" />
               </div>
-              <div className="flex flex-col">
-                <h2 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`}>
-                  {category.split(' ')[0]} <span className="opacity-80 font-display">{category.split(' ')[1]}</span>
-                </h2>
-                <div className="h-1 w-24 bg-gradient-to-r from-primary/50 to-transparent rounded-full mt-2" />
-              </div>
-              <div className="h-[1px] grow bg-border/40 opacity-20" />
-            </div>
-            
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              {tools
-                .filter(t => t.category === category)
-                .map((tool) => (
-                  <div key={tool.to} className="relative group/card-wrapper w-full h-full">
-                    <div className="absolute -inset-1 bg-gradient-to-tr from-primary/20 to-accent/10 rounded-[1.5rem] opacity-0 group-hover/card-wrapper:opacity-100 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110" />
-                    <ToolCard {...tool} />
-                    <div className="absolute top-4 right-4 flex gap-1.5 pointer-events-none z-50">
-                      {tool.tags.map(tag => (
-                         <span key={tag} className="text-[10px] bg-primary/20 text-primary font-black px-2 py-0.5 rounded-lg border border-primary/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md">
-                           {tag}
-                         </span>
-                      ))}
+              
+              <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                {tools
+                  .filter(t => t.category === category)
+                  .map((tool) => (
+                    <div key={tool.to} className="relative group/card-wrapper w-full h-full">
+                      <div className="absolute -inset-1 bg-gradient-to-tr from-primary/20 to-accent/10 rounded-[1.5rem] opacity-0 group-hover/card-wrapper:opacity-100 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110" />
+                      <ToolCard {...tool} />
+                      <div className="absolute top-4 right-4 flex gap-1.5 pointer-events-none z-50">
+                        {tool.tags.map(tag => (
+                           <span key={tag} className="text-[10px] bg-primary/20 text-primary font-black px-2 py-0.5 rounded-lg border border-primary/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md">
+                             {tag}
+                           </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-            </div>
-          </section>
-        );
-      })}
+                  ))}
+              </div>
+            </section>
+          );
+        })
+      )}
     </div>
   );
 };

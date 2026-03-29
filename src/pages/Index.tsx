@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import Navbar from "@/components/Navbar";
-import ToolsGrid from "@/components/ToolsGrid";
+import ToolsGrid, { tools } from "@/components/ToolsGrid";
+import SearchNavigator from "@/components/SearchNavigator";
 import Footer from "@/components/Footer";
 import { ShieldCheck, Zap, Lock } from "lucide-react";
 import AdPlaceholder from "@/components/AdPlaceholder";
@@ -15,6 +16,13 @@ const Index = () => {
     return false;
   });
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const categories = useMemo(() => {
+    return Array.from(new Set(tools.map(t => t.category)));
+  }, []);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
@@ -26,9 +34,24 @@ const Index = () => {
     localStorage.setItem("theme", next ? "dark" : "light");
   }, [darkMode]);
 
+  const clearFilters = useCallback(() => {
+    setSearchQuery("");
+    setSelectedCategory(null);
+  }, []);
+
+  const isFiltering = searchQuery.length > 0 || selectedCategory !== null;
+
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/20 relative overflow-x-hidden">
-      <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
+      <Navbar 
+        darkMode={darkMode} 
+        onToggleDark={toggleDark}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        categories={categories}
+      />
       
       {/* Sidebar Layout Wrapper */}
       <div className="flex justify-center items-start w-full relative">
@@ -42,14 +65,14 @@ const Index = () => {
            </div>
         </aside>
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-16 lg:py-24 grow overflow-visible">
-          {/* Modern Hero Section */}
-          <section className="text-center mb-24 relative">
+        <main className="container mx-auto max-w-[1400px] px-6 py-10 lg:py-16 grow overflow-visible">
+          {/* Static Branding Section (Improved Vertical Density) */}
+          <section className="text-center mb-10 relative animate-in fade-in duration-1000">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full -z-10" />
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-foreground font-display mb-8 leading-[0.9]">
-              Local<span className="text-primary italic">Tools</span> <br className="hidden sm:block" /> <span className="text-3xl md:text-5xl opacity-40 uppercase tracking-widest font-sans not-italic">Creative Sandbox</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-foreground font-display mb-6 leading-[0.9]">
+              Local<span className="text-primary italic">Tools</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Creative Sandbox</span>
             </h1>
-            <p className="mx-auto max-w-3xl text-lg md:text-xl text-muted-foreground leading-relaxed font-medium">
+            <p className="mx-auto max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed font-medium">
               Professional-grade media processing that runs entirely in your browser. 
               No accounts, no uploads, and zero tracking—your data never leaves your device.
             </p>
@@ -57,7 +80,11 @@ const Index = () => {
 
           {/* Tools Section */}
           <div className="mb-32">
-            <ToolsGrid />
+            <ToolsGrid 
+              searchQuery={searchQuery}
+              selectedCategory={selectedCategory}
+              onClearFilters={clearFilters}
+            />
           </div>
 
           {/* Integrated Ad Break */}
