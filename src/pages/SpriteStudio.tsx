@@ -1,9 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Download, Scissors, Grid3X3, Trash2, Layers, Move, Square, Plus, Settings2, FolderArchive, ZoomIn, ZoomOut, MousePointer2 } from "lucide-react";
+import { ArrowLeft, Upload, Download, Scissors, Maximize2, Move, ZoomIn, ZoomOut, RotateCcw, Image as ImageIcon, Plus, Check, RefreshCw, Layers, Sparkles, CloudUpload, Grid3X3, Trash2, Square, Settings2, FolderArchive, MousePointer2 } from "lucide-react";
 import { motion, Reorder, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -11,6 +12,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import JSZip from "jszip";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 interface Slice {
   id: string;
@@ -57,6 +60,8 @@ const SpriteStudio = () => {
     reader.onload = (e) => setImage(e.target?.result as string);
     reader.readAsDataURL(f);
   };
+
+  usePasteFile((file) => handleFile(file));
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { naturalWidth, naturalHeight } = e.currentTarget;
@@ -344,46 +349,43 @@ const SpriteStudio = () => {
     setProcessing(false);
     toast.success("Baking complete! ZIP downloaded.");
   };
-
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-colors duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
-      <main className="container mx-auto max-w-[1600px] px-4 py-12">
+      <main className="container mx-auto max-w-[1600px] px-6 py-12">
         <div className="flex flex-col gap-8">
           <header className="flex items-center justify-between flex-wrap gap-6 border-b border-primary/5 pb-8">
             <div className="flex items-center gap-6">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl hover:bg-primary hover:text-primary-foreground transition-all shadow-xl group/back">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
                   <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
-                  Sprite <span className="text-primary">Studio</span>
+                <h1 className="text-3xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
+                   Sprite <span className="text-primary italic">Studio</span>
                 </h1>
                 <p className="text-muted-foreground text-xs font-black uppercase tracking-[0.2em] opacity-60">Professional Pixel Partitioning Engine</p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-               {image && (
-                 <Button onClick={() => { setImage(null); setSlices([]); }} variant="ghost" size="sm" className="gap-2 h-10 px-4 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 transition-colors">
-                    Wipe Stage
-                 </Button>
-               )}
-            </div>
+            {image && (
+              <Button onClick={() => { setImage(null); setSlices([]); }} variant="ghost" size="sm" className="gap-2 h-10 px-4 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
+            )}
           </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-8 items-start">
-            {/* Drafting Canvas (75%) */}
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-8 items-start">
             <div className="space-y-6">
               <Card 
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
-                className="glass-morphism border-primary/10 overflow-hidden h-[600px] lg:h-[800px] flex items-center justify-center relative bg-muted/10 rounded-2xl select-none shadow-2xl group/canvas"
+                onContextMenu={(e) => e.preventDefault()}
+                ref={containerRef}
+                className="glass-morphism border-primary/10 overflow-hidden h-[600px] lg:h-[800px] flex flex-col items-center justify-center relative bg-muted/10 rounded-2xl select-none shadow-2xl group/canvas p-10"
                 style={{
                   backgroundImage: `linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
                                    linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
@@ -392,23 +394,27 @@ const SpriteStudio = () => {
                   backgroundSize: '20px 20px',
                   backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
                 }}
-                onContextMenu={(e) => e.preventDefault()}
-                ref={containerRef}
               >
-                {!image && (
+                {!image ? (
                   <div 
                     onClick={() => inputRef.current?.click()}
-                    className="cursor-pointer group flex flex-col items-center justify-center p-20 w-[90%] border-4 border-dashed border-primary/20 rounded-2xl bg-background/50 hover:bg-primary/5 transition-all shadow-inner"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                    className="relative w-full h-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner group/dropzone"
                   >
-                    <div className="h-24 w-24 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-inner">
-                       <Scissors className="h-12 w-12 text-primary" />
+                    <div className="flex flex-col items-center justify-center space-y-6">
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                         <CloudUpload className="h-10 w-10 text-primary" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none">Drag & Drop</p>
+                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                        <KbdShortcut />
+                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 pt-4">PNG, JPG, SVG, WEBP ARE SUPPORTED</p>
+                      </div>
                     </div>
-                    <p className="text-2xl font-bold font-display text-center">Drop sprite sheet or image</p>
-                    <p className="text-muted-foreground text-sm mt-2 font-medium opacity-60 uppercase tracking-widest leading-loose">High-resolution drafting engine active</p>
                   </div>
-                )}
-
-                {image && (
+                ) : (
                   <div 
                     className={`absolute shadow-2xl ring-1 ring-primary/20 pointer-events-none origin-top-left flex items-start justify-start top-0 left-0 ${isPanning || dragType ? "" : "transition-transform duration-200"}`}
                     style={{ 
@@ -422,18 +428,11 @@ const SpriteStudio = () => {
                        ref={imgRef}
                        src={image} 
                        onLoad={onImageLoad}
-                       className="w-full h-full pointer-events-none select-none" 
+                       className="w-full h-full pointer-events-none select-none transition-all" 
                        style={{ imageRendering: zoom > 2 ? 'pixelated' : 'auto' }}
                        draggable={false}
-                       alt="Sprite Extraction Base" 
                     />
-                    
-                    {/* SVG UI Overlay - Locked to image coordinates */}
-                    <svg 
-                      className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
-                      viewBox={`0 0 ${imgSize.w || 1} ${imgSize.h || 1}`}
-                    >
-                      {/* Pixel Grid for Drafting Accuracy */}
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" viewBox={`0 0 ${imgSize.w || 1} ${imgSize.h || 1}`}>
                       {zoom > 8 && (
                         <defs>
                           <pattern id="pixel-grid" width="1" height="1" patternUnits="userSpaceOnUse">
@@ -441,74 +440,43 @@ const SpriteStudio = () => {
                           </pattern>
                         </defs>
                       )}
-                      
-                      {zoom > 8 && (
-                        <rect width="100%" height="100%" fill="url(#pixel-grid)" opacity="0.5" />
-                      )}
-
+                      {zoom > 8 && <rect width="100%" height="100%" fill="url(#pixel-grid)" opacity="0.5" />}
                       {slices.map((slice) => {
                         const nx = slice.w < 0 ? slice.x + slice.w : slice.x;
                         const ny = slice.h < 0 ? slice.y + slice.h : slice.y;
                         const nw = Math.abs(slice.w);
                         const nh = Math.abs(slice.h);
-                        
                         return (
-                          <g key={slice.id} className="pointer-events-none">
-                            <rect 
-                              x={nx} 
-                              y={ny} 
-                              width={nw} 
-                              height={nh}
-                              fill={activeId === slice.id ? "rgba(59, 130, 246, 0.15)" : "rgba(255, 255, 255, 0.05)"}
-                              stroke={activeId === slice.id ? "#3b82f6" : "rgba(255,255,255,0.4)"}
-                              strokeWidth={1 / zoom} // Adjust stroke weight slightly to keep it sharp but visible
-                              strokeDasharray={activeId === slice.id ? "0" : `${2/zoom},${2/zoom}`}
-                            />
-                            <text 
-                              x={nx + 2} 
-                              y={ny + 10} 
-                              fontSize={Math.max(8, 12 / zoom)} 
-                              fill={activeId === slice.id ? "#3b82f6" : "white"}
-                              className="font-mono font-black tracking-tighter select-none"
-                              style={{ paintOrder: 'stroke', stroke: 'black', strokeWidth: `${0.5/zoom}px` }}
-                            >
-                              {slice.name} ({Math.round(nw)}x{Math.round(nh)})
-                            </text>
-                          
-                          {activeId === slice.id && (
-                            <>
-                              <circle cx={nx} cy={ny} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
-                              <circle cx={nx + nw} cy={ny} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
-                              <circle cx={nx} cy={ny + nh} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
-                              <circle cx={nx + nw} cy={ny + nh} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
-                            </>
-                          )}
-                        </g>
+                          <g key={slice.id}>
+                            <rect x={nx} y={ny} width={nw} height={nh} fill={activeId === slice.id ? "rgba(59, 130, 246, 0.15)" : "rgba(255, 255, 255, 0.05)"} stroke={activeId === slice.id ? "#3b82f6" : "rgba(255,255,255,0.4)"} strokeWidth={1 / zoom} />
+                            <text x={nx + 2} y={ny + 10} fontSize={Math.max(8, 12 / zoom)} fill={activeId === slice.id ? "#3b82f6" : "white"} className="font-mono font-black tracking-tighter select-none">{slice.name}</text>
+                            {activeId === slice.id && (
+                              <>
+                                <circle cx={nx} cy={ny} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
+                                <circle cx={nx + nw} cy={ny} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
+                                <circle cx={nx} cy={ny + nh} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
+                                <circle cx={nx + nw} cy={ny + nh} r={3 / zoom} fill="white" stroke="#3b82f6" strokeWidth={0.5 / zoom} />
+                              </>
+                            )}
+                          </g>
                         );
                       })}
                     </svg>
                   </div>
                 )}
-                
                 <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />
               </Card>
 
               <div className="flex justify-between items-center px-4">
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 italic">
-                    Drafting Engine v1.0 • Low Latency Precision
-                 </p>
+                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 italic">Drafting Engine v1.0 • Low Latency Precision</p>
                  <div className="flex gap-4">
-                    <Button variant="ghost" size="sm" onClick={() => setSlices([])} className="h-8 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10">
-                       Wipe Stage
-                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setSlices([])} className="h-8 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10">Wipe Selection</Button>
                  </div>
               </div>
             </div>
 
-            {/* Studio Sidebar (25%) */}
-            <aside className="space-y-6 lg:sticky lg:top-24">
-              {/* Export Panel */}
-              <Card className="glass-morphism border-primary/20 rounded-[2rem] shadow-2xl overflow-hidden bg-primary/5">
+            <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
+              <Card className="glass-morphism border-primary/20 rounded-2xl shadow-2xl overflow-hidden bg-primary/5">
                  <CardContent className="p-8 space-y-6">
                     <div className="flex items-center gap-3 mb-2">
                        <FolderArchive className="h-5 w-5 text-primary" />
@@ -521,193 +489,64 @@ const SpriteStudio = () => {
                        {slices.length} Assets ready for partitioning
                     </p>
                  </CardContent>
-              </Card>               {/* Grid Wizard */}
-              <Card className="glass-morphism border-primary/10 rounded-[2rem] shadow-xl overflow-hidden">
+              </Card>
+
+              <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl overflow-hidden">
                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary flex items-center gap-3">
                        <Grid3X3 className="h-4 w-4" /> Drafting Mode
                     </h3>
                     <div className="flex bg-muted/20 p-1 rounded-2xl">
-                       <button 
-                         onClick={() => setMode("manual")}
-                         className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-md transition-all ${mode === "manual" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"}`}
-                       >
-                         Manual
-                       </button>
-                       <button 
-                         onClick={() => setMode("grid")}
-                         className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-md transition-all ${mode === "grid" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"}`}
-                       >
-                         Grid
-                       </button>
+                       <button onClick={() => setMode("manual")} className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-md transition-all ${mode === "manual" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground"}`}>Manual</button>
+                       <button onClick={() => setMode("grid")} className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-md transition-all ${mode === "grid" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground"}`}>Grid</button>
                     </div>
                  </div>
-                   <CardContent className="p-8 space-y-6">
+                 <CardContent className="p-8 space-y-6">
                     <div className="space-y-4">
-                       <div className="flex items-center justify-between">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Stage Zoom</Label>
-                          <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded">{Math.round(zoom * 100)}%</span>
+                       <div className="flex justify-between items-center">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Zoom</Label>
+                          <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-2xl">{Math.round(zoom * 100)}%</span>
                        </div>
-                       <input 
-                         type="range" 
-                         min="0.2" 
-                         max="25" 
-                         step="0.1" 
-                         value={zoom} 
-                         onChange={(e) => setZoom(parseFloat(e.target.value))}
-                         className="w-full h-1.5 bg-primary/20 rounded-2xl appearance-none cursor-pointer accent-primary"
-                       />
+                       <input type="range" min="0.2" max="25" step="0.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="w-full h-1.5 bg-primary/20 rounded-2xl appearance-none cursor-pointer accent-primary" />
                     </div>
 
                     {mode === "grid" && (
-                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="space-y-6 pt-4 border-t border-primary/5 overflow-hidden">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 pt-4 border-t border-primary/5">
                         <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-2">
                               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Rows</Label>
-                              <Input 
-                                type="number" 
-                                value={gridConfig.rows} 
-                                onChange={(e) => setGridConfig({...gridConfig, rows: parseInt(e.target.value) || 1})}
-                                className="h-10 text-xs font-bold bg-muted/20 border-primary/10" 
-                              />
+                              <Input type="number" value={gridConfig.rows} onChange={(e) => setGridConfig({...gridConfig, rows: parseInt(e.target.value) || 1})} className="h-10 text-xs font-bold rounded-2xl" />
                            </div>
                            <div className="space-y-2">
                               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Cols</Label>
-                              <Input 
-                                type="number" 
-                                value={gridConfig.cols} 
-                                onChange={(e) => setGridConfig({...gridConfig, cols: parseInt(e.target.value) || 1})}
-                                className="h-10 text-xs font-bold bg-muted/20 border-primary/10" 
-                              />
+                              <Input type="number" value={gridConfig.cols} onChange={(e) => setGridConfig({...gridConfig, cols: parseInt(e.target.value) || 1})} className="h-10 text-xs font-bold rounded-2xl" />
                            </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                           <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Gap X (px)</Label>
-                              <Input 
-                                type="number" 
-                                value={gridConfig.gapX} 
-                                onChange={(e) => setGridConfig({...gridConfig, gapX: parseInt(e.target.value) || 0})}
-                                className="h-10 text-xs font-bold bg-muted/20 border-primary/10" 
-                              />
-                           </div>
-                           <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Gap Y (px)</Label>
-                              <Input 
-                                type="number" 
-                                value={gridConfig.gapY} 
-                                onChange={(e) => setGridConfig({...gridConfig, gapY: parseInt(e.target.value) || 0})}
-                                className="h-10 text-xs font-bold bg-muted/20 border-primary/10" 
-                              />
-                           </div>
-                        </div>
-                        <Button 
-                          variant="secondary" 
-                          className="w-full h-12 rounded-2xl font-bold gap-2 text-xs uppercase transition-all hover:bg-primary hover:text-primary-foreground"
-                          onClick={() => generateGrid(gridConfig.rows, gridConfig.cols, gridConfig.gapX, gridConfig.gapY)}
-                        >
-                           Overwrite Stage Grid
-                        </Button>
+                        <Button variant="secondary" className="w-full h-12 rounded-2xl font-bold gap-2 text-xs uppercase" onClick={() => generateGrid(gridConfig.rows, gridConfig.cols, gridConfig.gapX, gridConfig.gapY)}>Apply Schema</Button>
                       </motion.div>
                     )}
 
                     <div className="pt-2">
-                       <Button size="sm" variant="outline" onClick={() => { 
-                         // Reset viewport to centered position
-                         const viewportW = containerRef.current?.clientWidth || 800;
-                         const viewportH = containerRef.current?.clientHeight || 800;
-                         setZoom(1); 
-                         setPan({
-                           x: (viewportW - (imgSize.w * scale)) / 2,
-                           y: (viewportH - (imgSize.h * scale)) / 2,
-                         }); 
-                       }} className="w-full text-[10px] font-black uppercase tracking-widest h-8 rounded-2xl gap-2">
-                          <MousePointer2 className="h-3 w-3" /> Center Viewport
-                       </Button>
+                       <Button size="sm" variant="outline" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }} className="w-full text-[10px] font-black uppercase tracking-widest h-8 rounded-2xl gap-2">Reset Viewport</Button>
                     </div>
                  </CardContent>
               </Card>
 
-              {/* Slice Collection */}
               {slices.length > 0 && (
-                <Card className="glass-morphism border-primary/10 rounded-[2rem] shadow-xl overflow-hidden">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl overflow-hidden">
                    <div className="bg-primary/5 p-5 border-b border-primary/10">
-                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary flex items-center gap-3">
-                         <Layers className="h-4 w-4" /> Catalog ({slices.length})
-                      </h3>
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Catalog ({slices.length})</h3>
                    </div>
-                   <CardContent className="p-0">
-                      <Reorder.Group axis="y" values={slices} onReorder={setSlices} className="divide-y divide-primary/5">
-                        <AnimatePresence>
-                          {slices.map((slice, idx) => (
-                            <Reorder.Item 
-                              key={slice.id} 
-                              value={slice}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              onClick={() => setActiveId(slice.id)}
-                              className={`p-5 flex items-center gap-4 cursor-grab active:cursor-grabbing transition-colors ${activeId === slice.id ? "bg-primary/10" : "hover:bg-primary/5"}`}
-                            >
-                              <div className="h-9 w-9 shrink-0 bg-primary/5 border border-primary/10 rounded flex items-center justify-center text-[10px] font-black text-primary italic">
-                                 #{idx + 1}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                 <Input 
-                                   value={slice.name} 
-                                   onChange={(e) => setSlices(slices.map(s => s.id === slice.id ? {...s, name: e.target.value} : s))}
-                                   className="h-6 text-xs font-bold bg-transparent border-none p-0 focus-visible:ring-0 text-foreground" 
-                                 />
-                                 <div className="flex gap-2 mt-1">
-                                    <div className="flex items-center gap-1">
-                                       <span className="text-[8px] font-black text-muted-foreground opacity-40">X</span>
-                                       <input 
-                                         type="number" 
-                                         value={Math.round(slice.x)} 
-                                         onChange={(e) => setSlices(slices.map(s => s.id === slice.id ? {...s, x: Math.max(0, Math.min(parseInt(e.target.value) || 0, imgSize.w - s.w))} : s))}
-                                         className="w-10 bg-transparent text-[9px] font-mono font-bold text-muted-foreground focus:outline-none"
-                                       />
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                       <span className="text-[8px] font-black text-muted-foreground opacity-40">Y</span>
-                                       <input 
-                                         type="number" 
-                                         value={Math.round(slice.y)} 
-                                         onChange={(e) => setSlices(slices.map(s => s.id === slice.id ? {...s, y: Math.max(0, Math.min(parseInt(e.target.value) || 0, imgSize.h - s.h))} : s))}
-                                         className="w-10 bg-transparent text-[9px] font-mono font-bold text-muted-foreground focus:outline-none"
-                                       />
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                       <span className="text-[8px] font-black text-muted-foreground opacity-40">W</span>
-                                       <input 
-                                         type="number" 
-                                         value={Math.round(slice.w)} 
-                                         onChange={(e) => setSlices(slices.map(s => s.id === slice.id ? {...s, w: Math.max(1, Math.min(parseInt(e.target.value) || 1, imgSize.w - s.x))} : s))}
-                                         className="w-10 bg-transparent text-[9px] font-mono font-bold text-muted-foreground focus:outline-none"
-                                       />
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                       <span className="text-[8px] font-black text-muted-foreground opacity-40">H</span>
-                                       <input 
-                                         type="number" 
-                                         value={Math.round(slice.h)} 
-                                         onChange={(e) => setSlices(slices.map(s => s.id === slice.id ? {...s, h: Math.max(1, Math.min(parseInt(e.target.value) || 1, imgSize.h - s.y))} : s))}
-                                         className="w-10 bg-transparent text-[9px] font-mono font-bold text-muted-foreground focus:outline-none"
-                                       />
-                                    </div>
-                                 </div>
-                              </div>
-                              <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); deleteSlice(slice.id); }} className="h-8 w-8 text-destructive opacity-30 hover:opacity-100 transition-opacity">
-                                 <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </Reorder.Item>
-                          ))}
-                        </AnimatePresence>
-                      </Reorder.Group>
+                   <CardContent className="p-0 max-h-[300px] overflow-y-auto">
+                      {slices.map((slice, idx) => (
+                        <div key={slice.id} onClick={() => setActiveId(slice.id)} className={`p-4 flex items-center justify-between transition-colors ${activeId === slice.id ? "bg-primary/10" : "hover:bg-primary/5"}`}>
+                           <span className="text-[10px] font-bold">#{idx + 1} {slice.name}</span>
+                           <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); deleteSlice(slice.id); }} className="h-6 w-6 text-destructive opacity-40 hover:opacity-100"><Trash2 className="h-3 w-3" /></Button>
+                        </div>
+                      ))}
                    </CardContent>
                 </Card>
               )}
-
               <AdPlaceholder format="rectangle" />
             </aside>
           </div>
@@ -719,4 +558,3 @@ const SpriteStudio = () => {
 };
 
 export default SpriteStudio;
-

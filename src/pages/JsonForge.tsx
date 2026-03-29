@@ -129,7 +129,7 @@ const JsonForge = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-utility transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -152,41 +152,58 @@ const JsonForge = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start">
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-zinc-950 shadow-2xl rounded-2xl group">
-                <div className="absolute top-4 left-4 flex gap-2 z-20">
-                   <Button size="icon" variant="ghost" className="h-10 w-10 text-white/40 hover:text-white hover:bg-white/10 rounded-2xl" onClick={undo} disabled={historyIndex <= 0}>
-                      <Undo className="h-4 w-4" />
-                   </Button>
-                   <Button size="icon" variant="ghost" className="h-10 w-10 text-white/40 hover:text-white hover:bg-white/10 rounded-2xl" onClick={redo} disabled={historyIndex >= history.length - 1}>
-                      <Redo className="h-4 w-4" />
-                   </Button>
-                </div>
-                <div className="absolute top-4 right-4 flex gap-2 z-20">
-                   <Button size="icon" variant="ghost" className="h-10 w-10 text-white/40 hover:text-white hover:bg-white/10 rounded-2xl" onClick={copyToClipboard} disabled={!input}>
-                      <Copy className="h-4 w-4" />
-                   </Button>
-                   <Button size="icon" variant="ghost" className="h-10 w-10 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-2xl" onClick={clearInput} disabled={!input}>
-                      <Trash2 className="h-4 w-4" />
-                   </Button>
+              <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-black shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
+                <div className="bg-[#050505] px-4 py-2 border-b border-white/5 flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                      <div className="flex gap-2 items-center bg-[#0a0a0a] px-4 py-2 rounded-t-lg border-x border-t border-white/5 -mb-[9px] relative z-10">
+                         <FileJson className="h-3.5 w-3.5 text-yellow-400" />
+                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">dataset.json</span>
+                      </div>
+                   </div>
+                   
+                   <div className="flex items-center gap-1">
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={undo} disabled={historyIndex <= 0}>
+                         <Undo className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={redo} disabled={historyIndex >= history.length - 1}>
+                         <Redo className="h-3.5 w-3.5" />
+                      </Button>
+                      <div className="w-[1px] h-4 bg-white/10 mx-1" />
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={copyToClipboard} disabled={!input}>
+                         <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" onClick={clearInput} disabled={!input}>
+                         <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                   </div>
                 </div>
 
-                <textarea
-                  value={input}
-                  onChange={(e) => handleInput(e.target.value)}
-                  placeholder='Paste your JSON artifact here...'
-                  className="w-full h-[600px] bg-transparent pt-20 px-10 pb-20 font-mono text-sm text-primary/90 resize-none outline-none selection:bg-primary/30 leading-relaxed"
-                  spellCheck={false}
-                />
+                <div className="flex-1 flex overflow-hidden relative">
+                   {/* Line Numbers Gutter */}
+                   <div className="w-12 bg-[#050505] border-r border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-zinc-600 select-none">
+                      {Array.from({ length: Math.max(1, input.split('\n').length) }).map((_, i) => (
+                         <div key={i} className="leading-relaxed h-6">{i + 1}</div>
+                      ))}
+                   </div>
+                   
+                   <textarea
+                     value={input}
+                     onChange={(e) => handleInput(e.target.value)}
+                     placeholder='Paste your JSON artifact here...'
+                     className="flex-1 bg-transparent p-6 font-mono text-sm text-[#9cdcfe] resize-none outline-none selection:bg-primary/30 leading-relaxed custom-scrollbar"
+                     spellCheck={false}
+                   />
 
-                {error && (
-                  <div className="absolute bottom-0 inset-x-0 p-6 bg-destructive/10 border-t border-destructive/20 text-destructive flex items-start gap-3 animate-in slide-in-from-bottom-4">
-                    <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Syntax Error Detected</p>
-                      <p className="text-xs font-medium opacity-80">{error}</p>
-                    </div>
-                  </div>
-                )}
+                   {error && (
+                     <div className="absolute bottom-0 inset-x-0 p-4 bg-destructive/10 border-t border-destructive/20 text-destructive flex items-start gap-3 animate-in slide-in-from-bottom-4 z-30 backdrop-blur-md">
+                       <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                       <div>
+                         <p className="text-[9px] font-black uppercase tracking-widest leading-none mb-1">Syntax Error</p>
+                         <p className="text-[10px] font-medium opacity-80">{error}</p>
+                       </div>
+                     </div>
+                   )}
+                </div>
               </Card>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

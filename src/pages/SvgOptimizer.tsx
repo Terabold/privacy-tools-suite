@@ -79,7 +79,7 @@ const SvgOptimizer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -99,42 +99,72 @@ const SvgOptimizer = () => {
               </div>
             </div>
             {input && (
-               <Button onClick={() => { setInput(""); setOptimized(""); setStats(null); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                  Wipe Stage
-               </Button>
+              <Button onClick={() => { setInput(""); setOptimized(""); setStats(null); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
             )}
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 items-start">
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-zinc-950 shadow-2xl rounded-2xl group">
-                 <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between">
+              <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-black shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
+                 <div className="bg-[#0a0a0a] px-4 py-2 border-b border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                       <FileCode className="h-4 w-4 text-primary" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-foreground opacity-60">Source Artifact</span>
+                       <div className="flex gap-1.5 items-center bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-white/5 -mb-[9px] relative z-10">
+                          <FileCode className="h-3.5 w-3.5 text-orange-400" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">source.svg</span>
+                       </div>
                     </div>
-                    {input.length > 0 && <span className="text-[10px] font-black uppercase tracking-widest text-primary">{(new Blob([input]).size / 1024).toFixed(2)} KB</span>}
+                    
+                    <div className="flex items-center gap-1">
+                       <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={() => { navigator.clipboard.writeText(input); toast.success("Source Copied"); }} disabled={!input}>
+                          <Copy className="h-3.5 w-3.5" />
+                       </Button>
+                       <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" onClick={() => { setInput(""); setOptimized(""); setStats(null); }} disabled={!input}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                       </Button>
+                    </div>
                  </div>
-                 <textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder='Paste SVG code or XML artifact here...'
-                  className="w-full h-[400px] bg-transparent p-10 font-mono text-sm text-primary/90 resize-none outline-none selection:bg-primary/30 leading-relaxed scrollbar-hide"
-                  spellCheck={false}
-                 />
+                 
+                 <div className="flex-1 flex overflow-hidden">
+                    {/* Line Numbers Gutter */}
+                    <div className="w-12 bg-[#050505] border-r border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-zinc-600 select-none">
+                       {Array.from({ length: Math.max(1, input.split('\n').length) }).map((_, i) => (
+                          <div key={i} className="leading-relaxed h-6">{i + 1}</div>
+                       ))}
+                    </div>
+                    
+                    <textarea
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder='Paste SVG code or XML artifact here...'
+                      className="flex-1 bg-transparent p-6 font-mono text-sm text-[#ce9178] resize-none outline-none selection:bg-primary/30 leading-relaxed scrollbar-hide custom-scrollbar"
+                      spellCheck={false}
+                    />
+                 </div>
               </Card>
 
               {optimized && (
-                <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-zinc-950 shadow-2xl rounded-2xl animate-in zoom-in-95 duration-700">
-                   <div className="bg-emerald-500/5 p-4 border-b border-emerald-500/10 flex items-center justify-between">
+                <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-black shadow-2xl rounded-2xl animate-in zoom-in-95 duration-700 flex flex-col">
+                   <div className="bg-[#0a0a0a] px-4 py-2 border-b border-white/5 flex items-center justify-between font-sans">
                       <div className="flex items-center gap-3">
-                         <Sparkles className="h-4 w-4 text-emerald-500" />
-                         <span className="text-[10px] font-black uppercase tracking-widest text-foreground opacity-60">Optimized Artifact</span>
+                         <div className="flex gap-1.5 items-center bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-white/5 -mb-[9px] relative z-10">
+                            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">optimized.svg</span>
+                         </div>
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">{((stats?.optimized || 0) / 1024).toFixed(2)} KB</span>
+                      <span className="text-[10px] font-mono text-emerald-500/20">{((stats?.optimized || 0) / 1024).toFixed(2)} KB</span>
                    </div>
-                   <div className="p-10 font-mono text-sm text-emerald-500/90 h-[200px] overflow-auto select-all custom-scrollbar bg-black/50 overflow-x-auto text-left whitespace-pre-wrap break-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20" suppressContentEditableWarning>
-                      {optimized}
+                   
+                   <div className="flex-1 flex overflow-hidden">
+                      <div className="w-12 bg-[#050505] border-r border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-zinc-700 select-none">
+                         {Array.from({ length: Math.max(1, optimized.split('\n').length) }).map((_, i) => (
+                            <div key={i} className="leading-relaxed h-6">{i + 1}</div>
+                         ))}
+                      </div>
+                      <div className="flex-1 p-6 font-mono text-sm text-emerald-400 overflow-auto select-all custom-scrollbar bg-black/40 leading-relaxed">
+                         {optimized}
+                      </div>
                    </div>
                 </Card>
               )}

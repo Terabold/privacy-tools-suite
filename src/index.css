@@ -65,6 +65,33 @@
     --input: 240 10% 10%;
     --ring: 250 90% 66%;
   }
+
+  /* Sub-Themes (Category Localization) */
+  .theme-video {
+    --primary: 221.2 83.2% 53.3%;
+    --accent: 210 40% 96.1%;
+    --ring: 221.2 83.2% 53.3%;
+  }
+  .theme-image {
+    --primary: 24.6 95% 53.1%;
+    --accent: 346.8 77.2% 49.8%;
+    --ring: 24.6 95% 53.1%;
+  }
+  .theme-audio {
+    --primary: 142.1 76.2% 36.3%;
+    --accent: 149.1 52.2% 96.9%;
+    --ring: 142.1 76.2% 36.3%;
+  }
+  .theme-privacy {
+    --primary: 262.1 83.3% 57.8%;
+    --accent: 262.1 83.3% 95%;
+    --ring: 262.1 83.3% 57.8%;
+  }
+  .theme-utility {
+    --primary: 47.9 95.8% 53.1%;
+    --accent: 47.9 95.8% 95%;
+    --ring: 47.9 95.8% 53.1%;
+  }
 }
 
 @layer base {
@@ -79,10 +106,10 @@
 
 @layer utilities {
   .glass-morphism {
-    @apply backdrop-blur-md bg-white/50 dark:bg-black/40 border border-white/10 dark:border-white/5 shadow-xl;
+    @apply backdrop-blur-md bg-white/70 dark:bg-black/40 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 dark:shadow-none transition-all duration-300;
   }
   .studio-gradient {
-    @apply bg-gradient-to-br from-primary/10 to-transparent border border-primary/20;
+    @apply bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 dark:border-primary/20 transition-all duration-300;
   }
 }
 

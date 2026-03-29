@@ -1,11 +1,13 @@
 import { useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Download, Eye, Play, Clock, Layout, Monitor, Smartphone, Check, Youtube } from "lucide-react";
+import { ArrowLeft, Upload, Download, Eye, Play, Clock, Layout, Monitor, Smartphone, Check, Youtube, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 const YouTubeThumbnailHub = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -29,6 +31,8 @@ const YouTubeThumbnailHub = () => {
     reader.onload = (e) => setImage(e.target?.result as string);
     reader.readAsDataURL(f);
   };
+
+  usePasteFile(handleFile);
 
   const downloadScreenshot = async () => {
     if (!image || !stageRef.current || !canvasRef.current) return;
@@ -83,11 +87,11 @@ const YouTubeThumbnailHub = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+    <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-10">
           <header className="flex items-center justify-between flex-wrap gap-8">
             <div className="flex items-center gap-6">
               <Link to="/">
@@ -112,16 +116,13 @@ const YouTubeThumbnailHub = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
             <div className="space-y-8">
-                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[600px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner">
-                    <div className="absolute top-6 left-6 z-10 flex gap-2 pointer-events-none">
-                       <span className="text-[10px] font-black bg-primary text-primary-foreground px-3 py-1.5 rounded-2xl uppercase tracking-[0.2em] shadow-xl">High-Precision Overlay</span>
-                       {image && <span className="text-[10px] font-black bg-background/80 backdrop-blur-md text-foreground px-3 py-1.5 rounded-2xl uppercase tracking-[0.2em] shadow-sm border border-border/50">16:9 Standard</span>}
-                    </div>
+                   <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[600px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner p-10">
+
 
                     {image ? (
                       <div 
                         ref={stageRef}
-                        className="relative aspect-video w-[90%] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden group select-none"
+                        className="relative aspect-video w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden group select-none"
                       >
                         <img src={image} className="w-full h-full object-cover" alt="Hub Preview" />
                         
@@ -146,11 +147,17 @@ const YouTubeThumbnailHub = () => {
                     ) : (
                       <div 
                         onClick={() => inputRef.current?.click()}
-                        className="cursor-pointer group flex flex-col items-center justify-center p-20 w-[90%] border-2 border-dashed border-primary/20 rounded-2xl bg-background/50 hover:bg-primary/5 transition-all shadow-inner"
+                        className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                       >
-                        <Upload className="h-16 w-16 text-primary/40 mb-6 group-hover:scale-110 transition-transform" />
-                        <p className="text-xl font-black uppercase tracking-tighter">Bake New Preview</p>
-                        <p className="text-muted-foreground text-[10px] mt-2 font-black uppercase tracking-widest opacity-40">Drop 1280x720 PNG/JPG here</p>
+                        <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                          <CloudUpload className="h-10 w-10 text-primary" />
+                        </div>
+                        <div className="px-6 space-y-1">
+                          <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                          <KbdShortcut />
+                          <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">PNG, JPG, SVG, WEBP ARE SUPPORTED</p>
+                        </div>
                       </div>
                     )}
                     <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />

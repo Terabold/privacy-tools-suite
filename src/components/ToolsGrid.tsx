@@ -1,4 +1,4 @@
-import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap } from "lucide-react";
+import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap, ClipboardCopy } from "lucide-react";
 import ToolCard from "./ToolCard";
 import { Button } from "@/components/ui/button";
 
@@ -123,14 +123,22 @@ export const tools = [
     category: "Utility Belt",
     tags: ["QUICK"]
   },
+  {
+    title: "Quick Clipboard Hub",
+    description: "Instant clipboard-to-disk extraction: paste any artifact to download it immediately",
+    icon: <ClipboardCopy className="h-5 w-5" />,
+    to: "/quick-clipboard",
+    category: "Utility Belt",
+    tags: ["EXTRACT", "ZAP"]
+  },
 ];
 
-export const categoryConfig: Record<string, { icon: any, gradient: string }> = {
-  "Video Studio": { icon: Video, gradient: "from-blue-500 to-indigo-500" },
-  "Image Studio": { icon: ImageIcon, gradient: "from-orange-500 to-rose-500" },
-  "Audio Lab": { icon: Music, gradient: "from-emerald-500 to-teal-500" },
-  "Privacy Belt": { icon: ShieldCheck, gradient: "from-red-500 to-amber-500" },
-  "Utility Belt": { icon: Wrench, gradient: "from-slate-400 to-slate-600" }
+export const categoryConfig: Record<string, { icon: any, gradient: string, themeClass: string }> = {
+  "Video Studio": { icon: Video, gradient: "from-blue-600 to-indigo-500", themeClass: "theme-video" },
+  "Image Studio": { icon: ImageIcon, gradient: "from-orange-500 to-rose-500", themeClass: "theme-image" },
+  "Audio Lab": { icon: Music, gradient: "from-emerald-500 to-teal-500", themeClass: "theme-audio" },
+  "Privacy Belt": { icon: ShieldCheck, gradient: "from-purple-600 to-fuchsia-500", themeClass: "theme-privacy" },
+  "Utility Belt": { icon: Wrench, gradient: "from-amber-400 to-yellow-600", themeClass: "theme-utility" }
 };
 
 interface ToolsGridProps {
@@ -188,14 +196,17 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {filteredTools.map((tool) => (
               <div key={tool.to} className="relative group/card-wrapper w-full h-full animate-in zoom-in-95 duration-500">
-                <div className="absolute -inset-1 bg-gradient-to-tr from-primary/20 to-accent/10 rounded-2xl opacity-0 group-hover/card-wrapper:opacity-100 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110" />
-                <ToolCard {...tool} />
+                <div className={`absolute -inset-1 bg-gradient-to-tr ${categoryConfig[tool.category]?.gradient || "from-primary/20 to-accent/10"} opacity-0 group-hover/card-wrapper:opacity-20 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110`} />
+                <ToolCard {...tool} gradient={categoryConfig[tool.category]?.gradient} themeClass={categoryConfig[tool.category]?.themeClass} />
                 <div className="absolute top-4 right-4 flex gap-1.5 pointer-events-none z-50">
-                  {tool.tags.map(tag => (
-                     <span key={tag} className="text-[10px] bg-primary/20 text-primary font-black px-2 py-0.5 rounded-2xl border border-primary/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md">
-                       {tag}
-                     </span>
-                  ))}
+                  {tool.tags.map(tag => {
+                    const colorClass = categoryConfig[tool.category]?.gradient.split(' ')[0].replace('from-', '') || 'primary';
+                    return (
+                      <span key={tag} className={`text-[10px] bg-${colorClass}/10 text-${colorClass} font-black px-2 py-0.5 rounded-2xl border border-${colorClass}/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md`}>
+                        {tag}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -203,7 +214,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
         </section>
       ) : (
         categories.map(category => {
-          const config = categoryConfig[category] || { icon: Sparkles, gradient: "from-primary to-accent" };
+          const config = categoryConfig[category] || { icon: Sparkles, gradient: "from-primary to-accent", themeClass: "" };
           const Icon = config.icon;
 
           return (
@@ -216,7 +227,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                   <h2 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`}>
                     {category.split(' ')[0]} <span className="opacity-80 font-display">{category.split(' ')[1]}</span>
                   </h2>
-                  <div className="h-1 w-24 bg-gradient-to-r from-primary/50 to-transparent rounded-full mt-2" />
+                  <div className={`h-1 w-24 bg-gradient-to-r ${config.gradient} opacity-50 rounded-full mt-2`} />
                 </div>
                 <div className="h-[1px] grow bg-border/40 opacity-20" />
               </div>
@@ -226,14 +237,17 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                   .filter(t => t.category === category)
                   .map((tool) => (
                     <div key={tool.to} className="relative group/card-wrapper w-full h-full">
-                      <div className="absolute -inset-1 bg-gradient-to-tr from-primary/20 to-accent/10 rounded-2xl opacity-0 group-hover/card-wrapper:opacity-100 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110" />
-                      <ToolCard {...tool} />
+                      <div className={`absolute -inset-1 bg-gradient-to-tr ${config.gradient} opacity-0 group-hover/card-wrapper:opacity-20 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110`} />
+                      <ToolCard {...tool} gradient={config.gradient} themeClass={config.themeClass} />
                       <div className="absolute top-4 right-4 flex gap-1.5 pointer-events-none z-50">
-                        {tool.tags.map(tag => (
-                           <span key={tag} className="text-[10px] bg-primary/20 text-primary font-black px-2 py-0.5 rounded-2xl border border-primary/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md">
-                             {tag}
-                           </span>
-                        ))}
+                        {tool.tags.map(tag => {
+                          const colorClass = config.gradient.split(' ')[0].replace('from-', '');
+                          return (
+                            <span key={tag} className={`text-[10px] bg-${colorClass}/10 text-${colorClass} font-black px-2 py-0.5 rounded-2xl border border-${colorClass}/20 shadow-xl opacity-0 translate-y-2 group-hover/card-wrapper:opacity-100 group-hover/card-wrapper:translate-y-0 transition-all duration-500 uppercase tracking-widest whitespace-nowrap backdrop-blur-md`}>
+                              {tag}
+                            </span>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}

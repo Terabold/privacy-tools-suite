@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Download, Scissors, Camera, Layout, Terminal, Play, Pause, Trash2, Layers, RefreshCw } from "lucide-react";
+import { ArrowLeft, Upload, Download, Scissors, Camera, Layout, Terminal, Play, Pause, Trash2, Layers, RefreshCw, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -11,6 +11,8 @@ import AdPlaceholder from "@/components/AdPlaceholder";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 interface CapturedFrame {
   id: string;
@@ -68,6 +70,8 @@ const FrameGifStudio = () => {
     setProgress(0);
     toast.success("Studio Partitioned for Video Asset");
   };
+
+  usePasteFile(handleFile);
 
   useEffect(() => {
     return () => {
@@ -162,7 +166,7 @@ const FrameGifStudio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -182,9 +186,9 @@ const FrameGifStudio = () => {
               </div>
             </div>
             {file && (
-               <Button onClick={() => { setFile(null); setVideoUrl(null); setFrames([]); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                  Wipe Stage
-               </Button>
+              <Button onClick={() => { setFile(null); setVideoUrl(null); setFrames([]); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
             )}
           </header>
 
@@ -196,13 +200,17 @@ const FrameGifStudio = () => {
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                     onClick={() => inputRef.current?.click()}
-                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-40 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner group"
+                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                   >
-                    <div className="h-24 w-24 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover:scale-110 transition-transform">
-                       <Upload className="h-12 w-12 text-primary" />
+                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                       <CloudUpload className="h-10 w-10 text-primary" />
                     </div>
-                    <p className="text-3xl font-black text-foreground uppercase tracking-tight italic">Drop Master Records</p>
-                    <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-40">MP4, MOV, WebM Artifacts Supported</p>
+                    <div className="px-6 space-y-1">
+                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                      <KbdShortcut />
+                      <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP4, MOV, WebM Artifacts Supported</p>
+                    </div>
                     <input ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
                   </div>
                 </Card>

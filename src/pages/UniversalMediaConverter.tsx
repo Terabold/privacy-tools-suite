@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Download, RefreshCw, Terminal } from "lucide-react";
+import { ArrowLeft, Upload, Download, RefreshCw, Terminal, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -10,6 +10,8 @@ import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 const UniversalMediaConverter = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -77,6 +79,8 @@ const UniversalMediaConverter = () => {
     setProgress(0);
     setLogs([]);
   };
+
+  usePasteFile(handleFile);
 
   const isVideo = file?.type.startsWith("video/");
   const isImage = file?.type.startsWith("image/");
@@ -149,7 +153,7 @@ const UniversalMediaConverter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -162,22 +166,22 @@ const UniversalMediaConverter = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
-                   Media <span className="text-primary italic">Converter</span>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
+                  Media <span className="text-primary italic">Converter</span>
                 </h1>
                 <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Performance WASM Conversion Engine</p>
               </div>
             </div>
             
             {file && (
-               <Button onClick={() => { setFile(null); setResultUrl(null); setLogs([]); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                  Wipe Stage
-               </Button>
+              <Button onClick={() => { setFile(null); setResultUrl(null); setLogs([]); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
             )}
           </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start">
-            <div className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 items-start">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
               {isDownloadingModel && (
                 <Card className="border-primary/20 bg-primary/5 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-top-4 rounded-2xl">
                   <CardContent className="p-8">
@@ -191,29 +195,31 @@ const UniversalMediaConverter = () => {
               )}
 
               <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[500px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner p-10">
-                  <div
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
-                    onClick={() => !processing && inputRef.current?.click()}
-                    className={`relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-32 bg-background/50 hover:bg-primary/5 shadow-inner" : "py-32 opacity-50"}`}
-                  >
-                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                       <Upload className="h-10 w-10 text-primary" />
-                    </div>
-                    
-                    {file ? (
-                      <div className="px-6">
-                        <p className="text-2xl font-black text-foreground mb-2 italic uppercase tracking-tighter truncate max-w-md">{file.name}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-40">{(file.size / 1024 / 1024).toFixed(2)} MB • READY FOR PARTITIONING</p>
-                      </div>
-                    ) : (
-                      <div className="px-6">
-                        <p className="text-2xl font-black text-foreground uppercase tracking-tight italic">Drop Media Artifacts</p>
-                        <p className="mt-2 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-40">MP4, MOV, PNG, JPG, WEBP, MP3 Supported</p>
-                      </div>
-                    )}
-                    <input ref={inputRef} type="file" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
-                  </div>
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                  onClick={() => !processing && inputRef.current?.click()}
+                  className={`relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-32 bg-background/50 hover:bg-primary/5 shadow-inner" : "py-32 opacity-50"}`}
+                >
+                   <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                      <CloudUpload className="h-10 w-10 text-primary" />
+                   </div>
+                   
+                   {file ? (
+                     <div className="px-6 text-center">
+                       <p className="text-2xl font-black text-foreground mb-2 italic uppercase tracking-tighter truncate max-w-md">{file.name}</p>
+                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-40">{(file.size / 1024 / 1024).toFixed(2)} MB • READY FOR PARTITIONING</p>
+                     </div>
+                   ) : (
+                     <div className="px-6 text-center space-y-1">
+                       <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                       <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                       <KbdShortcut />
+                       <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP4, MOV, PNG, JPG, WEBP, MP3 Supported</p>
+                     </div>
+                   )}
+                  <input ref={inputRef} type="file" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
+                </div>
               </Card>
 
               {processing && (

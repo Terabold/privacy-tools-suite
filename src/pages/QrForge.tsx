@@ -68,7 +68,7 @@ const QrForge = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-privacy transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -88,9 +88,9 @@ const QrForge = () => {
               </div>
             </div>
             {input && (
-               <Button onClick={() => setInput("")} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                  Wipe Stage
-               </Button>
+              <Button onClick={() => setInput("")} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
             )}
           </header>
 
@@ -103,7 +103,7 @@ const QrForge = () => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Enter link or text to encode..."
-                    className="h-16 bg-background/50 border-primary/10 text-xl font-black italic tracking-tight rounded-2xl placeholder:text-muted-foreground/30"
+                    className="h-16 bg-background/50 border-primary/10 text-xl font-black italic tracking-tight rounded-2xl placeholder:text-muted-foreground/30 font-sans"
                   />
                   <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] opacity-30 text-foreground">
                     <ShieldCheck className="h-3 w-3" /> Zero-Leak Encoding Enabled

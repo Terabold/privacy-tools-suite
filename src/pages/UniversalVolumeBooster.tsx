@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Volume2, Download, Music, ShieldCheck, Terminal, Play, RotateCcw } from "lucide-react";
+import { ArrowLeft, Upload, Volume2, Download, Music, ShieldCheck, Terminal, Play, RotateCcw, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 const UniversalVolumeBooster = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -123,6 +125,7 @@ const UniversalVolumeBooster = () => {
     const data = audioBuffer.getChannelData(0);
     const step = Math.ceil(data.length / width);
     const amp = height / 2;
+    const volumeFactor = volume / 100;
 
     ctx.clearRect(0, 0, width, height);
     
@@ -138,17 +141,18 @@ const UniversalVolumeBooster = () => {
         if (datum > max) max = datum;
       }
       
-      const barHeight = Math.max(1, (max - min) * amp * 0.8);
-      ctx.fillStyle = "rgba(139, 92, 246, 0.7)"; // Increased opacity
+      // Apply volume factor to the visual height, with a slight compression to keep it looking clean at high gain
+      const barHeight = Math.min(height, Math.max(1, (max - min) * amp * 0.8 * volumeFactor));
+      ctx.fillStyle = volume > 150 ? "rgba(139, 92, 246, 0.9)" : "rgba(139, 92, 246, 0.7)";
       ctx.beginPath();
       ctx.roundRect(i, amp - barHeight / 2, barWidth, barHeight, 1);
       ctx.fill();
     }
-  }, [audioBuffer]);
+  }, [audioBuffer, volume]);
 
   useEffect(() => {
     if (audioBuffer) drawStaticWaveform();
-  }, [audioBuffer, drawStaticWaveform]);
+  }, [audioBuffer, volume, drawStaticWaveform]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -156,7 +160,7 @@ const UniversalVolumeBooster = () => {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [audioBuffer, drawStaticWaveform]);
+  }, [audioBuffer, volume, drawStaticWaveform]);
 
   useEffect(() => {
     if (gainNodeRef.current) {
@@ -193,6 +197,8 @@ const UniversalVolumeBooster = () => {
     
     toast.success(`${f.name} loaded into studio`);
   };
+
+  usePasteFile(handleFile);
 
   useEffect(() => {
     return () => {
@@ -330,7 +336,7 @@ const UniversalVolumeBooster = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-audio transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -367,14 +373,16 @@ const UniversalVolumeBooster = () => {
                       onClick={() => !processing && inputRef.current?.click()}
                       className={`relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner" : "py-32 opacity-50"}`}
                     >
-                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                         <Volume2 className="h-10 w-10 text-primary" />
-                      </div>
-                      
-                      <div className="px-6">
-                        <p className="text-2xl font-black text-foreground uppercase tracking-tight italic">Drop Audio/Video Artifacts</p>
-                        <p className="mt-2 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-40">MP3, WAV, OGG, & MP4 Audio Streams Supported</p>
-                      </div>
+                       <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                          <CloudUpload className="h-10 w-10 text-primary" />
+                       </div>
+                       
+                       <div className="px-6 space-y-1">
+                         <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                         <KbdShortcut />
+                         <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP3, WAV, OGG, & MP4 Audio Streams Supported</p>
+                       </div>
                       <input ref={inputRef} type="file" className="hidden" accept="audio/*,video/*" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
                     </div>
                 </Card>
@@ -417,7 +425,7 @@ const UniversalVolumeBooster = () => {
 
                       {/* Professional Player Layout */}
                       <div className="pt-6 border-t border-primary/10 flex flex-col items-center gap-6">
-                        <div className="w-full h-32 bg-background/50 rounded-xl border border-border/50 shadow-inner flex items-center justify-center overflow-hidden relative group/waveform">
+                        <div className="w-full h-32 bg-background/50 rounded-2xl border border-border/50 shadow-inner flex items-center justify-center overflow-hidden relative group/waveform">
                            {/* Static Waveform Background */}
                            <canvas ref={staticCanvasRef} className="absolute inset-0 w-full h-full opacity-60" />
                            {/* Live Frequency Overly */}

@@ -19,6 +19,7 @@ import JsonForge from "./pages/JsonForge.tsx";
 import QrForge from "./pages/QrForge.tsx";
 import PiiMasker from "./pages/PiiMasker.tsx";
 import SvgOptimizer from "./pages/SvgOptimizer.tsx";
+import QuickClipboardHub from "./pages/QuickClipboardHub.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import ScrollToTop from "./components/ScrollToTop";
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/qr-forge" element={<QrForge />} />
           <Route path="/pii-masker" element={<PiiMasker />} />
           <Route path="/svg-optimizer" element={<SvgOptimizer />} />
+          <Route path="/quick-clipboard" element={<QuickClipboardHub />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

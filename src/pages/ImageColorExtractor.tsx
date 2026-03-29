@@ -1,12 +1,14 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Copy, Check, Pipette, Search, ZoomIn, ZoomOut, Maximize2, MousePointer2 } from "lucide-react";
+import { ArrowLeft, Upload, Copy, Check, Pipette, Search, ZoomIn, ZoomOut, Maximize2, MousePointer2, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 const ImageColorExtractor = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -52,6 +54,8 @@ const ImageColorExtractor = () => {
     };
     img.src = url;
   };
+
+  usePasteFile(handleFile);
 
   const handleImageLoad = () => {
     const img = imgRef.current;
@@ -138,7 +142,7 @@ const ImageColorExtractor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -152,23 +156,20 @@ const ImageColorExtractor = () => {
               </Link>
               <div>
                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
-                  Pixel <span className="text-primary italic">Extractor</span>
+                   Pixel <span className="text-primary italic">Extractor</span>
                 </h1>
                 <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Precision Local Color Palette Suite</p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-               {imgSrc && (
-                 <Button onClick={() => { setImgSrc(null); setColor(null); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                    Wipe Stage
-                 </Button>
-               )}
-            </div>
+            {imgSrc && (
+              <Button onClick={() => { setImgSrc(null); setColor(null); }} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
+            )}
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start">
-            <div className="space-y-8">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
               <Card 
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -176,57 +177,54 @@ const ImageColorExtractor = () => {
                 onMouseLeave={handleMouseUp}
                 onContextMenu={(e) => e.preventDefault()}
                 ref={containerRef}
-                className="glass-morphism border-primary/5 min-h-[700px] flex items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner select-none overflow-hidden cursor-crosshair active:cursor-grabbing"
+                className="glass-morphism border-primary/5 min-h-[500px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner select-none overflow-hidden p-10"
               >
-                <div className="absolute top-6 left-6 z-10 flex gap-2 pointer-events-none">
-                   <span className="text-[10px] font-black bg-primary text-primary-foreground px-3 py-1.5 rounded-2xl uppercase tracking-[0.2em] shadow-xl">Precision Stage</span>
-                   {imgSrc && (
-                     <span className="text-[10px] font-black bg-background/80 backdrop-blur-md text-foreground px-3 py-1.5 rounded-2xl uppercase tracking-[0.2em] shadow-sm border border-border/50">
-                       Scale: {(zoom * 100).toFixed(0)}%
-                     </span>
-                   )}
-                </div>
-
-                <div className="absolute top-6 right-6 z-10 flex gap-2">
-                    <Button size="icon" variant="secondary" className="rounded-2xl bg-background/80 hover:bg-background border h-10 w-10" onClick={() => setZoom(z => Math.max(1, z - 1))}>
-                       <ZoomOut className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="secondary" className="rounded-2xl bg-background/80 hover:bg-background border h-10 w-10" onClick={() => setZoom(z => Math.min(50, z + 1))}>
-                       <ZoomIn className="h-4 w-4" />
-                    </Button>
-                </div>
-                
-                {imgSrc ? (
-                  <div 
-                    ref={containerRef}
-                    className="w-full h-full flex items-center justify-center p-0 overflow-hidden"
+                {!imgSrc ? (
+                   <div
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                    onClick={() => inputRef.current?.click()}
+                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                   >
-                    <img 
-                      ref={imgRef}
-                      src={imgSrc} 
-                      alt="Local Source" 
-                      crossOrigin="anonymous"
-                      onLoad={handleImageLoad}
-                      onClick={handleClick}
-                      className="transition-transform duration-75 ease-out origin-center shadow-[0_50px_100px_rgba(0,0,0,0.5)]"
-                      style={{ 
-                        transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})`,
-                        imageRendering: zoom > 2 ? "pixelated" : "auto",
-                        maxWidth: '90%',
-                        maxHeight: '600px'
-                      }}
-                    />
+                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                       <CloudUpload className="h-10 w-10 text-primary" />
+                    </div>
+                    <div className="px-6 space-y-1">
+                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                      <KbdShortcut />
+                      <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">Sample Palette from High-Res Masters</p>
+                    </div>
                   </div>
                 ) : (
-                  <div 
-                    onClick={() => inputRef.current?.click()}
-                    className="cursor-pointer group flex flex-col items-center justify-center p-20 w-[90%] border-2 border-dashed border-primary/20 rounded-2xl bg-background/50 hover:bg-primary/5 transition-all shadow-inner"
-                  >
-                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                       <Pipette className="h-10 w-10 text-primary" />
+                  <div className="relative w-full h-full flex items-center justify-center cursor-crosshair active:cursor-grabbing">
+
+                    <div className="absolute top-0 right-0 z-10 flex gap-2">
+                        <Button size="icon" variant="secondary" className="rounded-2xl bg-background/80 hover:bg-background border h-10 w-10" onClick={() => setZoom(z => Math.max(1, z - 1))}>
+                           <ZoomOut className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="secondary" className="rounded-2xl bg-background/80 hover:bg-background border h-10 w-10" onClick={() => setZoom(z => Math.min(50, z + 1))}>
+                           <ZoomIn className="h-4 w-4" />
+                        </Button>
                     </div>
-                    <p className="text-xl font-black uppercase tracking-tighter">Drop image to sample</p>
-                    <p className="text-[10px] mt-2 font-black uppercase tracking-widest opacity-40">Direct hardware-accelerated sampling</p>
+
+                    <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                      <img 
+                        ref={imgRef}
+                        src={imgSrc} 
+                        alt="Local Source" 
+                        crossOrigin="anonymous"
+                        onLoad={handleImageLoad}
+                        onClick={handleClick}
+                        className="transition-transform duration-75 ease-out origin-center shadow-[0_50px_100px_rgba(0,0,0,0.5)]"
+                        style={{ 
+                          transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})`,
+                          imageRendering: zoom > 2 ? "pixelated" : "auto",
+                          maxWidth: '90%',
+                          maxHeight: '600px'
+                        }}
+                      />
+                    </div>
                   </div>
                 )}
                 <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />

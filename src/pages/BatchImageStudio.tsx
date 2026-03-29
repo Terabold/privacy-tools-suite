@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, Download, Trash2, Layers, Settings2, Palette, Maximize, Type } from "lucide-react";
+import { ArrowLeft, Upload, Download, Trash2, Layers, Settings2, Palette, Maximize, Type, Image as ImageIcon, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -9,6 +9,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 interface StyledImage {
   id: string;
@@ -56,6 +58,8 @@ const BatchImageStudio = () => {
     });
     toast.success(`${newFiles.length} images added to batch`);
   };
+
+  usePasteFile((file) => handleFiles({ 0: file, length: 1, item: () => file } as any));
 
   const removeImage = (id: string) => {
     setImages((prev) => prev.filter((img) => img.id !== id));
@@ -140,7 +144,7 @@ const BatchImageStudio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -148,42 +152,45 @@ const BatchImageStudio = () => {
           <header className="flex items-center justify-between flex-wrap gap-8">
             <div className="flex items-center gap-6">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 group/back transition-all">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
                   <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-foreground">
-                  Batch <span className="text-primary italic">Studio</span>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
+                   Batch <span className="text-primary italic">Image Studio</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Performance Browser-Based Image Pipeline</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Mass Processing & Overlay Engine</p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-               {images.length > 0 && (
-                 <Button onClick={() => setImages([])} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                    <Trash2 className="h-3.5 w-3.5" /> Wipe Queue
-                 </Button>
-               )}
-            </div>
+            {images.length > 0 && (
+              <Button onClick={() => setImages([])} variant="ghost" size="sm" className="gap-2 h-10 px-5 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                Wipe Stage
+              </Button>
+            )}
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start">
-            <div className="space-y-8">
-              <div 
-                onClick={() => inputRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
-                className="cursor-pointer group relative p-16 border-2 border-dashed border-primary/20 rounded-2xl bg-muted/5 hover:bg-primary/5 transition-all flex flex-col items-center justify-center text-center shadow-inner"
-              >
-                <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 transition-transform">
-                  <Layers className="h-10 w-10 text-primary" />
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+              <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner p-10">
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
+                  onClick={() => inputRef.current?.click()}
+                  className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                >
+                  <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                     <CloudUpload className="h-10 w-10 text-primary" />
+                  </div>
+                  <div className="px-6 space-y-1">
+                    <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                    <KbdShortcut />
+                    <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center uppercase tracking-widest opacity-20">JPG, PNG, WebP • 100% Local Pipeline</p>
+                  </div>
                 </div>
-                <p className="text-xl font-black uppercase tracking-tighter italic">Drop Batch Assets</p>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-40 mt-2">Professional high-DPI pipeline active</p>
-                <input ref={inputRef} type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFiles(e.target.files)} />
-              </div>
+                <input ref={inputRef} type="file" className="hidden" multiple accept="image/*" onChange={(e) => handleFiles(e.target.files)} />
+              </Card>
 
               {images.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">

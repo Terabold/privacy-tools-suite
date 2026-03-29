@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, ShieldX, Check, Trash2, Camera, MapPin, Smartphone, FileCheck, Download } from "lucide-react";
+import { ArrowLeft, Upload, ShieldX, Check, Trash2, Camera, MapPin, Smartphone, FileCheck, Download, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
@@ -8,6 +8,8 @@ import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { toast } from "sonner";
 import exifr from "exifr";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 const MetadataScrubber = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -54,6 +56,8 @@ const MetadataScrubber = () => {
     reader.readAsDataURL(f);
   };
 
+  usePasteFile(handleFile);
+
   const scrubMetadata = async () => {
     if (!file || !preview || !canvasRef.current) return;
     setProcessing(true);
@@ -86,7 +90,7 @@ const MetadataScrubber = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-privacy transition-all duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <main className="container mx-auto max-w-[1400px] px-6 py-12">
@@ -94,15 +98,15 @@ const MetadataScrubber = () => {
           <header className="flex items-center justify-between flex-wrap gap-8">
             <div className="flex items-center gap-6">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 group/back transition-all shadow-sm">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
                   <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
-                  Privacy <span className="text-primary italic">Scrubber</span>
+                   Metadata <span className="text-primary italic">Scrubber</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Anonymous Metadata Sanitization Engine</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Deep Privacy Sanitization Engine</p>
               </div>
             </div>
             
@@ -126,13 +130,17 @@ const MetadataScrubber = () => {
                 ) : (
                   <div 
                     onClick={() => inputRef.current?.click()}
-                    className="cursor-pointer group flex flex-col items-center justify-center p-20 w-full border-2 border-dashed border-primary/20 rounded-2xl bg-background/50 hover:bg-primary/5 transition-all shadow-inner"
+                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                   >
                     <div className="h-24 w-24 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-inner">
-                       <ShieldX className="h-12 w-12 text-primary" />
+                       <CloudUpload className="h-12 w-12 text-primary" />
                     </div>
-                    <p className="text-2xl font-black uppercase tracking-tighter">Load Privacy Source</p>
-                    <p className="text-[10px] mt-2 font-black uppercase tracking-widest opacity-40">JPG or PNG Files • Strips Camera & GPS Data</p>
+                    <div className="px-6 space-y-1">
+                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
+                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                      <KbdShortcut />
+                      <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">JPG or PNG Files • Strips Camera & GPS Data</p>
+                    </div>
                   </div>
                 )}
                 <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />

@@ -64,10 +64,10 @@ const TextCaseFormatter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-utility transition-colors duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
-      <main className="container mx-auto max-w-6xl px-4 py-12">
+      <main className="container mx-auto max-w-[1400px] px-6 py-12">
         <div className="flex flex-col gap-10">
           <header className="flex items-center justify-between flex-wrap gap-8">
             <div className="flex items-center gap-6">
@@ -77,7 +77,7 @@ const TextCaseFormatter = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
                    Text Case <span className="text-primary italic">Formatter</span>
                 </h1>
                 <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional String Transformation Lab</p>
@@ -91,21 +91,21 @@ const TextCaseFormatter = () => {
                </div>
                <div className="w-[1px] bg-border/50" />
                <div className="text-center px-4">
-                  <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">Characters</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">Chars</p>
                   <p className="text-xl font-bold font-mono">{stats.chars}</p>
                </div>
             </div>
           </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,320px] gap-8 items-start">
-            <div className="space-y-6">
-              <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl overflow-hidden bg-muted/5">
-                <CardContent className="p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+              <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl overflow-hidden bg-muted/5 p-6">
+                <CardContent className="p-4">
                   <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Paste your content, script, or code list here…"
-                    className="min-h-[350px] w-full resize-none bg-transparent border-none text-lg text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-0 font-medium leading-relaxed"
+                    className="min-h-[400px] w-full resize-none bg-transparent border-none text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-0 font-medium leading-relaxed custom-scrollbar"
                   />
                   
                   <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
