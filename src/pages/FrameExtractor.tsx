@@ -1,0 +1,516 @@
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Camera, Download, Trash2, CloudUpload, Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import AdPlaceholder from "@/components/AdPlaceholder";
+import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
+import VideoTimeline from "@/components/VideoTimeline";
+import JSZip from "jszip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Copy, Eye, FileArchive, Check } from "lucide-react";
+
+interface CapturedFrame {
+  id: string;
+  url: string;
+  time: number;
+}
+
+const FrameExtractor = () => {
+  const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
+  const [file, setFile] = useState<File | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [frames, setFrames] = useState<CapturedFrame[]>([]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showGallery, setShowGallery] = useState(false);
+
+  // Smooth Playhead Logic
+  const [displayTime, setDisplayTime] = useState(0);
+  const rAFRef = useRef<number>();
+  
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const toggleDark = useCallback(() => {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }, [darkMode]);
+
+
+
+  const handleFile = (f: File | undefined) => {
+    if (!f) return;
+    if (videoUrl) URL.revokeObjectURL(videoUrl);
+    setFile(f);
+    const url = URL.createObjectURL(f);
+    setVideoUrl(url);
+    setFrames([]);
+    setCurrentTime(0);
+    setDisplayTime(0);
+    toast.success("Ready for Instance Capture");
+  };
+
+  usePasteFile(handleFile);
+
+  // requestAnimationFrame loop for smooth timer/playhead
+  useEffect(() => {
+    const update = () => {
+      if (videoRef.current && !videoRef.current.paused) {
+        setDisplayTime(videoRef.current.currentTime);
+      }
+      rAFRef.current = requestAnimationFrame(update);
+    };
+    rAFRef.current = requestAnimationFrame(update);
+    return () => {
+      if (rAFRef.current) cancelAnimationFrame(rAFRef.current);
+    };
+  }, []);
+
+  // Sync when prop-based currentTime changes (seeks)
+  useEffect(() => {
+    setDisplayTime(currentTime);
+  }, [currentTime]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+       if (!file) return;
+       // We let VideoTimeline handle arrow keys globally, but C for capture remains
+       if (e.key.toLowerCase() === "c" && (e.ctrlKey || e.metaKey)) {
+          captureFrame();
+       }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [file]);
+
+  const captureFrame = async () => {
+    const video = videoRef.current;
+    if (!video || !file) return;
+
+    setProcessing(true);
+    
+    const time = video.currentTime;
+    
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      
+      if (!ctx) throw new Error("Could not get canvas context");
+      
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      const url = canvas.toDataURL("image/png");
+      
+      setFrames(prev => [{ id: Math.random().toString(36), url, time }, ...prev]);
+      toast.success("Moment Captured!");
+    } catch (e) {
+      toast.error("Frame extraction error.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const copyToClipboard = async (frame: CapturedFrame) => {
+    try {
+      const response = await fetch(frame.url);
+      const blob = await response.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]);
+      setCopiedId(frame.id);
+      toast.success("Copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      toast.error("Failed to copy image.");
+    }
+  };
+
+  const downloadAllAsZip = async () => {
+    if (frames.length === 0) return;
+    const zip = new JSZip();
+    const folder = zip.folder("captured_frames");
+    
+    for (const frame of frames) {
+       const response = await fetch(frame.url);
+       const blob = await response.blob();
+       folder?.file(`frame_${frame.time.toFixed(2)}.png`, blob);
+    }
+    
+    const content = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = `captured_frames_${new Date().getTime()}.zip`;
+    link.click();
+    toast.success("ZIP Artifact Generated!");
+  };
+
+  const removeFrame = (id: string) => {
+    setFrames(prev => {
+      const f = prev.find(x => x.id === id);
+      if (f) URL.revokeObjectURL(f.url);
+      return prev.filter(x => x.id !== id);
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-300 overflow-x-hidden">
+      <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
+      
+      <div className="flex justify-center items-start w-full relative">
+        <aside className="hidden min-[1850px]:flex flex-col gap-10 sticky top-32 w-[300px] shrink-0 px-6 py-8 animate-in fade-in slide-in-from-left-8 duration-300">
+           <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50" />
+           <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50" />
+           <div className="p-8 rounded-2xl border-2 border-dashed border-primary/5 bg-primary/5 text-center mt-12 studio-gradient">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-60">Verified Workspace Partner</p>
+           </div>
+        </aside>
+
+        <main className="grow transition-all duration-300 container mx-auto max-w-[1400px] px-6 py-12">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <Link to="/">
+                  <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
+                    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
+                     Frame <span className="text-primary italic">Extractor</span>
+                  </h1>
+                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">High-Resolution Instance Recovery Studio</p>
+                </div>
+              </div>
+            </header>
+
+            <div className="w-full flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-8 duration-300">
+              {!file ? (
+                <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[500px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner p-10 select-none">
+                   <div
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                    onClick={() => inputRef.current?.click()}
+                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-24 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                  >
+                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                       <CloudUpload className="h-10 w-10 text-primary" />
+                    </div>
+                    <div className="px-6 space-y-1">
+                      <p className="text-3xl font-bold text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] opacity-40 italic">Drag or click to browse</p>
+                      <KbdShortcut />
+                    </div>
+                    <label htmlFor="frame-upload-input" className="sr-only">Upload Video for Extraction</label>
+                    <input id="frame-upload-input" name="frame-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+                  </div>
+                </Card>
+              ) : (
+                <div className="w-full space-y-12">
+                  <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
+                    {/* LEFT COLUMN: SOURCE WORKBENCH */}
+                    <div className="space-y-6 flex flex-col items-center">
+                      <Card className="w-full max-h-[35vh] rounded-3xl overflow-hidden shadow-2xl relative border-2 border-primary/10 bg-black aspect-video flex items-center justify-center studio-gradient focus-within:ring-2 focus-within:ring-primary/20">
+                        <video 
+                          ref={videoRef}
+                          src={videoUrl!}
+                          className="w-full h-full object-contain bg-black cursor-pointer shadow-2xl"
+                          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+                          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+                          crossOrigin="anonymous"
+                        />
+                      </Card>
+
+                       <div className="w-full glass-morphism border-primary/5 bg-primary/5 p-4 md:p-6 rounded-[28px] space-y-4 shadow-2xl studio-gradient border-border/20">
+                         <div className="flex flex-col gap-4">
+                            <div className="flex items-center justify-between gap-4">
+                               <div className="flex bg-black/20 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner">
+                                  <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.0333) }} className="h-10 w-10 text-muted-foreground hover:text-primary transition-colors">
+                                     <ChevronLeft className="h-5 w-5" />
+                                  </Button>
+                                  <Button 
+                                    onClick={() => {
+                                      if (videoRef.current?.paused) {
+                                        videoRef.current.play();
+                                        setIsPlaying(true);
+                                      } else {
+                                        videoRef.current?.pause();
+                                        setIsPlaying(false);
+                                      }
+                                    }}
+                                    className="h-10 w-14 bg-primary text-primary-foreground rounded-lg shadow-lg hover:scale-105 active:scale-95 transition-all mx-1.5"
+                                  >
+                                     {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
+                                  </Button>
+                                  <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 0.0333) }} className="h-10 w-10 text-muted-foreground hover:text-primary transition-colors">
+                                     <ChevronRight className="h-5 w-5" />
+                                  </Button>
+                               </div>
+
+                               <Button 
+                                 onClick={captureFrame} 
+                                 disabled={processing} 
+                                 className="flex-1 max-w-[200px] h-11 rounded-xl bg-secondary text-secondary-foreground font-bold italic uppercase tracking-tighter shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all gap-3 border-b-2 active:border-b-0 active:translate-y-0.5 relative overflow-hidden group/btn px-4"
+                               >
+                                  <Camera className={`h-4 w-4 relative z-10 ${processing ? "animate-spin" : ""}`} />
+                                  <span className="relative z-10">Capture</span>
+                               </Button>
+
+                               <div className="hidden sm:flex items-center gap-2 shrink-0 bg-black/40 px-3 py-2 rounded-xl border border-white/5 shadow-inner">
+                                  <span className="text-lg font-bold italic tracking-tighter text-primary font-mono">{displayTime.toFixed(3)}s</span>
+                               </div>
+                            </div>
+                            
+                            <div className="w-full">
+                               <VideoTimeline 
+                                 videoRef={videoRef}
+                                 src={videoUrl}
+                                 currentTime={currentTime}
+                                 duration={duration}
+                                 onSeek={(t) => {
+                                   if (videoRef.current) videoRef.current.currentTime = t;
+                                   setCurrentTime(t);
+                                 }}
+                                 showRange={false}
+                               />
+                            </div>
+                         </div>
+                       </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: LATEST CAPTURE WORKBENCH */}
+                    <div className="space-y-6">
+                       <Card className="w-full rounded-3xl overflow-hidden shadow-2xl relative border border-white/5 bg-zinc-950 max-h-[38vh] aspect-video flex items-center justify-center group/latest">
+                          {frames.length > 0 ? (
+                            <div className="relative w-full h-full animate-in fade-in zoom-in-95 duration-500">
+                               <img 
+                                 src={frames[0].url} 
+                                 className="w-full h-full object-contain" 
+                                 alt="Latest Capture" 
+                               />
+                               <div className="absolute top-4 left-4 px-3 py-1 bg-black/80 rounded-full border border-white/10 backdrop-blur-md">
+                                  <span className="text-[10px] font-bold text-primary italic tracking-widest uppercase">Latest Capture • {frames[0].time.toFixed(3)}s</span>
+                               </div>
+                               
+                               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/latest:opacity-100 transition-opacity flex flex-col items-center justify-center gap-4 backdrop-blur-sm">
+                                  <div className="flex gap-4">
+                                     <Button 
+                                       onClick={() => copyToClipboard(frames[0])}
+                                       className="h-12 px-6 rounded-xl bg-white text-black hover:bg-white/90 font-bold gap-2"
+                                     >
+                                        {copiedId === frames[0].id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                        Copy image
+                                     </Button>
+                                     <Button 
+                                       onClick={() => {
+                                         const a = document.createElement("a");
+                                         a.href = frames[0].url;
+                                         a.download = `frame_capture_${frames[0].time.toFixed(2)}.png`;
+                                         a.click();
+                                       }}
+                                       variant="outline"
+                                       className="h-12 px-6 rounded-xl border-white/20 bg-black/20 text-white hover:!bg-black hover:!text-white font-bold gap-2 transition-all shadow-xl"
+                                     >
+                                        <Download className="h-4 w-4" />
+                                        Download
+                                     </Button>
+                                  </div>
+                               </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center p-12 text-center space-y-4 opacity-20">
+                               <Camera className="h-16 w-16 stroke-[1]" />
+                               <p className="text-[10px] font-bold uppercase tracking-[0.3em]">No instances recovered yet</p>
+                            </div>
+                          )}
+                       </Card>
+
+                       {frames.length > 0 && (
+                         <div className="grid grid-cols-2 gap-4 animate-in slide-in-from-right-4 duration-500">
+                            <Button 
+                              onClick={() => copyToClipboard(frames[0])}
+                              variant="outline"
+                              className="h-14 rounded-2xl border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-bold uppercase italic tracking-tighter gap-3"
+                            >
+                               {copiedId === frames[0].id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                               Capture to Clipboard
+                            </Button>
+                            <Button 
+                              onClick={() => {
+                                const a = document.createElement("a");
+                                a.href = frames[0].url;
+                                a.download = `frame_capture_${frames[0].time.toFixed(2)}.png`;
+                                a.click();
+                              }}
+                              className="h-14 rounded-2xl bg-primary text-primary-foreground font-bold uppercase italic tracking-tighter gap-3"
+                            >
+                               <Download className="h-4 w-4" />
+                               Export Artifact
+                            </Button>
+                         </div>
+                       )}
+
+                       <div 
+                         onClick={() => setShowGallery(true)}
+                         className="bg-black/20 rounded-3xl border border-border/50 p-4 min-h-[160px] relative overflow-hidden group studio-gradient shadow-2xl cursor-pointer hover:border-primary/40 transition-all flex flex-col"
+                       >
+                          <header className="mb-3 flex items-center justify-between px-1">
+                             <h4 className="text-[9px] font-bold uppercase tracking-[0.3em] text-primary italic">Capture History</h4>
+                             <Eye className="h-3 w-3 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
+                          </header>
+                          
+                          {frames.length === 0 ? (
+                            <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2 opacity-20">
+                               <p className="text-[9px] font-bold uppercase tracking-widest italic">Snapshots will build a history here</p>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-4 gap-2 flex-1 auto-rows-fr">
+                               {frames.slice(0, 8).map((frame) => (
+                                 <div key={frame.id} className="relative rounded-lg overflow-hidden border border-white/5 opacity-80 hover:opacity-100 transition-opacity shadow-sm bg-black/40">
+                                   <img src={frame.url} className="w-full h-full object-cover aspect-video" alt="History Thumb" />
+                                 </div>
+                               ))}
+                            </div>
+                          )}
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* GALLERY MODAL */}
+            <Dialog open={showGallery} onOpenChange={setShowGallery}>
+              <DialogContent className="max-w-6xl h-[85vh] flex flex-col p-0 glass-morphism border-primary/20 bg-black/95 transition-all overflow-hidden studio-gradient shadow-[0_0_100px_rgba(0,0,0,0.8)] theme-video outline-none rounded-[40px]">
+                <DialogHeader className="p-10 border-b border-white/5 shrink-0 bg-zinc-950/50 backdrop-blur-3xl">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="space-y-1">
+                      <DialogTitle className="text-5xl font-bold italic tracking-tighter uppercase text-shadow-glow">Capture <span className="text-primary italic">Registry</span></DialogTitle>
+                      <div className="flex items-center gap-3">
+                         <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                         <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary/60 italic leading-none">Recovered Temporal Sandbox • {frames.length} Active Artifacts</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4">
+                      <Button 
+                        onClick={downloadAllAsZip} 
+                        disabled={frames.length === 0}
+                        className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground font-bold italic uppercase tracking-tighter gap-4 shadow-2xl shadow-primary/20 hover:scale-105 transition-all border-b-4 border-black/20"
+                      >
+                        <FileArchive className="h-6 w-6" />
+                        Download ZIP
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowGallery(false)}
+                        className="h-14 px-6 text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 hover:bg-white/10 transition-all rounded-xl"
+                      >
+                        Back to Studio
+                      </Button>
+                    </div>
+                  </div>
+                </DialogHeader>
+                
+                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar bg-black/40">
+                  {frames.length === 0 ? (
+                     <div className="h-full flex flex-col items-center justify-center text-center space-y-8 opacity-20">
+                        <Camera className="h-32 w-32 stroke-[1] animate-pulse" />
+                        <div className="space-y-2">
+                           <p className="text-2xl font-bold uppercase tracking-[0.4em] italic">Registry Null</p>
+                           <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 italic">Capture an instance to build history</p>
+                        </div>
+                     </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                      {frames.map((frame) => (
+                        <Card key={frame.id} className="relative group/card overflow-hidden bg-zinc-950 border border-white/5 hover:border-primary/50 transition-all shadow-2xl rounded-2xl flex flex-col h-full hover:scale-[1.02] duration-300">
+                          <div className="aspect-video relative overflow-hidden shrink-0">
+                            <img src={frame.url} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" alt={`Capture at ${frame.time}s`} />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover/card:opacity-100 transition-opacity" />
+                            
+                            <div className="absolute top-4 left-4 px-3 py-1 bg-black/80 rounded-lg border border-white/10 backdrop-blur-md">
+                              <span className="text-[10px] font-bold text-primary italic tracking-widest">{frame.time.toFixed(3)}s</span>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4 flex gap-2 bg-zinc-950/50 backdrop-blur-sm border-t border-white/5">
+                             <Button 
+                               onClick={() => copyToClipboard(frame)}
+                               variant="ghost"
+                               className="flex-1 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-[9px] uppercase tracking-widest gap-2"
+                             >
+                                {copiedId === frame.id ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3 text-primary" />}
+                                Copy
+                             </Button>
+                              <Button 
+                               onClick={() => {
+                                 const a = document.createElement("a");
+                                 a.href = frame.url;
+                                 a.download = `capture_${frame.time.toFixed(2)}.png`;
+                                 a.click();
+                               }}
+                               className="h-10 w-10 shrink-0 rounded-xl bg-white/5 hover:!bg-black hover:!text-white transition-all group/dl shadow-inner border border-white/5"
+                             >
+                                <Download className="h-4 w-4 group-hover/dl:scale-110 transition-transform" />
+                             </Button>
+                             <Button 
+                               onClick={() => removeFrame(frame.id)}
+                               className="h-10 w-10 shrink-0 rounded-xl bg-white/5 hover:bg-destructive hover:text-destructive-foreground transition-all group/del shadow-inner border border-white/5"
+                             >
+                                <Trash2 className="h-4 w-4 group-hover/del:scale-110 transition-transform" />
+                             </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <footer className="pt-20 border-t border-border/50">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <Card className="glass-morphism border-primary/5 p-6 rounded-3xl bg-primary/5">
+                     <p className="text-[9px] font-bold uppercase tracking-widest text-primary mb-4 italic">Precision Engine</p>
+                     <p className="text-[11px] leading-relaxed opacity-60">Utilize Arrow Keys (left/right) for precision frame-stepping. Captured moments are exported as lossless 8-bit PNG artifacts.</p>
+                  </Card>
+                  <div className="md:col-span-2">
+                     <AdPlaceholder format="banner" className="opacity-20 grayscale hover:grayscale-0 transition-all" />
+                  </div>
+               </div>
+            </footer>
+          </div>
+        </main>
+
+        <aside className="hidden min-[1850px]:flex flex-col gap-10 sticky top-32 w-[300px] shrink-0 px-6 py-8 animate-in fade-in slide-in-from-right-8 duration-300">
+           <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50" />
+           <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50" />
+           <div className="p-8 rounded-2xl border-2 border-dashed border-primary/5 bg-primary/5 text-center mt-12 studio-gradient">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-60">Verified Workspace Partner</p>
+           </div>
+        </aside>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default FrameExtractor;

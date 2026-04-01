@@ -8,6 +8,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 // @ts-ignore
 import { optimize } from "svgo/browser";
 
@@ -23,6 +25,22 @@ const SvgOptimizer = () => {
     document.documentElement.classList.toggle("dark", next);
     localStorage.setItem("theme", next ? "dark" : "light");
   }, [darkMode]);
+
+  const handleFile = (file: File | undefined) => {
+    if (!file) return;
+    if (file.type !== "image/svg+xml" && !file.name.endsWith(".svg")) {
+       toast.error("Format mismatch. Deploy SVG artifact only.");
+       return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setInput(e.target?.result as string);
+      toast.success("SVG Artifact Staged");
+    };
+    reader.readAsText(file);
+  };
+
+  usePasteFile(handleFile);
 
   const optimizeSvg = () => {
     try {
@@ -136,6 +154,9 @@ const SvgOptimizer = () => {
                       className="flex-1 bg-transparent p-6 font-mono text-sm text-[#ce9178] resize-none outline-none selection:bg-primary/30 leading-relaxed scrollbar-hide custom-scrollbar"
                       spellCheck={false}
                     />
+                    <div className="absolute bottom-6 right-6">
+                       <KbdShortcut />
+                    </div>
                  </div>
               </Card>
 

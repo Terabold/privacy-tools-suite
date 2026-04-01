@@ -9,6 +9,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+import { KbdShortcut } from "@/components/KbdShortcut";
 
 const JsonForge = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -28,6 +30,18 @@ const JsonForge = () => {
     document.documentElement.classList.toggle("dark", next);
     localStorage.setItem("theme", next ? "dark" : "light");
   }, [darkMode]);
+
+  const handleFile = (file: File | undefined) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      handleInput(e.target?.result as string);
+      toast.success("JSON Artifact Staged");
+    };
+    reader.readAsText(file);
+  };
+
+  usePasteFile(handleFile);
 
   // Smart Validation Effect
   useEffect(() => {
@@ -143,9 +157,9 @@ const JsonForge = () => {
               </Link>
               <div>
                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
-                   JSON <span className="text-primary italic">Forge</span>
+                   JSON <span className="text-primary italic">Studio</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Data Architecture & Validation Engine</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional Data Architecture & Validation</p>
               </div>
             </div>
           </header>
@@ -193,6 +207,9 @@ const JsonForge = () => {
                      className="flex-1 bg-transparent p-6 font-mono text-sm text-[#9cdcfe] resize-none outline-none selection:bg-primary/30 leading-relaxed custom-scrollbar"
                      spellCheck={false}
                    />
+                   <div className="absolute bottom-6 right-6 z-20">
+                      <KbdShortcut />
+                   </div>
 
                    {error && (
                      <div className="absolute bottom-0 inset-x-0 p-4 bg-destructive/10 border-t border-destructive/20 text-destructive flex items-start gap-3 animate-in slide-in-from-bottom-4 z-30 backdrop-blur-md">

@@ -296,17 +296,17 @@ const AudioTrimmer = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
                   Audio <span className="text-primary italic">Trimmer</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Precision Local Audio Partitioning</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">High-Precision Local Audio Partitioning</p>
               </div>
             </div>
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="lg:col-span-8 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl transition-all duration-700 hover:border-primary/30">
+              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-700 hover:border-primary/30">
                 <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Wave Stage</h3>
                   {audioBuffer && (
@@ -332,8 +332,8 @@ const AudioTrimmer = () => {
                         <CloudUpload className="h-10 w-10 text-primary" />
                       </div>
                       <div className="px-6 space-y-1">
-                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
-                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
+                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
                         <KbdShortcut />
                         <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP3, WAV, or OGG Files Supported</p>
                       </div>
@@ -400,20 +400,20 @@ const AudioTrimmer = () => {
 
                         {/* Left trim handle */}
                         <div
-                          className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                          className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-glow"
                           style={{ left: `${(range[0] / duration) * 100}%` }}
                         >
-                          <div className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-2xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
+                          <div className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
                             <div className="w-[1px] h-4 bg-white/60" />
                           </div>
                         </div>
 
                         {/* Right trim handle */}
                         <div
-                          className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                          className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-glow"
                           style={{ left: `${(range[1] / duration) * 100}%` }}
                         >
-                          <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-2xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
+                          <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
                             <div className="w-[1px] h-4 bg-white/60" />
                           </div>
                         </div>
@@ -464,10 +464,10 @@ const AudioTrimmer = () => {
                             </Button>
                             <button
                               onClick={playPreview}
-                              className="h-20 w-20 rounded-2xl bg-primary flex items-center justify-center text-white hover:scale-110 transition-transform shadow-2xl shadow-primary/40 relative group overflow-hidden"
+                              className="h-20 w-20 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform shadow-xl shadow-primary/20 relative group overflow-hidden"
                             >
                               <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                              {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 fill-white" />}
+                              {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 fill-current" />}
                             </button>
                           </div>
                         </div>
@@ -508,7 +508,7 @@ const AudioTrimmer = () => {
                     <Button
                       onClick={downloadTrimmed}
                       disabled={!audioBuffer || processing}
-                      className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase italic"
+                      className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-xl shadow-primary/10 hover:bg-primary hover:text-primary-foreground hover:scale-[1.01] active:scale-[0.99] transition-all uppercase italic"
                     >
                       <Download className="h-6 w-6" />
                       {processing ? "Slicing Samples..." : "Export Trimmed"}

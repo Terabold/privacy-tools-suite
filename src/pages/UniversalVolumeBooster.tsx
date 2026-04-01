@@ -349,10 +349,10 @@ const UniversalVolumeBooster = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
-                   Universal                   Volume <span className="text-primary italic">Booster</span>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
+                   Universal Volume <span className="text-primary italic">Booster</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Performance Bitstream Amplification</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">High-Performance Bitstream Amplification</p>
               </div>
             </div>
           </header>
@@ -371,9 +371,9 @@ const UniversalVolumeBooster = () => {
                           <CloudUpload className="h-10 w-10 text-primary" />
                        </div>
                        
-                       <div className="px-6 space-y-1">
-                         <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
-                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                       <div className="px-6 text-center space-y-2">
+                         <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
+                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
                          <KbdShortcut />
                          <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP3, WAV, OGG, & MP4 Audio Streams Supported</p>
                        </div>
@@ -468,9 +468,9 @@ const UniversalVolumeBooster = () => {
 
                               <button 
                                 onClick={handlePlay}
-                                className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg shadow-primary/20"
+                                className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform shadow-xl shadow-primary/20"
                               >
-                                {isPlaying ? <span className="h-5 w-5 border-l-4 border-r-4 border-white" /> : <Play className="h-6 w-6 fill-white" />}
+                                {isPlaying ? <span className="h-5 w-5 border-l-4 border-r-4 border-primary-foreground" /> : <Play className="h-6 w-6 fill-current" />}
                               </button>
                               <div>
                                  <p className="text-[10px] font-black uppercase tracking-widest opacity-20 text-foreground">Status</p>
@@ -520,7 +520,7 @@ const UniversalVolumeBooster = () => {
                     <Button 
                       onClick={processAndDownload} 
                       disabled={!file || processing} 
-                      className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase italic"
+                      className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-xl shadow-primary/10 hover:bg-primary hover:text-primary-foreground hover:scale-[1.01] active:scale-[0.99] transition-all uppercase italic"
                     >
                       <Download className="h-6 w-6" />
                       {processing ? "Amplifying Artifact..." : "Export Boosted"}

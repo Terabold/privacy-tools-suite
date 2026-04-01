@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, ShieldX, Download, Trash2, Undo2, Eraser, Square, Layers, Sparkles, ShieldCheck, CloudUpload } from "lucide-react";
+import { ArrowLeft, ShieldX, Download, Trash2, Undo2, Eraser, Square, Layers, Sparkles, CloudUpload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -24,6 +24,7 @@ interface RedactionRegion {
 const PiiMasker = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
   const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [textContent, setTextContent] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [regions, setRegions] = useState<RedactionRegion[]>([]);
   const [redactionStyle, setRedactionStyle] = useState<"blur" | "black">("blur");
@@ -50,20 +51,33 @@ const PiiMasker = () => {
 
   const handleFile = (f: File | undefined) => {
     if (!f) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        setImage(img);
-        setFile(f);
-        setRegions([]);
-        setZoom(1);
-        setPan({ x: 0, y: 0 });
-        toast.success("Identity Scrubber Initialized");
+    setFile(f);
+    setRegions([]);
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+
+    const isImage = f.type.startsWith("image/");
+    if (isImage) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          setImage(img);
+          setTextContent(null);
+          toast.success("Identity Scrubber Initialized");
+        };
+        img.src = e.target?.result as string;
       };
-      img.src = e.target?.result as string;
-    };
-    reader.readAsDataURL(f);
+      reader.readAsDataURL(f);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setTextContent(e.target?.result as string);
+        setImage(null);
+        toast.success("Document Redaction Mode");
+      };
+      reader.readAsText(f);
+    }
   };
 
   usePasteFile(handleFile);
@@ -73,13 +87,11 @@ const PiiMasker = () => {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx || !image) return;
 
-    // Reset canvas to image size
     canvas.width = image.width;
     canvas.height = image.height;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0);
 
-    // Filter logic per region
     regions.forEach(r => {
       ctx.save();
       if (r.style === "blur") {
@@ -93,14 +105,11 @@ const PiiMasker = () => {
         ctx.fillRect(r.x, r.y, r.width, r.height);
       }
       ctx.restore();
-      
-      // Fine border for active region
       ctx.strokeStyle = "rgba(124, 58, 237, 0.4)";
       ctx.lineWidth = 2 / zoom;
       ctx.strokeRect(r.x, r.y, r.width, r.height);
     });
 
-    // Drawing preview
     if (isDrawing) {
       ctx.strokeStyle = "#7c3aed";
       ctx.lineWidth = 2 / zoom;
@@ -111,13 +120,12 @@ const PiiMasker = () => {
       const h = Math.abs(startPos.y - currPos.y);
       ctx.strokeRect(x, y, w, h);
     }
-  }, [image, regions, isDrawing, startPos, currPos]);
+  }, [image, regions, isDrawing, startPos, currPos, zoom]);
 
   useEffect(() => {
-    drawCanvas();
-  }, [drawCanvas]);
+    if (image) drawCanvas();
+  }, [drawCanvas, image]);
 
-  // Scroll-to-zoom
   useEffect(() => {
     const el = containerRef.current;
     if (!el || !image) return;
@@ -144,13 +152,11 @@ const PiiMasker = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!image) return;
-    // Right-click → pan
     if (e.button === 2) {
       setIsPanning(true);
       setPanStart({ x: e.clientX, y: e.clientY });
       return;
     }
-    // Left-click → draw blur
     if (e.button === 0) {
       const pos = getMousePos(e);
       setIsDrawing(true);
@@ -184,11 +190,8 @@ const PiiMasker = () => {
     const h = Math.abs(startPos.y - currPos.y);
 
     if (w > 5 && h > 5) {
-      // Dynamic blur strength: if selection is very small (<20px), reduce blur.
       let adjustedStrength = blurStrength;
-      if (Math.max(w, h) < 20) {
-         adjustedStrength = Math.max(2, blurStrength / 4);
-      }
+      if (Math.max(w, h) < 20) adjustedStrength = Math.max(2, blurStrength / 4);
       setRegions([...regions, { 
         id: Math.random().toString(36).substr(2, 9),
         x, y, width: w, height: h, 
@@ -207,7 +210,17 @@ const PiiMasker = () => {
     a.href = url;
     a.download = `redacted_${file?.name || "image"}.png`;
     a.click();
-    toast.success("Artifact Dispatched Without Metadata");
+    toast.success("Artifact Dispatched");
+  };
+
+  const redactSelectedText = () => {
+    const sel = window.getSelection()?.toString();
+    if (sel && textContent) {
+      setTextContent(textContent.replace(sel, "█".repeat(sel.length)));
+      toast.success("Identity String Redacted");
+    } else {
+      toast.error("Highlight text to redact");
+    }
   };
 
   return (
@@ -224,17 +237,17 @@ const PiiMasker = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
                    PII <span className="text-primary italic">Masker</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Neural-Grade Privacy Redaction</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Neural-Grade Privacy Redaction</p>
               </div>
             </div>
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              {!image ? (
+            <div className="space-y-8">
+              {!image && !textContent ? (
                 <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner p-10">
                    <div
                     onDragOver={(e) => e.preventDefault()}
@@ -246,20 +259,46 @@ const PiiMasker = () => {
                        <CloudUpload className="h-10 w-10 text-primary" />
                     </div>
                     <div className="px-6 space-y-1">
-                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
-                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
+                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag or click to browse</p>
                       <KbdShortcut />
-                      <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center">IMAGES, LOGS, OR DOCUMENTS SUPPORTED</p>
+                      <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center uppercase tracking-tighter font-black">Images, Logs, TXT or MD Supported</p>
                     </div>
-                    <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+                    <input ref={inputRef} type="file" className="hidden" accept="image/*,text/plain,text/markdown,.log" onChange={(e) => handleFile(e.target.files?.[0])} />
                   </div>
                 </Card>
+              ) : textContent !== null ? (
+                <div className="space-y-8 animate-in fade-in zoom-in duration-500">
+                  <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl bg-zinc-950 p-0 relative min-h-[600px] flex flex-col">
+                    <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between">
+                       <h3 className="text-[10px] font-black uppercase tracking-widest text-primary">Live Document Stream</h3>
+                       <p className="text-[9px] font-black opacity-30 uppercase tracking-widest">Select text to redact</p>
+                    </div>
+                    <textarea 
+                      value={textContent}
+                      onChange={(e) => setTextContent(e.target.value)}
+                      className="flex-1 bg-transparent p-10 font-mono text-sm leading-relaxed focus:outline-none custom-scrollbar min-h-[600px] text-foreground/80 selection:bg-primary/30"
+                      spellCheck={false}
+                    />
+                    <div className="p-4 border-t border-border/10 bg-black/40 flex justify-between items-center">
+                       <Button 
+                         variant="ghost" 
+                         size="sm" 
+                         onClick={redactSelectedText}
+                         className="h-8 text-[9px] font-black uppercase tracking-widest border border-primary/20 hover:bg-primary/10 transition-all text-primary"
+                        >
+                         Redact Selection
+                       </Button>
+                       <p className="text-[9px] font-black opacity-20 uppercase tracking-widest italic">Manual Block-Cipher Active</p>
+                    </div>
+                  </Card>
+                </div>
               ) : (
                 <div className="space-y-8">
                   <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl bg-zinc-950 p-0 relative">
                     <div 
                       ref={containerRef}
-                      className="w-full h-[600px] relative overflow-hidden flex items-center justify-center bg-[#0a0a0a]"
+                      className="w-full h-[650px] relative overflow-hidden flex items-center justify-center bg-[#0a0a0a] rounded-2xl"
                       onMouseDown={handleMouseDown}
                       onMouseMove={handleMouseMove}
                       onMouseUp={handleMouseUp}
@@ -273,26 +312,22 @@ const PiiMasker = () => {
                         style={{ 
                           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
                           transition: isPanning || isDrawing ? 'none' : 'transform 0.15s ease-out',
-                          maxWidth: 'none',
-                          maxHeight: 'none'
+                          maxWidth: 'calc(100% - 60px)',
+                          maxHeight: 'calc(100% - 60px)',
+                          objectFit: 'contain'
                         }}
                       />
                     </div>
-                    
                     <div className="absolute top-6 right-6 flex gap-2">
                        <Button size="icon" variant="ghost" onClick={() => setRegions(prev => prev.slice(0, -1))} disabled={regions.length === 0} className="h-12 w-12 rounded-2xl bg-black/60 text-white backdrop-blur-md border border-white/10 hover:bg-black/80">
                           <Undo2 className="h-5 w-5" />
                        </Button>
                        <Button size="icon" variant="ghost" onClick={() => setRegions([])} disabled={regions.length === 0} className="h-12 w-12 rounded-2xl bg-destructive/60 text-white backdrop-blur-md border border-white/10 hover:bg-destructive/80">
-                          <Eraser className="h-5 w-5" />
+                          <Trash2 className="h-5 w-5" />
                        </Button>
                     </div>
                     <p className="text-[9px] text-center text-muted-foreground/30 font-black uppercase tracking-widest py-2 italic">Left-click: mask • Right-click: pan • Scroll: zoom</p>
                   </Card>
-
-                  <div className="flex flex-col sm:flex-row gap-6">
-                     {/* Stage controls removed, moved to sidebar */}
-                  </div>
                 </div>
               )}
             </div>
@@ -300,72 +335,75 @@ const PiiMasker = () => {
             <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Masking Calibration</h3>
-                    <div className="flex gap-2">
-                       {image && (
-                         <Button 
-                           onClick={() => { setImage(null); setFile(null); setRegions([]); }} 
-                           variant="ghost" 
-                           size="sm" 
-                           className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all"
-                         >
-                           Reset Stage
-                         </Button>
-                       )}
-                    </div>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Redaction Logic</h3>
+                    {(image || textContent) && (
+                      <Button 
+                        onClick={() => { setImage(null); setTextContent(null); setFile(null); setRegions([]); }} 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all"
+                      >
+                        Reset Stage
+                      </Button>
+                    )}
                   </div>
                  <CardContent className="p-5 space-y-6">
-                    <div className="space-y-4">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Redaction Style</label>
-                       <div className="flex bg-muted/20 p-1 rounded-2xl">
-                          <button onClick={() => setRedactionStyle("blur")} className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${redactionStyle === "blur" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:bg-primary/5"}`}>
-                             <Layers className="h-3 w-3" /> Gaussian Blur
-                          </button>
-                          <button onClick={() => setRedactionStyle("black")} className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${redactionStyle === "black" ? "bg-black text-white shadow-lg" : "text-muted-foreground hover:bg-primary/5"}`}>
-                             <Eraser className="h-3 w-3" /> Solid Black
-                          </button>
-                       </div>
-                    </div>
+                    {image && (
+                      <div className="space-y-6">
+                        <div className="space-y-4">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Style Mask</label>
+                           <div className="grid grid-cols-2 gap-2 bg-muted/20 p-1 rounded-2xl">
+                              <button onClick={() => setRedactionStyle("blur")} className={`py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${redactionStyle === "blur" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hov:bg-primary/5"}`}>
+                                 Gaussian
+                              </button>
+                              <button onClick={() => setRedactionStyle("black")} className={`py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${redactionStyle === "black" ? "bg-black text-white shadow-lg" : "text-muted-foreground hov:bg-primary/5"}`}>
+                                 Blackout
+                              </button>
+                           </div>
+                        </div>
 
-                    <div className="space-y-4">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Blur Matrix (Intensity)</label>
-                       <Slider 
-                         min={0}
-                         max={100}
-                         step={1}
-                         disabled={redactionStyle === "black"}
-                         value={[blurStrength]}
-                         onValueChange={([v]) => setBlurStrength(v)}
-                         className="py-2"
-                       />
-                       <div className={`bg-muted/5 p-3 rounded-2xl border border-border/50 text-center transition-opacity flex justify-between items-center ${redactionStyle === "black" ? "opacity-20" : ""}`}>
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 leading-none">Weight</p>
-                          <p className="text-xl font-black italic tracking-tighter text-foreground">{blurStrength}px</p>
-                       </div>
-                    </div>
+                        <div className="space-y-4">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Matric Intensity</label>
+                           <Slider 
+                             min={0} max={100} step={1}
+                             disabled={redactionStyle === "black"}
+                             value={[blurStrength]}
+                             onValueChange={([v]) => setBlurStrength(v)}
+                           />
+                        </div>
+                      </div>
+                    )}
 
-                    <div className="space-y-2 pt-2 border-t border-border/20">
-                       <div className="flex items-center gap-4 text-muted-foreground/60">
-                          <Square className="h-4 w-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Rectangle Tool Active</span>
-                       </div>
-                       <div className="flex items-center gap-4 text-muted-foreground/60">
-                          <Sparkles className="h-4 w-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Metadata Scrubbing Active</span>
-                       </div>
-                    </div>
+                    {textContent && (
+                      <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-2">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-primary italic">Document Mode Active</p>
+                        <p className="text-[8px] leading-relaxed opacity-40 uppercase font-black">All redactions are local to browser memory. Selection is replaced with solid matrix characters.</p>
+                      </div>
+                    )}
 
                     <div className="pt-4 border-t border-border/20">
-                       <Button onClick={exportImage} disabled={!image} className="w-full h-16 text-md font-black rounded-2xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all">
+                       <Button 
+                         onClick={() => {
+                           if (textContent) {
+                             const blob = new Blob([textContent], { type: "text/plain" });
+                             const url = URL.createObjectURL(blob);
+                             const a = document.createElement("a");
+                             a.href = url;
+                             a.download = `redacted_${file?.name || "document"}.txt`;
+                             a.click();
+                             toast.success("Artifact Dispatched");
+                           } else {
+                             exportImage();
+                           }
+                         }} 
+                         disabled={!image && !textContent} 
+                         className="w-full h-16 text-md font-black rounded-2xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all"
+                       >
                           <Download className="h-5 w-5" /> Export Artifact
                        </Button>
                     </div>
                  </CardContent>
-              </Card>
-
-              <div className="px-6">
-                 <AdPlaceholder format="rectangle" className="opacity-40 grayscale group-hover:grayscale-0 transition-all border-border/50" />
-              </div>
+               </Card>
             </aside>
           </div>
         </div>
@@ -376,4 +414,3 @@ const PiiMasker = () => {
 };
 
 export default PiiMasker;
-

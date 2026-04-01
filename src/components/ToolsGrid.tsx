@@ -1,15 +1,15 @@
-import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap, ClipboardCopy } from "lucide-react";
+import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap, ClipboardCopy, KeyRound, Binary, Clock, SearchCode, FileText, Palette, Fingerprint, Ruler, FileJson, FileStack, Monitor, RefreshCw, Database } from "lucide-react";
 import ToolCard from "./ToolCard";
 import { Button } from "@/components/ui/button";
 
 export const tools = [
   {
     title: "Universal Media Converter",
-    description: "The ultimate tool to convert video and image formats using WebAssembly engine",
+    description: "The ultimate tool to convert video and image formats using Native Browser engines",
     icon: <Video className="h-5 w-5" />,
     to: "/universal-media-converter",
     category: "Video Studio",
-    tags: ["ULTIMATE", "WASM"]
+    tags: ["ULTIMATE", "NATIVE"]
   },
   {
     title: "YouTube Verify",
@@ -27,14 +27,7 @@ export const tools = [
     category: "Image Studio",
     tags: ["3D", "WYSIWYG"]
   },
-  {
-    title: "Batch Image Studio",
-    description: "Apply borders, dynamic shadows, and watermarks to many images at once",
-    icon: <Layers className="h-5 w-5" />,
-    to: "/batch-image-studio",
-    category: "Image Studio",
-    tags: ["BATCH", "RESIZE"]
-  },
+
   {
     title: "Privacy Scrubber",
     description: "Absolute metadata destruction: strip GPS, camera info, and device ID from photos",
@@ -76,20 +69,44 @@ export const tools = [
     tags: ["DESIGN", "PRO"]
   },
   {
-    title: "Video to GIF / Frame Extraction",
-    description: "Extract high-res PNG frames and render optimized GIFs from any video artifact",
-    icon: <Camera className="h-5 w-5" />,
-    to: "/frame-gif-studio",
+    title: "Video to GIF",
+    description: "Render high-quality, optimized GIFs from any video artifact with precise range control",
+    icon: <RefreshCw className="h-5 w-5" />,
+    to: "/video-to-gif",
     category: "Video Studio",
-    tags: ["EXTRACT", "GIF"]
+    tags: ["GIF", "NATIVE"]
   },
   {
-    title: "JSON Forge",
-    description: "Professional data architect for formatting, minifying and validating JSON",
-    icon: <Code className="h-5 w-5" />,
-    to: "/json-forge",
+    title: "Frame Extractor",
+    description: "Capture high-resolution PNG instances and lossless frames from any video stream",
+    icon: <Camera className="h-5 w-5" />,
+    to: "/frame-extractor",
+    category: "Video Studio",
+    tags: ["PNG", "EXTRACT"]
+  },
+  {
+    title: "Aspect Studio",
+    description: "Professional aspect ratio remapping for social media with Pad and Crop modes",
+    icon: <Monitor className="h-5 w-5" />,
+    to: "/video-aspect-studio",
+    category: "Video Studio",
+    tags: ["RESIZE", "PRO"]
+  },
+  {
+    title: "JSON Studio",
+    description: "Professional JSON architect: structural validation, deep formatting, and schema-grade architecture",
+    icon: <FileJson className="h-5 w-5" />,
+    to: "/json-studio",
     category: "Utility Belt",
-    tags: ["DEV", "JSON"]
+    tags: ["DEV", "JSON", "PRO"]
+  },
+  {
+    title: "Data Transformer",
+    description: "Universal data translation: bi-directional CSV and JSON conversion with smart header parsing",
+    icon: <Database className="h-5 w-5" />,
+    to: "/data-transformer",
+    category: "Utility Belt",
+    tags: ["CONVERT", "CSV", "JSON"]
   },
   {
     title: "Secure QR Forge",
@@ -130,6 +147,126 @@ export const tools = [
     to: "/quick-clipboard",
     category: "Utility Belt",
     tags: ["EXTRACT", "ZAP"]
+  },
+  {
+    title: "JWT Decoder",
+    description: "Instantly decode and inspect JWT tokens: header, payload, expiry, and claims — no server",
+    icon: <KeyRound className="h-5 w-5" />,
+    to: "/jwt-decoder",
+    category: "Utility Belt",
+    tags: ["DEV", "AUTH"]
+  },
+  {
+    title: "Encode / Decode",
+    description: "Convert between Base64, URL encoding, HTML entities, and Hex in one place",
+    icon: <Binary className="h-5 w-5" />,
+    to: "/encoder-decoder",
+    category: "Utility Belt",
+    tags: ["BASE64", "HEX"]
+  },
+  {
+    title: "Timestamp Converter",
+    description: "Transform Unix timestamps, ISO 8601, and human dates across every format and timezone",
+    icon: <Clock className="h-5 w-5" />,
+    to: "/timestamp-converter",
+    category: "Utility Belt",
+    tags: ["UNIX", "ISO"]
+  },
+  {
+    title: "Regex Playground",
+    description: "Live regex testing with match highlighting, flag toggles, 8 presets, and a cheat sheet",
+    icon: <SearchCode className="h-5 w-5" />,
+    to: "/regex-playground",
+    category: "Utility Belt",
+    tags: ["DEV", "LIVE"]
+  },
+  {
+    title: "Lorem Ipsum Generator",
+    description: "Generate professional placeholder text in Classic, Buzzword, or Hipster styles",
+    icon: <FileText className="h-5 w-5" />,
+    to: "/lorem-generator",
+    category: "Utility Belt",
+    tags: ["CONTENT", "DEV"]
+  },
+  {
+    title: "Secure Password Generator",
+    description: "Hardware-backed high-entropy password generator with instant audit and local-only logic",
+    icon: <ShieldCheck className="h-5 w-5" />,
+    to: "/password-generator",
+    category: "Utility Belt",
+    tags: ["SECURE", "PRIVACY"]
+  },
+  {
+    title: "Palette Studio",
+    description: "Professional color harmony engine: generate Monochromatic, Analogous, and Triadic palettes",
+    icon: <Palette className="h-5 w-5" />,
+    to: "/palette-studio",
+    category: "Image Studio",
+    tags: ["DESIGN", "COLOR"]
+  },
+  {
+    title: "Hash Lab",
+    description: "Multi-algorithm cryptographic checksums: SHA-256, SHA-512, and MD5 fingerprints",
+    icon: <Fingerprint className="h-5 w-5" />,
+    to: "/hash-lab",
+    category: "Privacy Belt",
+    tags: ["CRYPTO", "SECURE"]
+  },
+  {
+    title: "Unit Converter",
+    description: "Fast, high-precision measurement transformation across every global standard",
+    icon: <Ruler className="h-5 w-5" />,
+    to: "/unit-converter",
+    category: "Utility Belt",
+    tags: ["QUICK", "MATH"]
+  },
+  {
+    title: "Base64 Image Encoder",
+    description: "Direct image-to-memory-string conversion for developers and creative artifact logic",
+    icon: <FileStack className="h-5 w-5" />,
+    to: "/base64-image",
+    category: "Image Studio",
+    tags: ["EXTRACT", "DEV"]
+  },
+  {
+    title: "Reverse Audio",
+    description: "Temporal phase inversion: flip your audio buffers backward with zero-latency local processing",
+    icon: <RefreshCw className="h-5 w-5" />,
+    to: "/reverse-audio",
+    category: "Audio Lab",
+    tags: ["FLIP", "WAV"]
+  },
+  {
+    title: "Binary to Audio",
+    description: "Experimental data-bending: interpret any raw file bitstream as audio PCM data",
+    icon: <Binary className="h-5 w-5" />,
+    to: "/binary-to-audio",
+    category: "Audio Lab",
+    tags: ["GLITCH", "PCM"]
+  },
+  {
+    title: "Audio Mono/Stereo",
+    description: "Professional channel remapping: convert Mono to pseudo-Stereo or mix Stereo to Mono",
+    icon: <Layers className="h-5 w-5" />,
+    to: "/audio-mono-stereo",
+    category: "Audio Lab",
+    tags: ["CHANNELS", "PRO"]
+  },
+  {
+    title: "Bass Booster EQ",
+    description: "Deep frequency enhancement: surgical low-end amplification using low-shelf filtering",
+    icon: <Zap className="h-5 w-5" />,
+    to: "/audio-bass-booster",
+    category: "Audio Lab",
+    tags: ["EQ", "BASS"]
+  },
+  {
+    title: "Image Compressor",
+    description: "High-speed local image optimization: reduce file size by up to 90% without quality loss",
+    icon: <Zap className="h-5 w-5" />,
+    to: "/image-compressor",
+    category: "Image Studio",
+    tags: ["COMPRESS", "WEB"]
   },
 ];
 

@@ -9,13 +9,6 @@ export default defineConfig(({ mode }) => ({
     host: "127.0.0.1",
     port: 8899,
     strictPort: true,
-    watch: {
-      usePolling: true,
-    },
-    headers: {
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp",
-    },
     hmr: {
       overlay: false,
     },
@@ -25,6 +18,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },
+  optimizeDeps: {
+    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+  }
 }));

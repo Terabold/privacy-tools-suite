@@ -195,23 +195,23 @@ const ImageColorExtractor = () => {
                 onMouseLeave={handleMouseUp}
                 onContextMenu={(e) => e.preventDefault()}
                 ref={containerRef}
-                className="glass-morphism border-primary/5 h-[800px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner select-none overflow-hidden p-10"
+                className="glass-morphism border-primary/5 h-[650px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner select-none overflow-hidden p-10"
               >
                 {!imgSrc ? (
                    <div
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                     onClick={() => inputRef.current?.click()}
-                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                    className="relative w-full h-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                   >
-                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover:scale-110 transition-transform">
                        <CloudUpload className="h-10 w-10 text-primary" />
                     </div>
-                    <div className="px-6 space-y-1">
-                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop</p>
-                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
+                    <div className="px-6 space-y-2">
+                      <p className="text-4xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
+                      <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click to browse</p>
                       <KbdShortcut />
-                      <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">Sample Palette from High-Res Masters</p>
+                      <p className="mt-6 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 italic">Sample Palette from High-Res Masters</p>
                     </div>
                   </div>
                 ) : (
@@ -239,6 +239,7 @@ const ImageColorExtractor = () => {
                         crossOrigin="anonymous"
                         onLoad={handleImageLoad}
                         onClick={handleClick}
+                        onDragStart={(e) => e.preventDefault()}
                         className="transition-transform duration-75 ease-out origin-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] border-4 border-white/10 rounded-xl"
                         style={{ 
                           transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})`,
@@ -272,81 +273,78 @@ const ImageColorExtractor = () => {
                      </Button>
                    )}
                  </div>
-                <CardContent className="p-8 space-y-12">
-                   <div className="space-y-6">
+                <CardContent className="p-5 space-y-6">
+                   <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Extracted Palette</h3>
+                         <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Extraction History</h3>
                          {history.length > 0 && (
                            <Button 
                              onClick={() => setHistory([])} 
                              variant="ghost" 
-                             className="h-6 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10"
+                             className="h-5 px-2 text-[8px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10"
                            >
                              Clear
                            </Button>
                          )}
                       </div>
                       
-                      <div className="grid grid-cols-6 gap-2">
+                      <div className="grid grid-cols-6 gap-1.5">
                          {history.map((c, i) => (
                            <button 
                              key={i} 
                              onClick={() => { setColor(c); navigator.clipboard.writeText(c.hex); toast.success("Copied!"); }}
-                             className="group relative aspect-square rounded-lg border border-white/10 shadow-lg overflow-hidden transition-transform hover:scale-110 active:scale-95"
+                             className="group relative aspect-square rounded-lg border border-white/5 shadow-md overflow-hidden transition-transform hover:scale-110 active:scale-95"
                              style={{ backgroundColor: c.hex }}
-                             title={c.hex}
                            >
                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                <Copy className="h-3 w-3 text-white" />
+                                <Copy className="h-2.5 w-2.5 text-white" />
                              </div>
                            </button>
-                         ))}
-                         {Array.from({ length: Math.max(0, 6 - history.length) }).map((_, i) => (
-                           <div key={`empty-${i}`} className="aspect-square rounded-lg border border-dashed border-primary/10 bg-primary/5" />
                          ))}
                       </div>
 
                       {color ? (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 pt-6 border-t border-primary/5">
+                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300 pt-4 border-t border-primary/5">
                            <div 
-                             className="h-32 w-full rounded-2xl shadow-2xl border-4 border-white/5 transition-all"
-                             style={{ backgroundColor: color.hex, boxShadow: `0 20px 40px ${color.hex}44` }}
+                             className="h-20 w-full rounded-xl shadow-xl border-2 border-white/5"
+                             style={{ backgroundColor: color.hex, boxShadow: `0 10px 20px ${color.hex}44` }}
                            />
-                           <div className="grid grid-cols-1 gap-3">
-                              <button 
-                                onClick={() => { navigator.clipboard.writeText(color.hex); toast.success("Hex Copied"); }}
-                                className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-border/50 hover:bg-primary/5 group transition-all"
-                              >
-                                 <div className="text-left">
-                                   <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 mb-0.5">HEX</p>
-                                   <p className="text-lg font-black font-mono tracking-tighter">{color.hex}</p>
-                                 </div>
-                                 <Copy className="h-4 w-4 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
-                              </button>
-                              <button 
-                                onClick={() => { navigator.clipboard.writeText(color.rgb); toast.success("RGB Copied"); }}
-                                className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-border/50 hover:bg-primary/5 group transition-all"
-                              >
-                                 <div className="text-left">
-                                   <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 mb-0.5">RGB Profile</p>
-                                   <p className="text-xs font-black font-mono">{color.rgb}</p>
-                                 </div>
-                                 <Copy className="h-4 w-4 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
-                              </button>
-                           </div>
+                           <div className="grid grid-cols-1 gap-2">
+                               <button 
+                                 onClick={() => { navigator.clipboard.writeText(color.hex); toast.success("Hex Copied"); }}
+                                 className="flex items-center justify-between p-3 bg-background/50 rounded-xl border border-border/50 hover:bg-primary/5 group"
+                               >
+                                  <div className="text-left">
+                                    <p className="text-[7px] font-black uppercase tracking-widest text-muted-foreground/60 mb-0.5">HEX</p>
+                                    <p className="text-sm font-black font-mono">{color.hex}</p>
+                                  </div>
+                                  <Copy className="h-3 w-3 text-primary opacity-20 group-hover:opacity-100" />
+                               </button>
+
+                               <button 
+                                 onClick={() => { navigator.clipboard.writeText(color.rgb); toast.success("RGB Copied"); }}
+                                 className="flex items-center justify-between p-3 bg-background/50 rounded-xl border border-border/50 hover:bg-primary/5 group"
+                               >
+                                  <div className="text-left">
+                                    <p className="text-[7px] font-black uppercase tracking-widest text-muted-foreground/60 mb-0.5">RGB</p>
+                                    <p className="text-sm font-black font-mono">{color.rgb}</p>
+                                  </div>
+                                  <Copy className="h-3 w-3 text-primary opacity-20 group-hover:opacity-100" />
+                               </button>
+                            </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/5 rounded-2xl border border-dashed border-primary/10">
-                           <Pipette className="h-8 w-8 text-primary mb-4 opacity-20" />
-                           <p className="text-[9px] font-black uppercase tracking-widest opacity-40 leading-tight">Sample Canvas Stage</p>
+                        <div className="py-8 text-center bg-muted/5 rounded-xl border border-dashed border-primary/10">
+                           <Pipette className="h-6 w-6 text-primary mx-auto mb-2 opacity-20" />
+                           <p className="text-[8px] font-black uppercase tracking-widest opacity-40">Sample Canvas</p>
                         </div>
                       )}
                    </div>
 
-                    <div className="space-y-5 pt-8 border-t border-primary/5">
-                        <div className="flex justify-between items-center">
-                           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Stage Zoom</label>
-                           <span className="text-[11px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded">{zoom.toFixed(1)}x</span>
+                    <div className="space-y-4 pt-6 border-t border-primary/5">
+                        <div className="flex justify-between items-center px-1">
+                           <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">Zoom</label>
+                           <span className="text-[10px] font-black text-primary">{zoom.toFixed(1)}x</span>
                         </div>
                         <Slider 
                         defaultValue={[1]}
@@ -356,6 +354,7 @@ const ImageColorExtractor = () => {
                         step={0.5} 
                         onValueChange={([v]) => setZoom(v)} 
                         disabled={!imgSrc} 
+                        className="py-1"
                       />
                     </div>
                 </CardContent>

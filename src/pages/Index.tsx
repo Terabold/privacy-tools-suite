@@ -1,12 +1,15 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import ToolsGrid, { tools } from "@/components/ToolsGrid";
-import SearchNavigator from "@/components/SearchNavigator";
 import Footer from "@/components/Footer";
 import { ShieldCheck, Zap, Lock } from "lucide-react";
 import AdPlaceholder from "@/components/AdPlaceholder";
 
 const Index = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("theme");
@@ -16,8 +19,16 @@ const Index = () => {
     return false;
   });
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  // Read query params from URL (set by Navbar when navigating from a tool page)
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const [searchQuery, setSearchQuery] = useState(() => params.get("search") ?? "");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(() => params.get("category") ?? null);
+
+  // Sync state when URL params change (e.g. browser back/forward)
+  useEffect(() => {
+    setSearchQuery(params.get("search") ?? "");
+    setSelectedCategory(params.get("category") ?? null);
+  }, [params]);
 
   const categories = useMemo(() => {
     return Array.from(new Set(tools.map(t => t.category)));
@@ -37,7 +48,23 @@ const Index = () => {
   const clearFilters = useCallback(() => {
     setSearchQuery("");
     setSelectedCategory(null);
-  }, []);
+    navigate("/", { replace: true });
+  }, [navigate]);
+
+  // Keep URL in sync when user interacts with filters on the homepage
+  const handleSetSearchQuery = useCallback((q: string) => {
+    setSearchQuery(q);
+    const p = new URLSearchParams(location.search);
+    if (q) p.set("search", q); else p.delete("search");
+    navigate(`/?${p.toString()}`, { replace: true });
+  }, [navigate, location.search]);
+
+  const handleSetCategory = useCallback((cat: string | null) => {
+    setSelectedCategory(cat);
+    const p = new URLSearchParams(location.search);
+    if (cat) p.set("category", cat); else p.delete("category");
+    navigate(`/?${p.toString()}`, { replace: true });
+  }, [navigate, location.search]);
 
   const isFiltering = searchQuery.length > 0 || selectedCategory !== null;
 
@@ -47,9 +74,9 @@ const Index = () => {
         darkMode={darkMode} 
         onToggleDark={toggleDark}
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+        setSearchQuery={handleSetSearchQuery}
         selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
+        setSelectedCategory={handleSetCategory}
         categories={categories}
       />
       
