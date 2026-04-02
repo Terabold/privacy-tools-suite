@@ -1,10 +1,12 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { toPng } from "html-to-image";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Download, CloudUpload, Eye, EyeOff, RefreshCw, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlaceholder from "@/components/AdPlaceholder";
@@ -27,7 +29,6 @@ const PerspectiveTilter = () => {
   const [nativeWidth, setNativeWidth] = useState(1920);
   const [nativeHeight, setNativeHeight] = useState(1080);
   const [scalingMode, setScalingMode] = useState<"contain" | "cover" | "fill">("contain");
-  const [showStageFrame, setShowStageFrame] = useState(true);
 
   const [borderWidth, setBorderWidth] = useState(2);
   const [borderColor, setBorderColor] = useState("#ffffff");
@@ -36,6 +37,7 @@ const PerspectiveTilter = () => {
   const [stageColor, setStageColor] = useState("#00000000");
   const [shadowBlur, setShadowBlur] = useState(40);
   const [shadowColor, setShadowColor] = useState("rgba(0,0,0,0.4)");
+  const [enableShadow, setEnableShadow] = useState(false);
   const [shadowX, setShadowX] = useState(0);
   const [shadowY, setShadowY] = useState(20);
 
@@ -109,64 +111,38 @@ const PerspectiveTilter = () => {
     setPercentY(50);
   };
 
-  const download = () => {
-    if (!image) return;
+  const download = async () => {
+    if (!image || !stageRef.current) return;
     setProcessing(true);
 
-    const canvas = document.createElement("canvas");
-    canvas.width = renderWidth;
-    canvas.height = renderHeight;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    try {
+      // We calculate a scale multiplier to export the responsive DOM at the upscaled output resolution.
+      const scaleMultiplier = renderWidth / stageRef.current.offsetWidth;
 
-    const svgMarkup = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="${renderWidth}" height="${renderHeight}">
-        <foreignObject width="100%" height="100%">
-          <div xmlns="http://www.w3.org/1999/xhtml" style="
-            width: 100%; height: 100%; background: ${stageColor}; position: relative; overflow: hidden;
-          ">
-            <div style="position: absolute; left: ${percentX}%; top: ${percentY}%; width: 100%; height: 100%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;">
-              <div style="perspective: ${perspective}px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                <div style="
-                  transform: rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale});
-                  transform-style: preserve-3d;
-                  display: inline-flex;
-                ">
-                  <img src="${image}" style="
-                    ${scalingMode === "fill" ? "width: 100%; height: 100%;" : ""}
-                    ${scalingMode === "contain" ? "max-width: 100%; max-height: 100%; object-fit: contain;" : ""}
-                    ${scalingMode === "cover" ? "width: 100%; height: 100%; object-fit: cover;" : ""}
-                    border: ${borderWidth}px ${borderStyle} ${borderColor};
-                    box-shadow: ${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor};
-                    border-radius: ${borderRadius}px;
-                  " />
-                </div>
-              </div>
-            </div>
-          </div>
-        </foreignObject>
-      </svg>
-    `.replace(/\s+/g, " ").trim();
+      const dataUrl = await toPng(stageRef.current, {
+        pixelRatio: scaleMultiplier,
+        cacheBust: true,
+        backgroundColor: 'rgba(0,0,0,0)',
+        style: {
+          // Reset any visual scale and ensure it's captured at native aspect ratio
+          transform: 'scale(1)',
+          transformOrigin: 'top left',
+          background: stageColor === "#00000000" ? 'transparent' : stageColor,
+        },
+      });
 
-    const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`;
-    const tempImg = new Image();
-    tempImg.src = svgUrl;
-
-    tempImg.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(tempImg, 0, 0);
       const link = document.createElement("a");
       link.download = `localtools-3d-tilt-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png", 1.0);
+      link.href = dataUrl;
       link.click();
+      
       setProcessing(false);
       toast.success("3D Artifact Captured Successfully");
-    };
-
-    tempImg.onerror = () => {
+    } catch (err) {
+      console.error("Capture Error:", err);
       setProcessing(false);
       toast.error("Render Engine Error. Please try a smaller dimension.");
-    };
+    }
   };
 
   return (
@@ -209,13 +185,13 @@ const PerspectiveTilter = () => {
                       onClick={() => inputRef.current?.click()}
                       onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                       onDrop={(e) => { e.preventDefault(); e.stopPropagation(); handleFile(e.dataTransfer.files[0]); }}
-                      className="relative w-full h-[70vh] min-h-[500px] flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner group"
+                      className="relative w-full aspect-video flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner group"
                     >
                       <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
                         <CloudUpload className="h-10 w-10 text-primary" />
                       </div>
                       <div className="px-6 space-y-1">
-                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Drag & Drop Image</p>
+                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
                         <KbdShortcut />
                         <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">PNG, JPG, SVG, WEBP ARE SUPPORTED</p>
@@ -224,68 +200,86 @@ const PerspectiveTilter = () => {
                   ) : (
                     <div
                       ref={stageRef}
-                      onMouseMove={handleMouseMove}
-                      onMouseUp={handleMouseUp}
-                      onMouseLeave={handleMouseUp}
-                      className="relative w-full h-[70vh] min-h-[500px] flex items-center justify-center select-none bg-muted/5 rounded-2xl border-2 border-border/20 overflow-hidden transition-all shadow-[inset_0_0_80px_rgba(0,0,0,0.5)] hover:bg-muted/10 group/stage"
-                      style={{ background: stageColor }}
+                      className="w-full aspect-video relative flex items-center justify-center select-none bg-muted/5 rounded-2xl border-2 border-border/20 overflow-visible transition-all hover:bg-muted/10 studio-gradient-dark shadow-2xl"
+                      style={{ 
+                        background: stageColor,
+                        padding: '12%', // Internal "Safe Zone"
+                      }}
                     >
-                      {/* Render Stage Frame */}
-                      {showStageFrame && (
-                        <div
-                          className="absolute border-2 border-dashed border-primary/60 z-10 transition-shadow shadow-[0_0_80px_rgba(0,0,0,0.5)] cursor-move group/frame"
-                          onMouseDown={(e) => handleMouseDown(e, "pan")}
-                          style={{
-                            width: `${(renderWidth / Math.max(renderWidth, renderHeight)) * 80}%`,
-                            height: `${(renderHeight / Math.max(renderWidth, renderHeight)) * 80}%`,
+                        <div 
+                          className="w-full h-full preserve-3d flex items-center justify-center" 
+                          style={{ 
+                            perspective: `${perspective}px`,
+                            left: `${percentX}%`,
+                            top: `${percentY}%`,
+                            position: 'absolute',
+                            transform: 'translate(-50%, -50%)'
                           }}
                         >
-                          <div className="absolute top-2 left-2 px-3 py-1 bg-primary/90 text-[9px] font-black text-white uppercase tracking-widest rounded-md backdrop-blur-md shadow-lg pointer-events-none">
-                            {renderWidth} × {renderHeight} Canvas (Drag center to pan)
-                          </div>
-
-                          {/* Resize Handle */}
                           <div
-                            className="absolute -bottom-3 -right-3 w-6 h-6 bg-primary border-2 border-white rounded-full cursor-nwse-resize hover:scale-125 transition-transform flex items-center justify-center"
-                            onMouseDown={(e) => handleMouseDown(e, "resize-br")}
-                          >
-                            <Scale className="h-3 w-3 text-white pointer-events-none" />
-                          </div>
-                        </div>
-                      )}
-
-                      <div
-                        className="absolute w-full h-full pointer-events-none flex items-center justify-center transition-transform duration-75"
-                        style={{
-                          left: `${percentX}%`,
-                          top: `${percentY}%`,
-                          transform: 'translate(-50%, -50%)'
-                        }}
-                      >
-                        <div className="w-full h-full preserve-3d flex items-center justify-center" style={{ perspective: `${perspective}px` }}>
-                          <div
-                            className="preserve-3d"
+                            className="preserve-3d flex items-center justify-center p-4"
                             style={{
                               transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`,
+                              // Ensure this rotated container doesn't clip its own shadow
+                              overflow: 'visible' 
                             }}
                           >
-                            <img
-                              onLoad={() => setProcessing(false)}
-                              src={image}
-                              alt="Tilting Artifact"
-                              className="max-h-[60vh] max-w-[80%] shadow-2xl preserve-3d"
+                            <div
+                              className="transition-all duration-300"
                               style={{
+                                boxShadow: enableShadow ? `0px ${shadowBlur / 2}px ${shadowBlur}px rgba(0,0,0, 0.5)` : 'none',
                                 border: `${borderWidth}px ${borderStyle} ${borderColor}`,
                                 borderRadius: `${borderRadius}px`,
-                                boxShadow: `${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor}`,
-                                width: scalingMode === "fill" ? "100%" : "auto",
-                                height: scalingMode === "fill" ? "100%" : "auto",
-                                objectFit: scalingMode,
+                                // overflow: 'hidden' is critical if the user has borderRadius
+                                overflow: 'hidden', 
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: 'transparent'
                               }}
-                            />
+                            >
+                              <img
+                                onLoad={() => setProcessing(false)}
+                                src={image}
+                                alt="Tilting Artifact"
+                                style={{
+                                  maxWidth: '100%',
+                                  maxHeight: '100%',
+                                  objectFit: 'contain',
+                                  display: 'block'
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
+
+                        {/* Interactive Dimension Label */}
+                    <div className="absolute -top-12 left-0 px-4 py-2 bg-black/60 backdrop-blur-xl border border-white/10 rounded-xl text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-2xl transition-opacity animate-in fade-in duration-1000">
+                       {renderWidth} × {renderHeight} <span className="text-primary opacity-60 ml-2">Final Output Preview</span>
+                    </div>
+                  </div>
+                  )}
+                  {image && (
+                    <div className="absolute top-6 right-6 z-50 flex gap-2">
+                       <Button 
+                        onClick={() => setImage(null)} 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-primary/10 bg-black/20 hover:bg-black/40 backdrop-blur-md border border-white/10 rounded-xl transition-all shadow-xl active:scale-95 group"
+                      >
+                        <CloudUpload className="h-3.5 w-3.5 mr-2 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        Change Image
+                      </Button>
+
+                      <Button 
+                        onClick={resetTilt} 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 bg-black/20 hover:bg-black/40 backdrop-blur-md border border-destructive/20 rounded-xl transition-all shadow-xl active:scale-95 group"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
+                        Reset Calibration
+                      </Button>
                     </div>
                   )}
                   <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />
@@ -295,115 +289,120 @@ const PerspectiveTilter = () => {
               {/* Settings Sidebar */}
               <aside className="space-y-8 h-fit">
                 <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
-                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
+                  <div className="bg-primary/5 p-4 border-b border-primary/10">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Capture Calibration</h3>
-                    <div className="flex gap-2">
-                      {image && (
-                        <Button onClick={() => setShowStageFrame(!showStageFrame)} variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl">
-                          {showStageFrame ? <Eye className="h-4 w-4 text-primary" /> : <EyeOff className="h-4 w-4 opacity-40" />}
-                        </Button>
-                      )}
-                      {image && (
-                        <Button onClick={() => setImage(null)} variant="ghost" size="sm" className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-xl transition-all">
-                          Reset Stage
-                        </Button>
-                      )}
-                    </div>
                   </div>
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                      {/* Dimensions */}
-                      <div className="space-y-6">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Output Resolution</label>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <p className="text-[9px] font-black uppercase opacity-40">Width</p>
-                            <input
-                              type="number" value={renderWidth}
-                              onChange={(e) => setRenderWidth(Math.max(10, parseInt(e.target.value) || 0))}
-                              className="w-full bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all text-foreground"
+                  <CardContent className="p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-shadow-none">
+                      {/* Left Column: Dimensions & Rotations */}
+                      <div className="space-y-3">
+                        <div className="space-y-2 pb-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-primary leading-none block mb-1.5 italic">Output Resolution</label>
+                          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-3 flex items-center justify-between shadow-inner">
+                            <div className="space-y-1">
+                               <p className="text-[8px] font-black uppercase opacity-40 text-muted-foreground">Target Extraction</p>
+                               <p className="text-sm font-display font-black italic tracking-tight">{renderWidth} × {renderHeight}</p>
+                            </div>
+                            <div className="h-9 w-9 bg-primary/10 rounded-xl flex items-center justify-center">
+                               <Scale className="h-4 w-4 text-primary opacity-60" />
+                            </div>
+                          </div>
+                          <p className="text-[9px] text-muted-foreground/60 font-black uppercase tracking-widest leading-tight">
+                            Auto-upscaled (+25%) for safety.
+                          </p>
+                        </div>
+
+                        <div className="space-y-3 border-t border-primary/5 pt-1.5">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 leading-none block">Pitch & Yaw</label>
+                          <div>
+                            <div className="flex justify-between items-end w-full mb-0.5 gap-4">
+                              <label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap">Pitch (X)</label>
+                              <span className="text-primary text-[10px] font-black">{rotateX}°</span>
+                            </div>
+                            <Slider min={-90} max={90} step={1} value={[rotateX]} onValueChange={([v]) => setRotateX(v)} className="py-1" />
+                          </div>
+                          
+                          <div>
+                            <div className="flex justify-between items-end w-full mb-0.5 gap-4">
+                              <label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap">Yaw (Y)</label>
+                              <span className="text-primary text-[10px] font-black">{rotateY}°</span>
+                            </div>
+                            <Slider min={-90} max={90} step={1} value={[rotateY]} onValueChange={([v]) => setRotateY(v)} className="py-1" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 border-t border-primary/5 pt-1.5">
+                          <div className="flex justify-between items-end w-full mb-1 gap-4">
+                            <label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap text-primary/60">Border Radius</label>
+                            <span className="text-primary text-[10px] font-black">{borderRadius}px</span>
+                          </div>
+                          <Slider min={0} max={200} step={1} value={[borderRadius]} onValueChange={([v]) => setBorderRadius(v)} className="py-1" />
+                        </div>
+                      </div>
+
+                      {/* Right Column: Zoom, Fit & Shadow */}
+                      <div className="space-y-3">
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-primary leading-none block italic">Perspective & Fit</label>
+                          <div>
+                            <div className="flex justify-between items-end w-full mb-0.5 gap-4">
+                              <label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap">Zoom</label>
+                              <span className="text-primary text-[10px] font-black">{scale.toFixed(2)}x</span>
+                            </div>
+                            <Slider min={0.1} max={3} step={0.01} value={[scale]} onValueChange={([v]) => setScale(v)} className="py-1" />
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between items-end w-full mb-0.5 gap-4">
+                              <label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap">Depth</label>
+                              <span className="text-primary text-[10px] font-black">{perspective}px</span>
+                            </div>
+                            <Slider min={200} max={2000} step={1} value={[perspective]} onValueChange={([v]) => setPerspective(v)} className="py-1" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 border-t border-primary/5 pt-1.5">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Fit Mode</label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {["contain", "cover", "fill"].map((m) => (
+                              <button
+                                key={m}
+                                onClick={() => setScalingMode(m as any)}
+                                className={`py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-all ${scalingMode === m ? "bg-primary border-primary text-white shadow-lg" : "border-border/50 hover:bg-primary/5 text-muted-foreground"}`}
+                              >
+                                {m}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Shadows */}
+                        <div className="space-y-3 border-t border-primary/5 pt-1.5">
+                          <div className="flex justify-between items-center bg-primary/5 p-2 rounded-xl border border-primary/10">
+                            <div className="space-y-0.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary leading-none">Enable Shadow</label>
+                                <p className="text-[8px] text-muted-foreground font-black uppercase opacity-40">Shadow Engine</p>
+                            </div>
+                            <Switch 
+                                checked={enableShadow} 
+                                onCheckedChange={setEnableShadow} 
+                                className="data-[state=checked]:bg-primary scale-90"
                             />
                           </div>
-                          <div className="space-y-2">
-                            <p className="text-[9px] font-black uppercase opacity-40">Height</p>
-                            <input
-                              type="number" value={renderHeight}
-                              onChange={(e) => setRenderHeight(Math.max(10, parseInt(e.target.value) || 0))}
-                              className="w-full bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all text-foreground"
-                            />
+
+                          <div>
+                            <div className="flex justify-between items-end w-full mb-0.5 gap-4">
+                              <label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap">Shadow Blur</label>
+                              <span className="text-primary text-[10px] font-black">{shadowBlur}px</span>
+                            </div>
+                            <Slider min={0} max={300} step={1} value={[shadowBlur]} onValueChange={([v]) => setShadowBlur(v)} disabled={!enableShadow} className="py-1" />
                           </div>
                         </div>
-                      </div>
-
-                      {/* Rotations */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">
-                          <label>Pitch (X Axis)</label>
-                          <span className="text-primary">{rotateX}°</span>
-                        </div>
-                        <Slider min={-90} max={90} step={1} value={[rotateX]} onValueChange={([v]) => setRotateX(v)} className="py-2" />
-
-                        <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mt-4">
-                          <label>Yaw (Y Axis)</label>
-                          <span className="text-primary">{rotateY}°</span>
-                        </div>
-                        <Slider min={-90} max={90} step={1} value={[rotateY]} onValueChange={([v]) => setRotateY(v)} className="py-2" />
-                      </div>
-
-                      {/* Zoom and Perspective */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">
-                          <label>Global Zoom</label>
-                          <span className="text-primary">{scale.toFixed(2)}x</span>
-                        </div>
-                        <Slider min={0.1} max={3} step={0.01} value={[scale]} onValueChange={([v]) => setScale(v)} className="py-2" />
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">
-                          <label>Camera Distance</label>
-                          <span className="text-primary">{perspective}px</span>
-                        </div>
-                        <Slider min={200} max={2000} step={1} value={[perspective]} onValueChange={([v]) => setPerspective(v)} className="py-2" />
-                      </div>
-
-                      {/* Image Scaling */}
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Image Scaling Mode</label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {["contain", "cover", "fill"].map((m) => (
-                            <button
-                              key={m}
-                              onClick={() => setScalingMode(m as any)}
-                              className={`py-2 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-all ${scalingMode === m ? "bg-primary border-primary text-white shadow-lg" : "border-border/50 hover:bg-primary/5 text-muted-foreground"}`}
-                            >
-                              {m}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Boundary Formatting */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">
-                          <label>Border Radius</label>
-                          <span className="text-primary">{borderRadius}px</span>
-                        </div>
-                        <Slider min={0} max={200} step={1} value={[borderRadius]} onValueChange={([v]) => setBorderRadius(v)} className="py-2" />
-                      </div>
-
-                      {/* Shadows */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">
-                          <label>Drop Shadow Density</label>
-                          <span className="text-primary">{shadowBlur}px</span>
-                        </div>
-                        <Slider min={0} max={300} step={1} value={[shadowBlur]} onValueChange={([v]) => setShadowBlur(v)} className="py-2" />
                       </div>
 
                       {/* Custom Stage Color Picker */}
-                      <div className="col-span-1 md:col-span-2 pt-4 mt-1 border-t border-border/10">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic block mb-4">Stage Canvas Color</label>
+                      <div className="col-span-1 md:col-span-2 pt-2 mt-0.5 border-t border-border/10">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic block mb-2">Stage Canvas Color</label>
                         <div className="flex gap-4">
                           <div className="grid grid-cols-5 md:grid-cols-10 gap-2 flex-1">
                             {["#00000000", "#18181b", "#ffffff", "#f97316", "#ef4444", "#3b82f6", "#10b981", "#8b5cf6", "#f43f5e", "#14b8a6"].map(c => (
@@ -418,7 +417,7 @@ const PerspectiveTilter = () => {
                           </div>
                           <div className="flex flex-col gap-2 w-32 justify-center pl-4 border-l border-border/10">
                             <Input
-                              value={stageColor === "#00000000" ? "Transparent" : stageColor}
+                              value={stageColor === "#00000000" ? "Alpha" : stageColor}
                               onChange={(e) => setStageColor(e.target.value)}
                               placeholder="#HEX"
                               className="text-xs font-black uppercase font-mono h-10 border-primary/20 text-center"
@@ -426,7 +425,6 @@ const PerspectiveTilter = () => {
                           </div>
                         </div>
                       </div>
-
                     </div>
 
                     <div className="pt-6 mt-4 border-t border-border/20">
