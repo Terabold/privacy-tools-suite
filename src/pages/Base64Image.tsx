@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -58,34 +58,41 @@ const Base64Image = () => {
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
           <div className="flex flex-col gap-10">
-            <header className="flex items-center gap-6">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
                   <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
                   Base64 <span className="text-primary italic">Encoder</span>
                 </h1>
                 <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
-                  Image to Data URL · Real-time Preview · Local Conversion
+                  Image to Data URL • Real-time Preview • Local Conversion
                 </p>
               </div>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
               <div className="space-y-8">
                 <Card
-                  className={`glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5 border-2 border-dashed flex items-center justify-center gap-4 group hover:border-primary/30 transition-all cursor-pointer relative overflow-hidden ${base64 ? "p-4 py-6" : "p-12"}`}
+                  className={`glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card border-2 border-dashed flex items-center justify-center gap-4 group hover:border-primary/30 transition-all cursor-pointer relative overflow-hidden ${base64 ? "p-4 py-6" : "p-12"}`}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={handleDrop}
-                  onClick={() => document.getElementById('fileInput')?.click()}
+                  onClick={() => document.getElementById('base64-file-input')?.click()}
                 >
+                  <label htmlFor="base64-file-input" className="sr-only">Upload Image for Base64 Encoding</label>
                   <input
-                    id="fileInput"
+                    id="base64-file-input"
+                    name="base64-file-input"
                     type="file"
                     accept="image/*"
                     className="hidden"
@@ -129,7 +136,7 @@ const Base64Image = () => {
                 {base64 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in zoom-in-95 duration-500">
                     {/* Preview */}
-                    <Card className="glass-morphism border-primary/10 rounded-3xl shadow-xl bg-muted/5 overflow-hidden">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <ImageIcon className="h-4 w-4 text-primary" />
@@ -139,13 +146,13 @@ const Base64Image = () => {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      <CardContent className="p-8 flex items-center justify-center bg-zinc-950/20 min-h-[250px]">
+                      <CardContent className="p-8 flex items-center justify-center bg-background/40 min-h-[250px]">
                         <img src={preview} alt="Preview" className="max-h-[200px] object-contain rounded-2xl shadow-2xl border border-white/5" />
                       </CardContent>
                     </Card>
 
                     {/* Code */}
-                    <Card className="glass-morphism border-primary/10 rounded-3xl shadow-xl bg-muted/5 overflow-hidden">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <FileCode className="h-4 w-4 text-primary" />
@@ -163,7 +170,7 @@ const Base64Image = () => {
                         <textarea
                           readOnly
                           value={base64}
-                          className="w-full h-[250px] bg-zinc-950/40 p-8 text-[11px] font-mono text-foreground/70 border-none resize-none focus:outline-none custom-scrollbar break-all leading-relaxed shadow-inner"
+                          className="w-full h-[250px] bg-background/20 p-8 text-[11px] font-mono text-foreground/70 border-none resize-none focus:outline-none custom-scrollbar break-all leading-relaxed shadow-inner"
                         />
                       </CardContent>
                     </Card>
@@ -172,19 +179,19 @@ const Base64Image = () => {
               </div>
 
               <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-3xl overflow-hidden shadow-xl border-2 border-primary/5">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/10 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Artifact Metrics</h3>
                   </div>
                   <CardContent className="p-8 space-y-8">
                     {fileName && (
-                      <div className="bg-muted/5 p-5 rounded-2xl border border-primary/10">
+                      <div className="bg-background/20 p-5 rounded-2xl border border-primary/10">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 leading-none">Source Label</p>
                         <p className="text-xs font-bold truncate text-primary">{fileName}</p>
                       </div>
                     )}
-                    <div className="bg-muted/5 p-5 rounded-2xl border border-primary/10">
+                    <div className="bg-background/20 p-5 rounded-2xl border border-primary/10">
                       <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 leading-none">String Weight</p>
                       <p className="text-3xl font-black italic tracking-tighter text-primary">{(base64.length / 1024).toFixed(1)} KB</p>
                     </div>
@@ -220,6 +227,11 @@ const Base64Image = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+    
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

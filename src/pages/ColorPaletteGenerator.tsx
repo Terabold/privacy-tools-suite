@@ -5,15 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 
 // Helper for HSL to Hex
 function hslToHex(h: number, s: number, l: number) {
   l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
   const f = (n: number) => {
     const k = (n + h / 30) % 12;
     const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
@@ -124,129 +124,134 @@ const ColorPaletteGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground theme-image transition-colors duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500 overflow-x-hidden">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
       
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
-        <div className="flex flex-col gap-10">
-          <header className="flex items-center gap-6">
-            <Link to="/">
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
-                Studio <span className="text-primary italic">Palette</span>
-              </h1>
-              <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
-                Professional Color Architect · Harmony Engine
-              </p>
-            </div>
-          </header>
-
-          <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-12 items-start">
-            {/* Left: Palette Preview (Shortened/Vertical) */}
-            <div className="space-y-8 animate-in fade-in slide-in-from-left-6 duration-700 lg:sticky lg:top-24">
-              <div className="flex flex-col h-[600px] rounded-[32px] overflow-hidden shadow-2xl border border-white/10 group bg-black/40 backdrop-blur-3xl">
-                {palette.map((hex, i) => (
-                  <div 
-                    key={i} 
-                    className="relative flex-1 flex items-center justify-between px-8 transition-all duration-500 hover:flex-[1.5] group/color cursor-pointer border-b border-white/5 last:border-0"
-                    style={{ backgroundColor: hex }}
-                    onClick={() => copyColor(hex)}
-                  >
-                    <span className="font-mono font-black text-white text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] select-none uppercase tracking-tighter">{hex}</span>
-                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover/color:opacity-100 transition-all">
-                       {copiedColor === hex ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                ))}
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                  Studio <span className="text-primary italic">Palette</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
+                  Professional Color Architect • Harmony Engine
+                </p>
               </div>
+            </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
             </div>
 
-            {/* Right: Controls & Export (The Bigger Half) */}
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-6 duration-700">
-              <Card className="glass-morphism border-primary/10 rounded-[32px] shadow-2xl bg-black/20 p-10 overflow-hidden relative">
-                <CardContent className="p-0 space-y-12 relative z-10">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[11px] font-black uppercase tracking-[0.25em] text-primary italic">Hue</p>
-                        <p className="text-xs font-black font-mono bg-primary/10 px-2 py-0.5 rounded text-primary">{hsl.h}°</p>
-                      </div>
-                      <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => setHsl(prev => ({ ...prev, h: parseInt(e.target.value) }))} className="w-full accent-primary h-2 bg-white/10 rounded-full appearance-none cursor-pointer" />
+            <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
+              {/* Left: Palette Preview */}
+              <div className="space-y-8 animate-in fade-in slide-in-from-left-6 duration-700 lg:sticky lg:top-24">
+                <div className="flex flex-col h-[600px] rounded-[32px] overflow-hidden shadow-2xl border border-white/10 group bg-card backdrop-blur-3xl">
+                  {palette.map((hex, i) => (
+                    <div 
+                      key={i} 
+                      className="relative flex-1 flex items-center justify-between px-8 transition-all duration-500 hover:flex-[1.5] group/color cursor-pointer border-b border-white/5 last:border-0"
+                      style={{ backgroundColor: hex }}
+                      onClick={() => copyColor(hex)}
+                    >
+                      <span className="font-mono font-black text-white text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] select-none uppercase tracking-tighter">{hex}</span>
+                      <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover/color:opacity-100 transition-all">
+                         {copiedColor === hex ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                      </Button>
                     </div>
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[11px] font-black uppercase tracking-[0.25em] text-primary italic">Saturation</p>
-                        <p className="text-xs font-black font-mono bg-primary/10 px-2 py-0.5 rounded text-primary">{hsl.s}%</p>
-                      </div>
-                      <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => setHsl(prev => ({ ...prev, s: parseInt(e.target.value) }))} className="w-full accent-primary h-2 bg-white/10 rounded-full appearance-none cursor-pointer" />
-                    </div>
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[11px] font-black uppercase tracking-[0.25em] text-primary italic">Lightness</p>
-                        <p className="text-xs font-black font-mono bg-primary/10 px-2 py-0.5 rounded text-primary">{hsl.l}%</p>
-                      </div>
-                      <input type="range" min="10" max="90" value={hsl.l} onChange={(e) => setHsl(prev => ({ ...prev, l: parseInt(e.target.value) }))} className="w-full accent-primary h-2 bg-white/10 rounded-full appearance-none cursor-pointer" />
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
 
-                  <div className="pt-10 border-t border-white/5 flex flex-col xl:flex-row items-center justify-between gap-10">
-                    <div className="flex bg-white/5 p-1.5 rounded-[22px] border border-white/5 w-full xl:w-auto">
-                      {['monochromatic', 'analogous', 'complementary', 'triadic'].map((m) => (
-                        <button
-                          key={m}
-                          onClick={() => setMode(m)}
-                          className={`flex-1 xl:flex-none px-6 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${
-                            mode === m 
-                              ? 'bg-primary text-white shadow-lg scale-105 z-10' 
-                              : 'text-muted-foreground hover:bg-white/5'
-                          }`}
-                        >
-                          {m}
+              {/* Right: Controls & Export */}
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-6 duration-700 overflow-visible">
+                <Card className="glass-morphism border-primary/10 rounded-[32px] shadow-2xl bg-card p-10 overflow-hidden relative">
+                  <CardContent className="p-0 space-y-12 relative z-10">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] font-black uppercase tracking-[0.25em] text-primary italic">Hue</p>
+                          <p className="text-xs font-black font-mono bg-primary/10 px-2 py-0.5 rounded text-primary">{hsl.h}°</p>
+                        </div>
+                        <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => setHsl(prev => ({ ...prev, h: parseInt(e.target.value) }))} className="w-full accent-primary h-2 bg-background/40 rounded-full appearance-none cursor-pointer" />
+                      </div>
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] font-black uppercase tracking-[0.25em] text-primary italic">Saturation</p>
+                          <p className="text-xs font-black font-mono bg-primary/10 px-2 py-0.5 rounded text-primary">{hsl.s}%</p>
+                        </div>
+                        <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => setHsl(prev => ({ ...prev, s: parseInt(e.target.value) }))} className="w-full accent-primary h-2 bg-background/40 rounded-full appearance-none cursor-pointer" />
+                      </div>
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] font-black uppercase tracking-[0.25em] text-primary italic">Lightness</p>
+                          <p className="text-xs font-black font-mono bg-primary/10 px-2 py-0.5 rounded text-primary">{hsl.l}%</p>
+                        </div>
+                        <input type="range" min="10" max="90" value={hsl.l} onChange={(e) => setHsl(prev => ({ ...prev, l: parseInt(e.target.value) }))} className="w-full accent-primary h-2 bg-background/40 rounded-full appearance-none cursor-pointer" />
+                      </div>
+                    </div>
+
+                    <div className="pt-10 border-t border-white/5 flex flex-col xl:flex-row items-center justify-between gap-10">
+                      <div className="flex bg-background/20 p-1.5 rounded-[22px] border border-white/5 w-full xl:w-auto">
+                        {['monochromatic', 'analogous', 'complementary', 'triadic'].map((m) => (
+                          <button
+                            key={m}
+                            onClick={() => setMode(m)}
+                            className={`flex-1 xl:flex-none px-6 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${
+                              mode === m 
+                                ? 'bg-primary text-primary-foreground shadow-lg scale-105 z-10' 
+                                : 'text-muted-foreground hover:bg-background/40'
+                            }`}
+                          >
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+                      <Button onClick={refresh} variant="ghost" className="h-14 px-8 font-black rounded-2xl border border-white/10 hover:bg-primary/10 transition-all text-xs uppercase italic gap-3 group">
+                        <RefreshCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-700" /> Randomize
+                      </Button>
+                    </div>
+
+                    <div className="pt-12 border-t border-white/5 space-y-8">
+                      <header>
+                        <h3 className="text-xl font-black uppercase italic tracking-tighter text-foreground">Export <span className="text-primary">Pipeline</span></h3>
+                      </header>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <button onClick={() => { navigator.clipboard.writeText(palette.join('\n')); toast.success("HEX Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">HEX</span>
+                            <Database className="h-4 w-4 opacity-20" />
+                          </div>
+                          <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Hex List</p>
                         </button>
-                      ))}
+                        <button onClick={() => { navigator.clipboard.writeText(palette.map((h, i) => `--color-${i+1}: ${h};`).join('\n')); toast.success("CSS Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">CSS</span>
+                            <Code className="h-4 w-4 opacity-20" />
+                          </div>
+                          <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Variables</p>
+                        </button>
+                        <button onClick={() => { navigator.clipboard.writeText(JSON.stringify(palette)); toast.success("JSON Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">JSON</span>
+                            <FileJson className="h-4 w-4 opacity-20" />
+                          </div>
+                          <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Object</p>
+                        </button>
+                      </div>
                     </div>
-                    <Button onClick={refresh} variant="ghost" className="h-14 px-8 font-black rounded-2xl border border-white/10 hover:bg-white/5 transition-all text-xs uppercase italic gap-3 group">
-                      <RefreshCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-700" /> Randomize
-                    </Button>
-                  </div>
-
-                  <div className="pt-12 border-t border-white/5 space-y-8">
-                    <header>
-                      <h3 className="text-xl font-black uppercase italic tracking-tighter">Export <span className="text-primary">Pipeline</span></h3>
-                    </header>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <button onClick={() => { navigator.clipboard.writeText(palette.join('\n')); toast.success("HEX Copied"); }} className="group flex flex-col p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-black text-primary uppercase tracking-widest">HEX</span>
-                          <Database className="h-4 w-4 opacity-20" />
-                        </div>
-                        <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Hex List</p>
-                      </button>
-                      <button onClick={() => { navigator.clipboard.writeText(palette.map((h, i) => `--color-${i+1}: ${h};`).join('\n')); toast.success("CSS Copied"); }} className="group flex flex-col p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-black text-primary uppercase tracking-widest">CSS</span>
-                          <Code className="h-4 w-4 opacity-20" />
-                        </div>
-                        <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Variables</p>
-                      </button>
-                      <button onClick={() => { navigator.clipboard.writeText(JSON.stringify(palette)); toast.success("JSON Copied"); }} className="group flex flex-col p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-black text-primary uppercase tracking-widest">JSON</span>
-                          <FileJson className="h-4 w-4 opacity-20" />
-                        </div>
-                        <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Object</p>
-                      </button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
@@ -255,6 +260,11 @@ const ColorPaletteGenerator = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+    
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

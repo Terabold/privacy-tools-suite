@@ -4,8 +4,8 @@ import Navbar from "@/components/Navbar";
 import ToolsGrid, { tools } from "@/components/ToolsGrid";
 import Footer from "@/components/Footer";
 import { ShieldCheck, Zap, Lock } from "lucide-react";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 
 
 const Index = () => {
@@ -39,6 +39,26 @@ const Index = () => {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
+
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: "-10% 0px -70% 0px" }
+    );
+
+    const sections = document.querySelectorAll("section[id]");
+    sections.forEach((section) => observer.observe(section));
+
+    return () => sections.forEach((section) => observer.unobserve(section));
+  }, []);
 
   const toggleDark = useCallback(() => {
     const next = !darkMode;
@@ -80,6 +100,7 @@ const Index = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={handleSetCategory}
         categories={categories}
+        activeSection={activeSection}
       />
       
       {/* Sidebar Layout Wrapper */}
@@ -88,18 +109,23 @@ const Index = () => {
         {/* Left Sponsor Sidebar */}
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-10 lg:py-16 grow overflow-visible">
+        <main className="container mx-auto max-w-[1240px] px-6 py-10 lg:py-16 grow overflow-visible">
           {/* Static Branding Section (Improved Vertical Density) */}
           <section className="text-center mb-10 relative animate-in fade-in duration-1000">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full -z-10" />
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-foreground font-display mb-6 leading-[0.9]">
-              Local<span className="text-primary italic">Tools</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Creative Sandbox</span>
+              ClientSide<span className="text-primary italic">Tools</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Creative Sandbox</span>
             </h1>
             <p className="mx-auto max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed font-medium">
               Professional-grade media processing that runs entirely in your browser. 
               No accounts, no uploads, and zero tracking—your data never leaves your device.
             </p>
           </section>
+
+          {/* Mobile Inline Ad */}
+          <div className="flex min-[1600px]:hidden justify-center mb-10 w-full">
+            <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+          </div>
 
           {/* Tools Section */}
           <div className="mb-32">
@@ -111,10 +137,10 @@ const Index = () => {
           </div>
 
           {/* Integrated Ad Break */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-32 opacity-60 grayscale hover:grayscale-0 transition-all">
-             <AdPlaceholder format="rectangle" />
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-32 opacity-60 transition-all">
+             <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
              <div className="hidden md:block h-12 w-[1px] bg-border" />
-             <AdPlaceholder format="rectangle" />
+             <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
           </div>
 
           {/* Privacy Manifesto Section */}
@@ -183,6 +209,11 @@ const Index = () => {
       </div>
 
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

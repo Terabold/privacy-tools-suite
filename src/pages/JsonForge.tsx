@@ -7,8 +7,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 
@@ -56,11 +56,10 @@ const JsonForge = () => {
       setIsValid(true);
       setLastValid(input);
 
-      // Auto-prettify only if valid and not already pretty (to avoid cursor jumping constantly)
+      // Auto-prettify only if valid and not already pretty
       if (autoPrettify) {
         const pretty = JSON.stringify(parsed, null, 2);
         if (pretty !== input) {
-          // We use a small timeout to allow the user to finish typing a char before jumping
           const tid = setTimeout(() => {
             handleInput(pretty, true);
             toast.success("Auto-Prettified");
@@ -79,7 +78,7 @@ const JsonForge = () => {
       setHistory(prev => {
         const next = prev.slice(0, historyIndex + 1);
         next.push(val);
-        if (next.length > 10) next.shift(); // 10-step history limit
+        if (next.length > 10) next.shift();
         return next;
       });
       setHistoryIndex(prev => Math.min(prev + 1, 9));
@@ -149,44 +148,47 @@ const JsonForge = () => {
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
           <div className="flex flex-col gap-10">
-            <header className="flex items-center justify-between flex-wrap gap-8">
-              <div className="flex items-center gap-6">
-                <Link to="/">
-                  <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
-                    JSON <span className="text-primary italic">Studio</span>
-                  </h1>
-                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional Data Architecture & Validation</p>
-                </div>
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                  JSON <span className="text-primary italic">Studio</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional Data Architecture & Validation</p>
               </div>
             </header>
 
-            <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-12 items-start">
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-12 items-start overflow-visible">
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-black shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
-                  <div className="bg-[#050505] px-4 py-2 border-b border-white/5 flex items-center justify-between">
+                <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-card shadow-2xl rounded-2xl group flex flex-col min-h-[600px] border-2 border-primary/5">
+                  <div className="bg-background/40 px-4 py-2 border-b border-primary/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex gap-2 items-center bg-[#0a0a0a] px-4 py-2 rounded-t-lg border-x border-t border-white/10 -mb-[1px] relative z-10 shadow-[0_-4px_10px_rgba(0,0,0,0.5)]">
+                      <div className="flex gap-2 items-center bg-background/20 px-4 py-2 rounded-t-lg border-x border-t border-primary/10 -mb-[px] relative z-10 shadow-[0_-4px_10px_rgba(0,0,0,0.5)]">
                         <FileJson className="h-3.5 w-3.5 text-yellow-500" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">dataset.json</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/80 italic">dataset.json</span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={undo} disabled={historyIndex <= 0}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/50 hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors" onClick={undo} disabled={historyIndex <= 0}>
                         <Undo className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={redo} disabled={historyIndex >= history.length - 1}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/50 hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors" onClick={redo} disabled={historyIndex >= history.length - 1}>
                         <Redo className="h-3.5 w-3.5" />
                       </Button>
-                      <div className="w-[1px] h-4 bg-white/10 mx-1" />
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={copyToClipboard} disabled={!input}>
+                      <div className="w-[1px] h-4 bg-primary/10 mx-1" />
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/50 hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors" onClick={copyToClipboard} disabled={!input}>
                         <Copy className="h-3.5 w-3.5" />
                       </Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" onClick={clearInput} disabled={!input}>
@@ -195,9 +197,9 @@ const JsonForge = () => {
                     </div>
                   </div>
 
-                  <div className="flex-1 flex overflow-hidden relative">
+                  <div className="flex-1 flex overflow-hidden relative bg-background/20">
                     {/* Line Numbers Gutter */}
-                    <div className="w-12 bg-[#050505] border-r border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-zinc-600 select-none">
+                    <div className="w-12 bg-background/40 border-r border-primary/10 flex flex-col py-6 items-center font-mono text-[10px] text-muted-foreground select-none opacity-40">
                       {Array.from({ length: Math.max(1, input.split('\n').length) }).map((_, i) => (
                         <div key={i} className="leading-relaxed h-6">{i + 1}</div>
                       ))}
@@ -206,7 +208,7 @@ const JsonForge = () => {
                     <textarea
                       value={input}
                       onChange={(e) => handleInput(e.target.value)}
-                      className="flex-1 bg-transparent p-6 font-mono text-sm text-[#9cdcfe] resize-none outline-none selection:bg-primary/30 leading-relaxed custom-scrollbar"
+                      className="flex-1 bg-transparent p-6 font-mono text-sm text-foreground/80 resize-none outline-none selection:bg-primary/30 leading-relaxed custom-scrollbar shadow-inner"
                       spellCheck={false}
                     />
 
@@ -233,28 +235,28 @@ const JsonForge = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Status Console</h3>
-                    {!error && input.length > 0 && <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-500 uppercase tracking-widest"><Check className="h-3 w-3" /> Valid Architecture</span>}
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">Status Console</h3>
+                    {!error && input.length > 0 && <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse"><Check className="h-3 w-3" /> Valid Architecture</span>}
                   </div>
                   <CardContent className="p-8 space-y-10">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-muted/5 p-5 rounded-2xl border border-border/50">
+                      <div className="bg-background/40 p-5 rounded-2xl border border-border/50">
                         <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none">Characters</p>
                         <p className="text-2xl font-black italic tracking-tighter text-foreground">{input.length}</p>
                       </div>
-                      <div className="bg-muted/5 p-5 rounded-2xl border border-border/50">
+                      <div className="bg-background/40 p-5 rounded-2xl border border-border/50">
                         <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none">Lines</p>
                         <p className="text-2xl font-black italic tracking-tighter text-foreground">{input.split('\n').length}</p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-border/50">
+                      <div className="flex items-center justify-between p-4 bg-background/20 rounded-2xl border border-border/50">
                         <div className="space-y-0.5">
-                          <Label className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Wand2 className="h-3.5 w-3.5" /> Auto-Prettify</Label>
-                          <p className="text-[9px] text-muted-foreground uppercase font-medium">Format while typing</p>
+                          <Label className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-foreground italic"><Wand2 className="h-3.5 w-3.5" /> Auto-Prettify</Label>
+                          <p className="text-[9px] text-muted-foreground uppercase font-black opacity-30">Format while typing</p>
                         </div>
                         <Switch checked={autoPrettify} onCheckedChange={setAutoPrettify} />
                       </div>
@@ -263,19 +265,15 @@ const JsonForge = () => {
                         onClick={restoreValid}
                         disabled={!lastValid || isValid}
                         variant="outline"
-                        className="w-full h-12 gap-2 text-xs font-black uppercase tracking-widest border-border/50 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-all"
+                        className="w-full h-12 gap-2 text-xs font-black uppercase tracking-widest border-border/50 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-all rounded-xl"
                       >
                         <ShieldCheck className="h-4 w-4" /> Restore Last Valid State
                       </Button>
                     </div>
 
-                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic">V8 native parsing • ECMA-404 compliant • Recursive deep-scan</p>
+                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic leading-relaxed">V8 native parsing • ECMA-404 compliant • Recursive deep-scan</p>
                   </CardContent>
                 </Card>
-
-                <div className="px-6">
-                  <AdPlaceholder format="rectangle" className="opacity-40 grayscale group-hover:grayscale-0 transition-all border-border/50" />
-                </div>
               </aside>
             </div>
           </div>
@@ -284,6 +282,11 @@ const JsonForge = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

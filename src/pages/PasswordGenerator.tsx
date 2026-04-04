@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 
 const CHARS = {
   upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -82,190 +83,199 @@ const PasswordGenerator = () => {
   return (
     <div className="min-h-screen bg-background text-foreground theme-utility transition-colors duration-500">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
-      
+
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
-        <div className="flex flex-col gap-10">
-          <header className="flex items-center gap-6">
-            <Link to="/">
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
-                Secure <span className="text-primary italic">Password</span>
-              </h1>
-              <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
-                High-Entropy Generator · 100% Client-Side · No Logs
-              </p>
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center gap-6">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
+                  Secure <span className="text-primary italic">Password</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
+                  High-Entropy Generator · 100% Client-Side · No Logs
+                </p>
+              </div>
+            </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
             </div>
-          </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              
-              {/* Output Display */}
-              <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                   <ShieldCheck className="h-40 w-40" />
-                </div>
-                <CardContent className="p-0 space-y-6 relative z-10">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Generated Password</p>
-                    <div className="flex gap-2">
-                       <Button variant="ghost" size="icon" onClick={() => setShowPassword(!showPassword)} className="h-8 w-8 rounded-xl border border-border/30">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+
+                {/* Output Display */}
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-8 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <ShieldCheck className="h-40 w-40" />
+                  </div>
+                  <CardContent className="p-0 space-y-6 relative z-10">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Generated Password</p>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => setShowPassword(!showPassword)} className="h-8 w-8 rounded-xl border border-border/30">
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                       </Button>
-                       <Button variant="ghost" size="icon" onClick={generate} className="h-8 w-8 rounded-xl border border-border/30 text-primary">
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={generate} className="h-8 w-8 rounded-xl border border-border/30 text-primary">
                           <RefreshCw className="h-4 w-4" />
-                       </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="relative group">
-                    <div className={`w-full min-h-[100px] flex items-center justify-center bg-zinc-950/40 border border-border/30 rounded-2xl p-6 text-3xl md:text-5xl font-mono tracking-wider break-all text-center selection:bg-primary/30 transition-all ${!showPassword ? 'blur-md select-none' : ''}`}>
-                      {password || "••••••••••••••••"}
-                    </div>
-                    {!showPassword && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Button variant="link" onClick={() => setShowPassword(true)} className="text-primary font-black uppercase tracking-widest text-[10px]">Show Password</Button>
+                        </Button>
                       </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Strength: <span className="text-foreground">{strengthLabels[strength]}</span></p>
-                      <p className="text-[10px] font-mono opacity-40">{Math.round((strength / 5) * 100)}%</p>
                     </div>
-                    <div className="h-2 w-full bg-muted/20 rounded-full flex gap-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className={`h-full flex-1 rounded-full transition-all duration-500 ${i < strength ? strengthColors[strength - 1] : 'bg-transparent'}`} />
-                      ))}
-                    </div>
-                  </div>
 
-                  <Button 
-                    onClick={copy}
-                    disabled={!password}
-                    className={`w-full gap-3 h-16 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 ${copied ? 'bg-green-600 hover:bg-green-700 shadow-green-600/20' : 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:scale-[1.01]'}`}
-                  >
-                    {copied ? <Check className="h-6 w-6" /> : <Copy className="h-6 w-6" />}
-                    {copied ? "Password Copied!" : "Copy to Clipboard"}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Configuration */}
-              <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5 p-8">
-                <CardContent className="p-0 space-y-8">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Length: <span className="text-primary text-sm font-black">{length}</span></p>
+                    <div className="relative group">
+                      <div className={`w-full min-h-[100px] flex items-center justify-center bg-zinc-950/40 border border-border/30 rounded-2xl p-6 text-3xl md:text-5xl font-mono tracking-wider break-all text-center selection:bg-primary/30 transition-all ${!showPassword ? 'blur-md select-none' : ''}`}>
+                        {password || "••••••••••••••••"}
+                      </div>
+                      {!showPassword && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Button variant="link" onClick={() => setShowPassword(true)} className="text-primary font-black uppercase tracking-widest text-[10px]">Show Password</Button>
+                        </div>
+                      )}
                     </div>
-                    <input 
-                      type="range" 
-                      min="4" 
-                      max="64" 
-                      value={length} 
-                      onChange={(e) => setLength(parseInt(e.target.value))}
-                      className="w-full accent-primary h-2 bg-muted/30 rounded-full appearance-none cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[8px] font-black opacity-20 uppercase tracking-widest">
-                      <span>Short</span>
-                      <span>Strong</span>
-                      <span>Extreme (64)</span>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                      { key: 'upper', label: 'Uppercase', icon: <Type className="h-3 w-3" />, chars: 'A-Z' },
-                      { key: 'lower', label: 'Lowercase', icon: <Type className="h-3 w-3" />, chars: 'a-z' },
-                      { key: 'numbers', label: 'Numbers', icon: <Hash className="h-3 w-3" />, chars: '0-9' },
-                      { key: 'symbols', label: 'Symbols', icon: <span className="text-[10px] font-bold">#%&</span>, chars: '!@#$' }
-                    ].map((opt) => (
-                      <button
-                        key={opt.key}
-                        onClick={() => setOptions(prev => ({ ...prev, [opt.key]: !(prev as any)[opt.key] }))}
-                        className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
-                          (options as any)[opt.key] 
-                            ? 'bg-primary/10 border-primary/30 text-primary' 
-                            : 'bg-muted/5 border-border/30 text-muted-foreground opacity-50 grayscale'
-                        }`}
-                      >
-                         <div className="flex items-center gap-3">
-                            <div className={`h-8 w-8 rounded-xl flex items-center justify-center border ${ (options as any)[opt.key] ? 'border-primary/20 bg-primary/20' : 'border-border/30 bg-muted/20' }`}>
-                               {opt.icon}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Strength: <span className="text-foreground">{strengthLabels[strength]}</span></p>
+                        <p className="text-[10px] font-mono opacity-40">{Math.round((strength / 5) * 100)}%</p>
+                      </div>
+                      <div className="h-2 w-full bg-muted/20 rounded-full flex gap-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <div key={i} className={`h-full flex-1 rounded-full transition-all duration-500 ${i < strength ? strengthColors[strength - 1] : 'bg-transparent'}`} />
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={copy}
+                      disabled={!password}
+                      className={`w-full gap-3 h-16 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 ${copied ? 'bg-green-600 hover:bg-green-700 shadow-green-600/20' : 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:scale-[1.01]'}`}
+                    >
+                      {copied ? <Check className="h-6 w-6" /> : <Copy className="h-6 w-6" />}
+                      {copied ? "Password Copied!" : "Copy to Clipboard"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Configuration */}
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5 p-8">
+                  <CardContent className="p-0 space-y-8">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Length: <span className="text-primary text-sm font-black">{length}</span></p>
+                      </div>
+                      <input
+                        type="range"
+                        min="4"
+                        max="64"
+                        value={length}
+                        onChange={(e) => setLength(parseInt(e.target.value))}
+                        className="w-full accent-primary h-2 bg-muted/30 rounded-full appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-[8px] font-black opacity-20 uppercase tracking-widest">
+                        <span>Short</span>
+                        <span>Strong</span>
+                        <span>Extreme (64)</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { key: 'upper', label: 'Uppercase', icon: <Type className="h-3 w-3" />, chars: 'A-Z' },
+                        { key: 'lower', label: 'Lowercase', icon: <Type className="h-3 w-3" />, chars: 'a-z' },
+                        { key: 'numbers', label: 'Numbers', icon: <Hash className="h-3 w-3" />, chars: '0-9' },
+                        { key: 'symbols', label: 'Symbols', icon: <span className="text-[10px] font-bold">#%&</span>, chars: '!@#$' }
+                      ].map((opt) => (
+                        <button
+                          key={opt.key}
+                          onClick={() => setOptions(prev => ({ ...prev, [opt.key]: !(prev as any)[opt.key] }))}
+                          className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${(options as any)[opt.key]
+                              ? 'bg-primary/10 border-primary/30 text-primary'
+                              : 'bg-muted/5 border-border/30 text-muted-foreground opacity-50 grayscale'
+                            }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`h-8 w-8 rounded-xl flex items-center justify-center border ${(options as any)[opt.key] ? 'border-primary/20 bg-primary/20' : 'border-border/30 bg-muted/20'}`}>
+                              {opt.icon}
                             </div>
                             <div className="text-left">
-                               <p className="text-[10px] font-black uppercase tracking-widest leading-tight">{opt.label}</p>
-                               <p className="text-[9px] opacity-40 font-mono">{opt.chars}</p>
+                              <p className="text-[10px] font-black uppercase tracking-widest leading-tight">{opt.label}</p>
+                              <p className="text-[9px] opacity-40 font-mono">{opt.chars}</p>
                             </div>
-                         </div>
-                         <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all ${ (options as any)[opt.key] ? 'border-primary bg-primary' : 'border-border/30' }`}>
+                          </div>
+                          <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all ${(options as any)[opt.key] ? 'border-primary bg-primary' : 'border-border/30'}`}>
                             {(options as any)[opt.key] && <Check className="h-3 w-3 text-white" />}
-                         </div>
-                      </button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <div className="flex justify-center">
-                <AdPlaceholder format="banner" className="opacity-50 grayscale hover:grayscale-0 transition-all" />
-              </div>
-            </div>
+                <div className="flex justify-center">
 
-            {/* Sidebar Stats */}
-            <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
-                <div className="bg-primary/5 p-5 border-b border-primary/10">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Security Audit</h3>
                 </div>
-                <CardContent className="p-8 space-y-6">
-                  <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
-                    <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Entropy</p>
-                    <p className="text-2xl font-black italic tracking-tighter">~{Math.round(length * Math.log2(Object.values(options).filter(Boolean).length * 20))} bits</p>
-                  </div>
-                  
-                  <div className="space-y-4">
-                     <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                        <ShieldCheck className="h-4 w-4 text-emerald-500" /> 
-                        <span>Local Crypto API</span>
-                     </div>
-                     <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                        <ShieldCheck className="h-4 w-4 text-emerald-500" /> 
-                        <span>Memory Only</span>
-                     </div>
-                     <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest opacity-30">
-                        <ShieldAlert className="h-4 w-4" /> 
-                        <span>Never Uploaded</span>
-                     </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-border/50">
-                    <p className="text-[9px] leading-relaxed text-muted-foreground/60 italic font-medium">
-                      Uses browser's hardware-backed crypto.getRandomValues() for cryptographically strong randomness.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="px-6">
-                <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 transition-all border-border/50" />
               </div>
-            </aside>
+
+              {/* Sidebar Stats */}
+              <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
+                  <div className="bg-primary/5 p-5 border-b border-primary/10">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Security Audit</h3>
+                  </div>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Entropy</p>
+                      <p className="text-2xl font-black italic tracking-tighter">~{Math.round(length * Math.log2(Object.values(options).filter(Boolean).length * 20))} bits</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
+                        <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                        <span>Local Crypto API</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
+                        <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                        <span>Memory Only</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest opacity-30">
+                        <ShieldAlert className="h-4 w-4" />
+                        <span>Never Uploaded</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-border/50">
+                      <p className="text-[9px] leading-relaxed text-muted-foreground/60 italic font-medium">
+                        Uses browser's hardware-backed crypto.getRandomValues() for cryptographically strong randomness.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="px-6">
+
+                </div>
+              </aside>
+            </div>
           </div>
-        </div>
         </main>
 
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

@@ -270,13 +270,7 @@ export const tools = [
   },
 ];
 
-export const categoryConfig: Record<string, { icon: any, gradient: string, themeClass: string, tagColor: string }> = {
-  "Video Studio": { icon: Video, gradient: "from-blue-600 to-indigo-500", themeClass: "theme-video", tagColor: "#3b82f6" },
-  "Image Studio": { icon: ImageIcon, gradient: "from-orange-500 to-rose-500", themeClass: "theme-image", tagColor: "#f97316" },
-  "Audio Lab": { icon: Music, gradient: "from-emerald-500 to-teal-500", themeClass: "theme-audio", tagColor: "#10b981" },
-  "Privacy Belt": { icon: ShieldCheck, gradient: "from-violet-500 to-fuchsia-400", themeClass: "theme-privacy", tagColor: "#8b5cf6" },
-  "Utility Belt": { icon: Wrench, gradient: "from-amber-400 to-yellow-600", themeClass: "theme-utility", tagColor: "#f59e0b" }
-};
+import { categoryConfig } from "@/config/categories";
 
 interface ToolsGridProps {
   searchQuery?: string;
@@ -359,7 +353,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
           const Icon = config.icon;
 
           return (
-            <section key={category} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <section key={category} id={category.replace(/\s+/g, '-').toLowerCase()} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
               <div className="flex items-center gap-6 mb-10 px-2">
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${config.gradient} shadow-lg shadow-black/20`}>
                   <Icon className="h-8 w-8 text-white" />

@@ -9,8 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -170,6 +170,11 @@ const PerspectiveTilter = () => {
                 </div>
               </div>
             </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_450px] gap-8 items-start">
               {/* Main Stage */}
@@ -439,7 +444,12 @@ const PerspectiveTilter = () => {
       </div>
 
       <Footer />
-    </div>
+    
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
+      </div>
   );
 };
 

@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -86,13 +87,13 @@ const CsvJsonForge = () => {
    };
 
    return (
-      <div className="min-h-screen bg-[#050505] text-foreground transition-colors duration-500 font-sans theme-utility overflow-x-hidden">
+      <div className="min-h-screen bg-background text-foreground transition-colors duration-500 font-sans theme-utility overflow-x-hidden">
          <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
 
          <div className="flex justify-center items-start w-full relative">
             <SponsorSidebars position="left" />
 
-            <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
+            <main className="container mx-auto max-w-[1240px] px-6 py-12 grow">
                <div className="flex flex-col gap-10">
                   <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
                      <Link to="/">
@@ -110,9 +111,14 @@ const CsvJsonForge = () => {
                      </div>
                   </header>
 
+                  {/* Mobile Inline Ad */}
+                  <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+                     <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+                  </div>
+
                   <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-10 items-start">
                      <div className="space-y-10">
-                        <div className="flex items-center justify-between gap-4 bg-zinc-900 border border-white/10 p-4 rounded-[2rem] shadow-2xl backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex items-center justify-between gap-4 bg-card border border-white/10 p-4 rounded-[2rem] shadow-2xl backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
                            <div className="flex gap-2.5">
                               <button
                                  onClick={() => setMode('csv2json')}
@@ -137,7 +143,7 @@ const CsvJsonForge = () => {
 
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-                              <Card className="glass-morphism border-primary/20 overflow-hidden relative bg-black shadow-2xl rounded-3xl group flex flex-col min-h-[600px] border-b-8">
+                              <Card className="glass-morphism border-primary/20 overflow-hidden relative bg-card shadow-2xl rounded-3xl group flex flex-col min-h-[600px] border-b-8">
                                  <div className="bg-[#0a0a0a] px-6 py-3 border-b border-white/5 flex items-center justify-between">
                                     <div className="flex items-center gap-3 relative top-[1px]">
                                        <div className="flex gap-2 items-center bg-[#111111] px-5 py-2.5 rounded-t-xl border-x border-t border-white/10 relative top-[13px] z-10 shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.5)]">
@@ -193,7 +199,7 @@ const CsvJsonForge = () => {
                      </div>
 
                      <aside className="space-y-8 lg:sticky lg:top-24 h-fit pb-10">
-                        <Card className="glass-morphism border-primary/20 rounded-[2rem] overflow-hidden shadow-2xl bg-zinc-900 animate-in slide-in-from-right-4 duration-500 border-l-4">
+                        <Card className="glass-morphism border-primary/20 rounded-[2rem] overflow-hidden shadow-2xl bg-card animate-in slide-in-from-right-4 duration-500 border-l-4">
                            <div className="bg-primary/10 p-6 border-b border-white/10 flex items-center justify-between">
                               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic">Forge Metrics</h3>
                               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
@@ -232,7 +238,7 @@ const CsvJsonForge = () => {
                         </Card>
 
                         <div className="px-6 border-t border-white/5 pt-8">
-                           <AdPlaceholder format="rectangle" className="opacity-40 grayscale group-hover:grayscale-0 transition-all border-white/10" />
+
                         </div>
                      </aside>
                   </div>
@@ -242,6 +248,11 @@ const CsvJsonForge = () => {
             <SponsorSidebars position="right" />
          </div>
          <Footer />
+
+         {/* Mobile Sticky Anchor Ad */}
+         <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+            <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+         </div>
       </div>
    );
 };

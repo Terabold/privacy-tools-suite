@@ -10,8 +10,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 
 import JSZip from "jszip";
 import { usePasteFile } from "@/hooks/usePasteFile";
@@ -125,7 +126,8 @@ const SpriteStudio = () => {
 
     el.addEventListener("wheel", handleWheelNative, { passive: false });
     return () => el.removeEventListener("wheel", handleWheelNative);
-  }, [image]); // Simplified dependency as nested setters are safe
+  }, [image]);
+
   const getCanvasPos = (e: React.MouseEvent | React.TouchEvent) => {
     if (!containerRef.current) return { x: 0, y: 0 };
     const rect = containerRef.current.getBoundingClientRect();
@@ -145,10 +147,6 @@ const SpriteStudio = () => {
 
     // Precise Float Coordinate (Rounding happens on modification/save)
     return { x: rawX, y: rawY };
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    // Replaced by native useEffect listener to handle preventDefault() correctly
   };
 
   const addSlice = (x: number, y: number, w: number, h: number) => {
@@ -387,36 +385,40 @@ const SpriteStudio = () => {
     setProcessing(false);
     toast.success("Baking complete! ZIP downloaded.");
   };
+
   return (
-    <div className="min-h-screen bg-background text-foreground theme-image transition-colors duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-colors duration-500 overflow-x-hidden">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
 
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
         <main className="container mx-auto max-w-[1800px] px-6 py-12 grow overflow-hidden">
-          <div className="flex flex-col gap-8">
-            <header className="flex items-center justify-between flex-wrap gap-6 border-b border-primary/5 pb-8">
-              <div className="flex items-center gap-6">
-                <Link to="/">
-                  <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
-                    Sprite <span className="text-primary italic">Studio</span>
-                  </h1>
-                  <p className="text-muted-foreground text-[9px] font-black uppercase tracking-[0.2em] opacity-60 mt-2">Professional Pixel Partitioning Engine</p>
-                </div>
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                  Sprite <span className="text-primary italic">Studio</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional Pixel Partitioning Engine • Batch Asset Slicing</p>
               </div>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_340px_280px] gap-6 items-start">
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_340px_280px] gap-8 items-start">
               {/* Column 1: Main Stage */}
               <div className="space-y-4">
                 {/* Horizontal Command Bar */}
-                <div className="glass-morphism border border-white/5 rounded-2xl p-2 px-5 flex items-center justify-between gap-4 bg-black/20 backdrop-blur-md shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="glass-morphism border border-white/10 rounded-2xl p-2 px-5 flex items-center justify-between gap-4 bg-background/40 backdrop-blur-md shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center gap-6 divide-x divide-white/5">
                     <div className="flex items-center gap-2.5">
                       <div className="h-2 w-2 rounded-full bg-primary/40" />
@@ -439,7 +441,7 @@ const SpriteStudio = () => {
                       <Trash2 className="h-3 w-3" /> Clean Stage
                     </Button>
                     <div className="w-[1px] h-4 bg-white/5" />
-                    <Button 
+                    <Button
                       onClick={() => {
                         const viewportW = containerRef.current?.clientWidth || 800;
                         const viewportH = containerRef.current?.clientHeight || 800;
@@ -447,10 +449,10 @@ const SpriteStudio = () => {
                         setScale(newScale);
                         setPan({ x: (viewportW - (imgSize.w * newScale)) / 2, y: (viewportH - (imgSize.h * newScale)) / 2 });
                         setZoom(1);
-                      }} 
+                      }}
                       disabled={!image}
-                      variant="outline" 
-                      size="sm" 
+                      variant="outline"
+                      size="sm"
                       className="h-8 px-4 rounded-xl font-black text-[8px] uppercase gap-2 border-primary/10 bg-primary/5 backdrop-blur-md hover:bg-primary/20 transition-all tracking-wider"
                     >
                       <RotateCcw className="h-3 w-3" /> Reset Viewport
@@ -464,7 +466,7 @@ const SpriteStudio = () => {
                   onMouseLeave={handleMouseUp}
                   onContextMenu={(e) => e.preventDefault()}
                   ref={containerRef}
-                  className="glass-morphism border-primary/10 overflow-hidden h-[calc(70vh-68px)] min-h-[500px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl select-none shadow-2xl group/canvas p-0"
+                  className="glass-morphism border-primary/10 overflow-hidden h-[calc(70vh-68px)] min-h-[500px] flex flex-col items-center justify-center relative bg-card rounded-2xl select-none shadow-2xl group/canvas p-0"
                   style={{
                     backgroundImage: `linear-gradient(45deg, var(--checker-color) 25%, transparent 25%), 
                                      linear-gradient(-45deg, var(--checker-color) 25%, transparent 25%), 
@@ -480,7 +482,7 @@ const SpriteStudio = () => {
                       onClick={() => inputRef.current?.click()}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
-                      className="absolute inset-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner group/dropzone"
+                      className="absolute inset-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background hover:border-primary/40 hover:bg-primary/5 shadow-inner group/dropzone"
                     >
                       <div className="flex flex-col items-center justify-center space-y-6">
                         <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
@@ -557,28 +559,28 @@ const SpriteStudio = () => {
 
                       {/* Minimal HUD Layer */}
                       <div className="absolute bottom-6 right-6 pointer-events-none">
-                        <div className="px-5 py-2 rounded-2xl bg-black/40 backdrop-blur-md border border-white/5 text-[9px] font-black uppercase tracking-widest text-muted-foreground/30 italic group-hover:opacity-100 opacity-0 transition-opacity">
+                        <div className="px-5 py-2 rounded-2xl bg-background/40 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase tracking-widest text-muted-foreground/30 italic group-hover:opacity-100 opacity-0 transition-opacity">
                           Drafting Engine v1.2 • Super-Resolution Partitioning
                         </div>
                       </div>
                     </>
                   )}
                 </Card>
-                <input 
-                  ref={inputRef} 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/*" 
+                <input
+                  ref={inputRef}
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
                   onChange={(e) => {
                     handleFile(e.target.files?.[0]);
                     e.target.value = "";
-                  }} 
+                  }}
                 />
               </div>
 
               <aside className="lg:sticky lg:top-24 h-[70vh] min-h-[550px]">
                 {/* Card 1: Master Studio Controls */}
-                <Card className="glass-morphism border-primary/20 rounded-2xl shadow-2xl overflow-hidden bg-background/20 backdrop-blur-3xl h-full flex flex-col">
+                <Card className="glass-morphism border-primary/20 rounded-2xl shadow-2xl overflow-hidden bg-card backdrop-blur-3xl h-full flex flex-col">
                   {/* Drafting Section (Top - Scrollable) */}
                   <div className="flex flex-col grow min-h-0">
                     <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between shrink-0">
@@ -597,7 +599,7 @@ const SpriteStudio = () => {
                       <div className="space-y-6">
                         <div className="space-y-2.5">
                           <div className="flex justify-between items-center px-1">
-                            <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 italic">Zoom</Label>
+                            <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">Zoom</Label>
                             <span className="text-sm font-black text-primary italic tracking-tighter">{Math.round(zoom * 100)}%</span>
                           </div>
                           <input type="range" min="0.2" max="25" step="0.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="w-full h-1 bg-primary/20 rounded-2xl appearance-none cursor-pointer accent-primary shadow-inner" />
@@ -612,27 +614,27 @@ const SpriteStudio = () => {
 
                             <div className="grid grid-cols-2 gap-3">
                               <div className="space-y-1.5">
-                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 italic">{gridMode === 'count' ? 'Rows' : 'Width'}</Label>
-                                <Input type="number" value={gridMode === 'count' ? gridConfig.rows : gridConfig.cellW} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'rows' : 'cellW']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-lg bg-zinc-950/40 border-white/5" />
+                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">{gridMode === 'count' ? 'Rows' : 'Width'}</Label>
+                                <Input type="number" value={gridMode === 'count' ? gridConfig.rows : gridConfig.cellW} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'rows' : 'cellW']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
                               </div>
                               <div className="space-y-1.5">
-                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 italic">{gridMode === 'count' ? 'Cols' : 'Height'}</Label>
-                                <Input type="number" value={gridMode === 'count' ? gridConfig.cols : gridConfig.cellH} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'cols' : 'cellH']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-lg bg-zinc-950/40 border-white/5" />
+                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">{gridMode === 'count' ? 'Cols' : 'Height'}</Label>
+                                <Input type="number" value={gridMode === 'count' ? gridConfig.cols : gridConfig.cellH} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'cols' : 'cellH']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
                               </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                               <div className="space-y-1.5">
-                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 italic">Gap X</Label>
-                                <Input type="number" value={gridConfig.gapX} onChange={(e) => setGridConfig({ ...gridConfig, gapX: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-lg bg-zinc-950/40 border-white/5" />
+                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">Gap X</Label>
+                                <Input type="number" value={gridConfig.gapX} onChange={(e) => setGridConfig({ ...gridConfig, gapX: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
                               </div>
                               <div className="space-y-1.5">
-                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 italic">Gap Y</Label>
-                                <Input type="number" value={gridConfig.gapY} onChange={(e) => setGridConfig({ ...gridConfig, gapY: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-lg bg-zinc-950/40 border-white/5" />
+                                <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">Gap Y</Label>
+                                <Input type="number" value={gridConfig.gapY} onChange={(e) => setGridConfig({ ...gridConfig, gapY: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
                               </div>
                             </div>
 
-                            <Button variant="secondary" className="w-full h-10 rounded-xl font-black gap-2 text-[10px] uppercase shadow-xl shadow-black/20 italic border border-white/5 hover:translate-y-[-1px] transition-all" onClick={() => generateGrid(gridConfig.rows, gridConfig.cols, gridConfig.gapX, gridConfig.gapY, gridConfig.cellW, gridConfig.cellH, gridMode)}>
+                            <Button variant="secondary" className="w-full h-10 rounded-xl font-black gap-2 text-[10px] uppercase shadow-xl shadow-black/20 italic border border-white/10 hover:translate-y-[-1px] transition-all bg-card hover:bg-accent" onClick={() => generateGrid(gridConfig.rows, gridConfig.cols, gridConfig.gapX, gridConfig.gapY, gridConfig.cellW, gridConfig.cellH, gridMode)}>
                               <Grid3X3 className="h-3 w-3" /> Apply Grid Schema
                             </Button>
                           </motion.div>
@@ -659,9 +661,9 @@ const SpriteStudio = () => {
                 </Card>
               </aside>
 
-              {/* Card 3: Partition Stack Section */}
+              {/* Column 3: Partition Stack Section */}
               <aside className="lg:sticky lg:top-24 h-[70vh] min-h-[500px] flex flex-col">
-                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl overflow-hidden flex flex-col h-full bg-background/20">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl overflow-hidden flex flex-col h-full bg-card">
                   <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-2">
                       <Layers className="h-3 w-3 text-primary" />
@@ -680,25 +682,25 @@ const SpriteStudio = () => {
                     ) : (
                       <Reorder.Group axis="y" values={slices} onReorder={setSlices} className="divide-y divide-white/5">
                         {slices.map((slice, idx) => (
-                            <Reorder.Item 
-                              key={slice.id} 
-                              value={slice}
-                              layout
-                              dragElastic={0}
-                              dragTransition={{ power: 0 }}
-                              onClick={() => setActiveId(slice.id)} 
-                              className={`p-3 px-4 flex items-center justify-between transition-none cursor-default z-10 ${activeId === slice.id ? "bg-primary/20 shadow-inner" : "hover:bg-primary/10 bg-transparent"}`}
-                            >
-                              <div className="flex items-center gap-3 overflow-hidden pointer-events-none">
-                                <GripVertical className="h-3 w-3 text-muted-foreground/30 cursor-grab active:cursor-grabbing pointer-events-auto" />
-                                <span className="text-[9px] font-black text-primary/80 italic">#{String(idx + 1).padStart(2, '0')}</span>
-                                <span className="text-[9px] font-black uppercase tracking-tighter truncate max-w-[100px] text-foreground">{slice.name}</span>
-                              </div>
-                              <div className="flex items-center gap-2 pointer-events-none">
-                                <span className="text-[8px] font-black text-muted-foreground italic">{slice.w}x{slice.h}</span>
-                                <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); deleteSlice(slice.id); }} className="h-6 w-6 text-destructive opacity-40 hover:opacity-100 transition-opacity hover:bg-destructive/10 rounded-lg pointer-events-auto"><Trash2 className="h-3 w-3" /></Button>
-                              </div>
-                            </Reorder.Item>
+                          <Reorder.Item
+                            key={slice.id}
+                            value={slice}
+                            layout
+                            dragElastic={0}
+                            dragTransition={{ power: 0 }}
+                            onClick={() => setActiveId(slice.id)}
+                            className={`p-3 px-4 flex items-center justify-between transition-none cursor-default z-10 ${activeId === slice.id ? "bg-primary/20 shadow-inner" : "hover:bg-primary/10 bg-transparent"}`}
+                          >
+                            <div className="flex items-center gap-3 overflow-hidden pointer-events-none">
+                              <GripVertical className="h-3 w-3 text-muted-foreground/30 cursor-grab active:cursor-grabbing pointer-events-auto" />
+                              <span className="text-[9px] font-black text-primary/80 italic">#{String(idx + 1).padStart(2, '0')}</span>
+                              <span className="text-[9px] font-black uppercase tracking-tighter truncate max-w-[100px] text-foreground">{slice.name}</span>
+                            </div>
+                            <div className="flex items-center gap-2 pointer-events-none">
+                              <span className="text-[8px] font-black text-muted-foreground italic">{slice.w}x{slice.h}</span>
+                              <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); deleteSlice(slice.id); }} className="h-6 w-6 text-destructive opacity-40 hover:opacity-100 transition-opacity hover:bg-destructive/10 rounded-lg pointer-events-auto"><Trash2 className="h-3 w-3" /></Button>
+                            </div>
+                          </Reorder.Item>
                         ))}
                       </Reorder.Group>
                     )}
@@ -711,6 +713,11 @@ const SpriteStudio = () => {
 
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

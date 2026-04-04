@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -54,7 +55,7 @@ const QuickClipboardHub = () => {
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow">
         <div className="flex flex-col gap-10">
           <header className="flex items-center justify-between flex-wrap gap-8">
             <div className="flex items-center gap-6">
@@ -71,6 +72,11 @@ const QuickClipboardHub = () => {
               </div>
             </div>
           </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
              {/* Master Paste Zone */}
@@ -186,7 +192,7 @@ const QuickClipboardHub = () => {
                 </Card>
 
                 <div className="px-6 py-4 bg-muted/5 rounded-2xl border border-border/50">
-                   <AdPlaceholder format="banner" className="opacity-40 grayscale hover:grayscale-0 transition-all border-none" />
+                   
                 </div>
              </div>
           </div>
@@ -196,7 +202,12 @@ const QuickClipboardHub = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
-    </div>
+    
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
+      </div>
   );
 };
 

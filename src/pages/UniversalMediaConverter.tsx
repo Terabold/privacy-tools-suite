@@ -7,9 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import SponsorSidebars from "@/components/SponsorSidebars";
-
+import AdBox from "@/components/AdBox";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { toast } from "sonner";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -41,8 +40,6 @@ const UniversalMediaConverter = () => {
 
   const handleFile = (f: File | undefined) => {
     if (!f) return;
-
-
     setFile(f);
     setOriginalSize(f.size);
     setResultUrl(null);
@@ -264,30 +261,33 @@ const UniversalMediaConverter = () => {
     <div className="min-h-screen bg-background text-foreground transition-all duration-300 theme-video overflow-x-hidden">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
 
-      {/* Sidebar Layout Wrapper */}
       <div className="flex justify-center items-start w-full relative">
-        {/* Left Sponsor Sidebar */}
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow overflow-visible">
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
           <div className="flex flex-col gap-10">
             <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
                   <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
                   Media <span className="text-primary italic">Converter</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">High-Efficiency Browser-Native Conversion Engine</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Efficiency Browser-Native Conversion Engine</p>
               </div>
             </header>
 
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="lg:col-span-8 space-y-8">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl relative group bg-zinc-900/50">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl relative group bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Activity className="h-4 w-4 text-primary" />
@@ -300,7 +300,7 @@ const UniversalMediaConverter = () => {
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                         onClick={() => !processing && inputRef.current?.click()}
-                        className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center cursor-pointer bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner transition-all duration-300 group/upload"
+                        className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center cursor-pointer bg-background hover:border-primary/40 hover:bg-primary/5 shadow-inner transition-all duration-300 group/upload"
                       >
                         <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover/upload:scale-110 transition-all">
                           <CloudUpload className="h-10 w-10 text-primary" />
@@ -309,7 +309,7 @@ const UniversalMediaConverter = () => {
                           <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
                           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-50">Drag master or click</p>
                         </div>
-                        <input ref={inputRef} type="file" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+                        <input ref={inputRef} type="file" accept="video/*,image/*,audio/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
                       </div>
                     ) : (
                       <div className="relative group w-full bg-background/40 p-10 rounded-3xl border border-primary/10 shadow-inner overflow-hidden min-h-[450px] flex flex-col items-center justify-center studio-gradient backdrop-blur-3xl">
@@ -386,7 +386,7 @@ const UniversalMediaConverter = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-4 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-b-2 border-r-2 bg-zinc-900/40">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-b-2 border-r-2 bg-card">
                   {resultUrl && (
                     <div className="bg-primary/10 border-b border-primary/10 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-3xl">
                       <div className="p-4 flex items-center justify-between border-b border-primary/5">
@@ -417,73 +417,73 @@ const UniversalMediaConverter = () => {
                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary italic">Process Geometry</h3>
                   </div>
                   <CardContent className="p-8 space-y-8">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-4">
-                          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Source Type</label>
-                          <div className="flex items-center gap-3 bg-background/40 h-14 px-4 rounded-xl border border-primary/5">
-                            <FileType className="h-5 w-5 text-primary opacity-60" />
-                            <span className="text-sm font-black uppercase tracking-tighter text-foreground truncate">{file?.type?.split('/')[1] || "Waiting"}</span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Target Spec</label>
-                          <Select
-                            value={targetFormat}
-                            onValueChange={setTargetFormat}
-                            disabled={processing || !file}
-                          >
-                            <SelectTrigger className="h-14 bg-background border-primary/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-4 overflow-hidden">
-                              <SelectValue placeholder="SET FORMAT" />
-                            </SelectTrigger>
-                            <SelectContent className="glass-morphism border-primary/20">
-                              {filteredFormats.map(fmt => (
-                                <SelectItem key={fmt} value={fmt} className="font-black py-3 text-sm uppercase tracking-widest">{fmt.toUpperCase()}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-4">
+                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Source Type</label>
+                        <div className="flex items-center gap-3 bg-background/40 h-14 px-4 rounded-xl border border-primary/5">
+                          <FileType className="h-5 w-5 text-primary opacity-60" />
+                          <span className="text-sm font-black uppercase tracking-tighter text-foreground truncate">{file?.type?.split('/')[1] || "Waiting"}</span>
                         </div>
                       </div>
 
+                      <div className="space-y-4">
+                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Target Spec</label>
+                        <Select
+                          value={targetFormat}
+                          onValueChange={setTargetFormat}
+                          disabled={processing || !file}
+                        >
+                          <SelectTrigger className="h-14 bg-background border-primary/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-4 overflow-hidden">
+                            <SelectValue placeholder="SET FORMAT" />
+                          </SelectTrigger>
+                          <SelectContent className="glass-morphism border-primary/20">
+                            {filteredFormats.map(fmt => (
+                              <SelectItem key={fmt} value={fmt} className="font-black py-3 text-sm uppercase tracking-widest">{fmt.toUpperCase()}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
 
-                      {isVideo && (
-                        <div className="space-y-4 animate-in slide-in-from-left-4 duration-300">
-                          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Temporal Shift</label>
-                          <Select value={videoSpeed} onValueChange={setVideoSpeed} disabled={processing || !file}>
-                            <SelectTrigger className="h-14 bg-background border-primary/10 rounded-2xl font-black uppercase tracking-tighter text-sm shadow-inner px-6">
-                              <SelectValue placeholder="SET SPEED" />
-                            </SelectTrigger>
-                            <SelectContent className="glass-morphism border-primary/20">
-                              {["0.5", "0.75", "1.0", "1.25", "1.5", "2.0"].map(s => (
-                                <SelectItem key={s} value={s} className="font-black py-3 text-sm">{s}x Speed</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
 
-                      <Button
-                        onClick={convertFile}
-                        disabled={!targetFormat || processing || !file}
-                        className="w-full gap-3 h-14 text-base font-black rounded-xl shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all uppercase italic"
-                      >
-                        <Terminal className="h-6 w-6" />
-                        {processing ? "Baking Artifact..." : "Finalize Production"}
-                      </Button>
+                    {isVideo && (
+                      <div className="space-y-4 animate-in slide-in-from-left-4 duration-300">
+                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Temporal Shift</label>
+                        <Select value={videoSpeed} onValueChange={setVideoSpeed} disabled={processing || !file}>
+                          <SelectTrigger className="h-14 bg-background border-primary/10 rounded-2xl font-black uppercase tracking-tighter text-sm shadow-inner px-6">
+                            <SelectValue placeholder="SET SPEED" />
+                          </SelectTrigger>
+                          <SelectContent className="glass-morphism border-primary/20">
+                            {["0.5", "0.75", "1.0", "1.25", "1.5", "2.0"].map(s => (
+                              <SelectItem key={s} value={s} className="font-black py-3 text-sm">{s}x Speed</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    <Button
+                      onClick={convertFile}
+                      disabled={!targetFormat || processing || !file}
+                      className="w-full gap-3 h-14 text-base font-black rounded-xl shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all uppercase italic"
+                    >
+                      <Terminal className="h-6 w-6" />
+                      {processing ? "Baking Artifact..." : "Finalize Production"}
+                    </Button>
                   </CardContent>
                 </Card>
-
-                <div className="px-6 pb-6">
-                  <AdPlaceholder format="rectangle" className="opacity-40 grayscale group-hover:grayscale-0 transition-all border-border/50" />
-                </div>
               </aside>
             </div>
           </div>
         </main>
 
-        {/* Right Sponsor Sidebar */}
         <SponsorSidebars position="right" />
+      </div>
+      <Footer />
 
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
       </div>
     </div>
   );

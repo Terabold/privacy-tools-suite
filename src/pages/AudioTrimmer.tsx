@@ -6,8 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -286,259 +287,271 @@ const AudioTrimmer = () => {
         }
       `}</style>
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
-      
+
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
-        <div className="flex flex-col gap-10">
-          <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <Link to="/">
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
-                Audio <span className="text-primary italic">Trimmer</span>
-              </h1>
-              <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">High-Precision Local Audio Partitioning</p>
-            </div>
-          </header>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="lg:col-span-8 space-y-8">
-              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-700 hover:border-primary/30 group relative">
-                <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Scissors className="h-4 w-4 text-primary" />
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Wave Stage</h3>
-                  </div>
-                </div>
-                <CardContent className="p-10">
-                  {!audioBuffer ? (
-                    <div
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
-                      onClick={() => inputRef.current?.click()}
-                      className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
-                    >
-                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                        <CloudUpload className="h-10 w-10 text-primary" />
-                      </div>
-                      <div className="px-6 space-y-1">
-                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
-                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
-                        <KbdShortcut />
-                        <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP3, WAV, or OGG Files Supported</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full space-y-6">
-                      <div
-                        className="relative h-64 w-full bg-background/50 rounded-2xl border border-border/50 shadow-inner group/waveform cursor-pointer select-none"
-                        onMouseDown={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const x = (e.clientX - rect.left) / rect.width;
-                          const clickTime = x * duration;
-
-                          // Check if clicking near left or right trim edge
-                          const leftEdgePos = range[0] / duration;
-                          const rightEdgePos = range[1] / duration;
-                          const edgeThreshold = 0.02; // ~2% of width for better hit area
-
-                          if (Math.abs(x - leftEdgePos) < edgeThreshold) {
-                            // Drag left trim handle
-                            const onMove = (ev: MouseEvent) => {
-                              const mx = Math.max(0, Math.min((ev.clientX - rect.left) / rect.width, 1));
-                              const t = mx * duration;
-                              setRange(prev => [Math.min(t, prev[1] - 0.05), prev[1]]);
-                              setCurrentTime(prev => t > prev ? t : prev); // Only move playhead if handle crosses it
-                            };
-                            const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-                            window.addEventListener('mousemove', onMove);
-                            window.addEventListener('mouseup', onUp);
-                          } else if (Math.abs(x - rightEdgePos) < edgeThreshold) {
-                            // Drag right trim handle
-                            const onMove = (ev: MouseEvent) => {
-                              const mx = Math.max(0, Math.min((ev.clientX - rect.left) / rect.width, 1));
-                              const t = mx * duration;
-                              setRange(prev => [prev[0], Math.max(t, prev[0] + 0.05)]);
-                              setCurrentTime(prev => t < prev ? t : prev); // Only move playhead if handle crosses it
-                            };
-                            const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-                            window.addEventListener('mousemove', onMove);
-                            window.addEventListener('mouseup', onUp);
-                          } else {
-                            // Click to seek playhead
-                            const newTime = Math.max(0, Math.min(clickTime, duration));
-                            setCurrentTime(newTime);
-                            const onMove = (ev: MouseEvent) => {
-                              const mx = (ev.clientX - rect.left) / rect.width;
-                              setCurrentTime(Math.max(0, Math.min(mx * duration, duration)));
-                            };
-                            const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-                            window.addEventListener('mousemove', onMove);
-                            window.addEventListener('mouseup', onUp);
-                          }
-                        }}
-                      >
-                        <canvas ref={canvasRef} className="w-full h-full pointer-events-none" />
-
-                        {/* Dimmed regions outside trim range */}
-                        <div className="absolute top-0 bottom-0 left-0 bg-black/60 pointer-events-none" style={{ width: `${(range[0] / duration) * 100}%` }} />
-                        <div className="absolute top-0 bottom-0 right-0 bg-black/60 pointer-events-none" style={{ width: `${((duration - range[1]) / duration) * 100}%` }} />
-
-                        {/* Green highlight for trim range */}
-                        <div className="absolute top-0 bottom-0 bg-emerald-500/10 pointer-events-none border-x border-emerald-500/30"
-                          style={{ left: `${(range[0] / duration) * 100}%`, width: `${((range[1] - range[0]) / duration) * 100}%` }} />
-
-                        {/* Left trim handle */}
-                        <div
-                          className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-glow"
-                          style={{ left: `${(range[0] / duration) * 100}%` }}
-                        >
-                          <div className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
-                            <div className="w-[1px] h-4 bg-white/60" />
-                          </div>
-                        </div>
-
-                        {/* Right trim handle */}
-                        <div
-                          className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-glow"
-                          style={{ left: `${(range[1] / duration) * 100}%` }}
-                        >
-                          <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
-                            <div className="w-[1px] h-4 bg-white/60" />
-                          </div>
-                        </div>
-
-                        {/* Playhead */}
-                        {audioBuffer && (
-                          <div
-                            className="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] z-50 pointer-events-none"
-                            style={{ left: `${(currentTime / duration) * 100}%` }}
-                          />
-                        )}
-                      </div>
-
-                      {/* Compact controls row */}
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Start</label>
-                            <input
-                              type="number" step="0.01" value={range[0].toFixed(2)}
-                              onChange={(e) => setRange([Math.min(parseFloat(e.target.value) || 0, range[1]), range[1]])}
-                              className="w-24 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm font-black font-mono outline-none focus:border-emerald-500 transition-colors text-emerald-500"
-                            />
-                          </div>
-                          <span className="text-muted-foreground/30 text-xs">—</span>
-                          <div className="flex items-center gap-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-emerald-500">End</label>
-                            <input
-                              type="number" step="0.1" value={range[1].toFixed(2)}
-                              onChange={(e) => {
-                                const v = parseFloat(e.target.value) || duration;
-                                setRange([range[0], Math.max(v, range[0])]);
-                                if (currentTime > v) setCurrentTime(v);
-                              }}
-                              className="w-24 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm font-black font-mono outline-none focus:border-emerald-500 transition-colors text-emerald-500 emerald-arrows"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-6">
-                          <div className="flex items-center gap-3">
-                            <Button
-                              variant="outline" size="icon"
-                              className="h-16 w-16 rounded-2xl border border-primary/20 hover:bg-primary/5 transition-all group"
-                              onClick={resetPlayback} title="Reset to Start"
-                            >
-                              <RotateCcw className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                            </Button>
-                            <button
-                              onClick={playPreview}
-                              className="h-20 w-20 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform shadow-xl shadow-primary/20 relative group overflow-hidden"
-                            >
-                              <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                              {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 fill-current" />}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <input ref={inputRef} type="file" className="hidden" accept="audio/*" onChange={(e) => handleFile(e.target.files?.[0])} />
-                  
-                  {/* Reset Button (Integrated into Workbench) */}
-                  <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <Button 
-                      onClick={() => { setAudioBuffer(null); setFileName(""); }} 
-                      variant="destructive" 
-                      size="sm" 
-                      className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
-                    >
-                      Reset Stage
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic px-4">32-bit precision • Web Audio API sandbox • Zero server interaction</p>
-            </div>
-
-            <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
-                <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
-                  <RefreshCw className="h-4 w-4 text-primary" />
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Export Parameters</h3>
-                </div>
-                <CardContent className="p-8 space-y-8">
-                  <div className="space-y-6">
-                    <div className="p-6 bg-background/50 rounded-2xl border border-border/50 space-y-4 shadow-inner">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Source Mass</span>
-                        <span className="text-[11px] font-black truncate max-w-[150px] italic text-primary">{fileName || "None"}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Duration Scan</span>
-                        <span className="text-[11px] font-black font-mono text-foreground">{duration.toFixed(2)}s</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Binary Forge</span>
-                        <span className="text-[11px] font-black text-primary italic">LPCM WAV</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6">
-                    <Button
-                      onClick={downloadTrimmed}
-                      disabled={!audioBuffer || processing}
-                      className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-xl shadow-primary/10 hover:bg-primary hover:text-primary-foreground hover:scale-[1.01] active:scale-[0.99] transition-all uppercase italic"
-                    >
-                      <Download className="h-6 w-6" />
-                      {processing ? "Slicing Samples..." : "Export Trimmed"}
-                    </Button>
-                    <p className="text-[9px] text-center mt-4 text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic">
-                      Direct-to-Disk High-Fidelity Export
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="px-6">
-                <AdPlaceholder format="rectangle" className="opacity-40 grayscale group-hover:grayscale-0 transition-all" />
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                  Audio <span className="text-primary italic">Trimmer</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
+                  High-Precision Local Audio Partitioning • Lossless Wave Slicing
+                </p>
               </div>
-            </aside>
+            </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div className="lg:col-span-8 space-y-8">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-700 hover:border-primary/30 group relative bg-card">
+                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Scissors className="h-4 w-4 text-primary" />
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Wave Stage</h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-10">
+                    {!audioBuffer ? (
+                      <div
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                        onClick={() => inputRef.current?.click()}
+                        className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                      >
+                        <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                          <CloudUpload className="h-10 w-10 text-primary" />
+                        </div>
+                        <div className="px-6 space-y-1">
+                          <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
+                          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
+                          <KbdShortcut />
+                          <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">MP3, WAV, or OGG Files Supported</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full space-y-6">
+                        <div
+                          className="relative h-64 w-full bg-background/50 rounded-2xl border border-border/50 shadow-inner group/waveform cursor-pointer select-none"
+                          onMouseDown={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            const x = (e.clientX - rect.left) / rect.width;
+                            const clickTime = x * duration;
+
+                            // Check if clicking near left or right trim edge
+                            const leftEdgePos = range[0] / duration;
+                            const rightEdgePos = range[1] / duration;
+                            const edgeThreshold = 0.02; // ~2% of width for better hit area
+
+                            if (Math.abs(x - leftEdgePos) < edgeThreshold) {
+                              // Drag left trim handle
+                              const onMove = (ev: MouseEvent) => {
+                                const mx = Math.max(0, Math.min((ev.clientX - rect.left) / rect.width, 1));
+                                const t = mx * duration;
+                                setRange(prev => [Math.min(t, prev[1] - 0.05), prev[1]]);
+                                setCurrentTime(prev => t > prev ? t : prev); // Only move playhead if handle crosses it
+                              };
+                              const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+                              window.addEventListener('mousemove', onMove);
+                              window.addEventListener('mouseup', onUp);
+                            } else if (Math.abs(x - rightEdgePos) < edgeThreshold) {
+                              // Drag right trim handle
+                              const onMove = (ev: MouseEvent) => {
+                                const mx = Math.max(0, Math.min((ev.clientX - rect.left) / rect.width, 1));
+                                const t = mx * duration;
+                                setRange(prev => [prev[0], Math.max(t, prev[0] + 0.05)]);
+                                setCurrentTime(prev => t < prev ? t : prev); // Only move playhead if handle crosses it
+                              };
+                              const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+                              window.addEventListener('mousemove', onMove);
+                              window.addEventListener('mouseup', onUp);
+                            } else {
+                              // Click to seek playhead
+                              const newTime = Math.max(0, Math.min(clickTime, duration));
+                              setCurrentTime(newTime);
+                              const onMove = (ev: MouseEvent) => {
+                                const mx = (ev.clientX - rect.left) / rect.width;
+                                setCurrentTime(Math.max(0, Math.min(mx * duration, duration)));
+                              };
+                              const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+                              window.addEventListener('mousemove', onMove);
+                              window.addEventListener('mouseup', onUp);
+                            }
+                          }}
+                        >
+                          <canvas ref={canvasRef} className="w-full h-full pointer-events-none" />
+
+                          {/* Dimmed regions outside trim range */}
+                          <div className="absolute top-0 bottom-0 left-0 bg-black/60 pointer-events-none" style={{ width: `${(range[0] / duration) * 100}%` }} />
+                          <div className="absolute top-0 bottom-0 right-0 bg-black/60 pointer-events-none" style={{ width: `${((duration - range[1]) / duration) * 100}%` }} />
+
+                          {/* Green highlight for trim range */}
+                          <div className="absolute top-0 bottom-0 bg-emerald-500/10 pointer-events-none border-x border-emerald-500/30"
+                            style={{ left: `${(range[0] / duration) * 100}%`, width: `${((range[1] - range[0]) / duration) * 100}%` }} />
+
+                          {/* Left trim handle */}
+                          <div
+                            className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-glow"
+                            style={{ left: `${(range[0] / duration) * 100}%` }}
+                          >
+                            <div className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
+                              <div className="w-[1px] h-4 bg-white/60" />
+                            </div>
+                          </div>
+
+                          {/* Right trim handle */}
+                          <div
+                            className="absolute top-0 bottom-0 w-[1px] bg-emerald-500 cursor-col-resize z-30 shadow-glow"
+                            style={{ left: `${(range[1] / duration) * 100}%` }}
+                          >
+                            <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl border border-white/30 hover:scale-110 active:scale-95 transition-all">
+                              <div className="w-[1px] h-4 bg-white/60" />
+                            </div>
+                          </div>
+
+                          {/* Playhead */}
+                          {audioBuffer && (
+                            <div
+                              className="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] z-50 pointer-events-none"
+                              style={{ left: `${(currentTime / duration) * 100}%` }}
+                            />
+                          )}
+                        </div>
+
+                        {/* Compact controls row */}
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Start</label>
+                              <input
+                                type="number" step="0.01" value={range[0].toFixed(2)}
+                                onChange={(e) => setRange([Math.min(parseFloat(e.target.value) || 0, range[1]), range[1]])}
+                                className="w-24 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm font-black font-mono outline-none focus:border-emerald-500 transition-colors text-emerald-500"
+                              />
+                            </div>
+                            <span className="text-muted-foreground/30 text-xs">—</span>
+                            <div className="flex items-center gap-3">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-emerald-500">End</label>
+                              <input
+                                type="number" step="0.1" value={range[1].toFixed(2)}
+                                onChange={(e) => {
+                                  const v = parseFloat(e.target.value) || duration;
+                                  setRange([range[0], Math.max(v, range[0])]);
+                                  if (currentTime > v) setCurrentTime(v);
+                                }}
+                                className="w-24 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm font-black font-mono outline-none focus:border-emerald-500 transition-colors text-emerald-500 emerald-arrows"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-3">
+                              <Button
+                                variant="outline" size="icon"
+                                className="h-16 w-16 rounded-2xl border border-primary/20 hover:bg-primary/5 transition-all group"
+                                onClick={resetPlayback} title="Reset to Start"
+                              >
+                                <RotateCcw className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                              </Button>
+                              <button
+                                onClick={playPreview}
+                                className="h-20 w-20 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform shadow-xl shadow-primary/20 relative group overflow-hidden"
+                              >
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 fill-current" />}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <input ref={inputRef} type="file" className="hidden" accept="audio/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+
+                    {/* Reset Button (Integrated into Workbench) */}
+                    <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <Button
+                        onClick={() => { setAudioBuffer(null); setFileName(""); }}
+                        variant="destructive"
+                        size="sm"
+                        className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
+                      >
+                        Reset Stage
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic px-4">32-bit precision • Web Audio API sandbox • Zero server interaction</p>
+              </div>
+
+              <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
+                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
+                    <RefreshCw className="h-4 w-4 text-primary" />
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Export Parameters</h3>
+                  </div>
+                  <CardContent className="p-8 space-y-8">
+                    <div className="space-y-6">
+                      <div className="p-6 bg-background/50 rounded-2xl border border-border/50 space-y-4 shadow-inner">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Source Mass</span>
+                          <span className="text-[11px] font-black truncate max-w-[150px] italic text-primary">{fileName || "None"}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Duration Scan</span>
+                          <span className="text-[11px] font-black font-mono text-foreground">{duration.toFixed(2)}s</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Binary Forge</span>
+                          <span className="text-[11px] font-black text-primary italic">LPCM WAV</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-6">
+                      <Button
+                        onClick={downloadTrimmed}
+                        disabled={!audioBuffer || processing}
+                        className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-xl shadow-primary/10 hover:bg-primary hover:text-primary-foreground hover:scale-[1.01] active:scale-[0.99] transition-all uppercase italic"
+                      >
+                        <Download className="h-6 w-6" />
+                        {processing ? "Slicing Samples..." : "Export Trimmed"}
+                      </Button>
+                      <p className="text-[9px] text-center mt-4 text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic">
+                        Direct-to-Disk High-Fidelity Export
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="px-6">
+
+                </div>
+              </aside>
+            </div>
           </div>
-        </div>
         </main>
 
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

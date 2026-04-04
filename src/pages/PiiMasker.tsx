@@ -7,8 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -294,7 +295,7 @@ const PiiMasker = () => {
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow overflow-visible">
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
         <div className="flex flex-col gap-10">
           <header className="flex items-center justify-between flex-wrap gap-8">
             <div className="flex items-center gap-6">
@@ -311,6 +312,11 @@ const PiiMasker = () => {
               </div>
             </div>
           </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="space-y-8">
@@ -331,7 +337,7 @@ const PiiMasker = () => {
                       <KbdShortcut />
                       <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center uppercase tracking-tighter font-black">Images, Logs, TXT or MD Supported</p>
                     </div>
-                    <input ref={inputRef} type="file" className="hidden" accept="image/png,image/jpeg,image/webp,text/plain,text/markdown,.log" onChange={(e) => handleFile(e.target.files?.[0])} />
+                    <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />
                   </div>
                 </Card>
               ) : textContent !== null ? (
@@ -513,7 +519,7 @@ const PiiMasker = () => {
                     </div>
                  </CardContent>
                </Card>
-            </aside>
+              </aside>
             </div>
           </div>
         </main>
@@ -521,7 +527,12 @@ const PiiMasker = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
-    </div>
+    
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
+      </div>
   );
 };
 

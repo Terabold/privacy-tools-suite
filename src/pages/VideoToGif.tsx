@@ -6,8 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -160,14 +161,14 @@ const VideoToGif = () => {
       setLogs(prev => [...prev, "Spawning Palette Generation Thread..."]);
       await ffmpeg.exec(args);
       setLogs(prev => [...prev, "Palette Generated.", "Rendering Final GIF Frame Data..."]);
-      
+
       const data = await ffmpeg.readFile(outputName);
       const a = document.createElement("a");
       const blob = new Blob([data as any], { type: 'image/gif' });
       a.href = URL.createObjectURL(blob);
       a.download = `${file.name.replace(/\.[^.]+$/, "")}_moment.gif`;
       a.click();
-      
+
       setProgressTarget(100);
       setProgress(100);
       setLogs(prev => [...prev, "Bake Complete. Downloading Artifact."]);
@@ -191,35 +192,40 @@ const VideoToGif = () => {
   return (
     <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-300 overflow-x-hidden">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
-      
+
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow">
           <div className="flex flex-col gap-10">
-            <header className="flex items-center gap-6 mb-2">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                  <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
                   Video to <span className="text-primary italic">GIF</span>
                 </h1>
-                <p className="text-muted-foreground mt-1 font-bold uppercase tracking-[0.2em] opacity-40 text-[9px]">Professional GIF Rendering Studio</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional GIF Rendering Studio</p>
               </div>
             </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
               <div className="lg:col-span-8 space-y-8">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[600px] flex flex-col items-center justify-center relative bg-muted/5 rounded-[32px] shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[600px] flex flex-col items-center justify-center relative bg-card rounded-[32px] shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                       onClick={() => !processing && inputRef.current?.click()}
-                      className={`relative w-full h-full flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-48 bg-background/50 hover:bg-primary/5 shadow-inner" : "py-48 opacity-50"}`}
+                      className={`relative w-full h-full flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-48 bg-background hover:bg-primary/5 shadow-inner" : "py-48 opacity-50"}`}
                     >
                       <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
                         <CloudUpload className="h-10 w-10 text-primary" />
@@ -230,7 +236,7 @@ const VideoToGif = () => {
                         <KbdShortcut />
                       </div>
                       <label htmlFor="gif-upload-input" className="sr-only">Upload Video for GIF</label>
-                      <input id="gif-upload-input" name="gif-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+                      <input id="gif-upload-input" name="gif-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*,image/*,audio/*" onChange={(e) => handleFile(e.target.files?.[0])} />
                     </div>
                   </Card>
                 ) : (
@@ -282,7 +288,7 @@ const VideoToGif = () => {
                               {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 fill-current" />}
                             </Button>
 
-                            <div className="px-5 py-3 rounded-2xl bg-black/20 border border-white/5 backdrop-blur-md">
+                            <div className="px-5 py-3 rounded-2xl bg-background/20 border border-white/5 backdrop-blur-md">
                               <span className="text-2xl font-bold italic tracking-tighter text-primary font-mono">
                                 {displayTime.toFixed(3)}s
                               </span>
@@ -313,7 +319,7 @@ const VideoToGif = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-border/20">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-border/20 bg-card">
                   <div className="bg-primary/5 p-8 border-b border-primary/10">
                     <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Configuration Master</h2>
                   </div>
@@ -321,20 +327,20 @@ const VideoToGif = () => {
                     <div className="space-y-6">
                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 leading-none block px-1">Precise Range</p>
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-muted/5 p-4 rounded-2xl border border-border/50 text-center">
+                        <div className="bg-background/40 p-4 rounded-2xl border border-border/50 text-center">
                           <p className="text-[9px] font-bold uppercase opacity-40 mb-1">Start</p>
                           <p className="text-xl font-bold italic tracking-tighter text-primary">{range[0].toFixed(3)}s</p>
                         </div>
-                        <div className="bg-muted/5 p-4 rounded-2xl border border-border/50 text-center">
+                        <div className="bg-background/40 p-4 rounded-2xl border border-border/50 text-center">
                           <p className="text-[9px] font-bold uppercase opacity-40 mb-1">End</p>
                           <p className="text-xl font-bold italic tracking-tighter text-primary">{range[1].toFixed(3)}s</p>
                         </div>
                       </div>
                     </div>
 
-                    <Button 
-                      onClick={renderGif} 
-                      disabled={processing || !file} 
+                    <Button
+                      onClick={renderGif}
+                      disabled={processing || !file}
                       className="w-full h-16 text-md font-black rounded-2xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary text-primary-foreground"
                     >
                       {processing ? <RefreshCw className="h-5 w-5 animate-spin" /> : <Scissors className="h-5 w-5" />}
@@ -364,9 +370,9 @@ const VideoToGif = () => {
                     </div>
                   </Card>
                 )}
-                
+
                 <div className="px-6">
-                   <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 transition-opacity border border-border/50" />
+
                 </div>
               </aside>
             </div>
@@ -376,6 +382,11 @@ const VideoToGif = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

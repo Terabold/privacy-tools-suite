@@ -1,5 +1,5 @@
 import React from "react";
-import AdPlaceholder from "./AdPlaceholder";
+import AdBox from "./AdBox";
 import { cn } from "@/lib/utils";
 
 interface SponsorSidebarsProps {
@@ -9,36 +9,30 @@ interface SponsorSidebarsProps {
 
 /**
  * Standardized Sponsor Sidebar component for the Privacy Tools Suite.
- * Fixes positioning issues where sidebars were either too close to central elements
- * or being clipped by the viewport edge.
+ * Fixes positioning issues where sidebars were causing horizontal clipping on 1080p.
+ * Visible only on 1600px screens and larger.
  */
 const SponsorSidebars = ({ position, className }: SponsorSidebarsProps) => {
   return (
     <aside 
       className={cn(
-        "hidden min-[1850px]:flex flex-col gap-10 sticky top-32 w-[300px] shrink-0 px-6 py-8 duration-1000 animate-in fade-in",
-        // LEFT SIDEBAR: Added mr-12 to move it LEFT (further away from the central content)
+        "hidden min-[1600px]:flex flex-col gap-10 sticky top-24 w-[300px] shrink-0 duration-1000 animate-in fade-in pt-8",
         position === "left" 
-            ? "slide-in-from-left-8 mr-12" 
-            // RIGHT SIDEBAR: Added mr-12 to move it LEFT (further away from the viewport edge/clipping)
-            : "slide-in-from-right-8 mr-12",
+            ? "slide-in-from-left-8 ml-8 mr-12" 
+            : "slide-in-from-right-8 ml-12 mr-8",
         className
       )}
     >
-       <AdPlaceholder 
-         format="rectangle" 
-         className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50 shadow-2xl lg:shadow-primary/5" 
-       />
-       <AdPlaceholder 
-         format="rectangle" 
-         className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50 shadow-2xl lg:shadow-primary/5" 
-       />
-       <AdPlaceholder 
-         format="rectangle" 
-         className="opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all border-border/50 shadow-2xl lg:shadow-primary/5" 
-       />
+      {/* Top Ad (300x250) */}
+      <AdBox width={300} height={250} label="300x250 AD" />
+
+      {/* Bottom Sticky Ad (300x600) */}
+      <div className="pt-20">
+        <AdBox width={300} height={600} label="300x600 AD" className="sticky top-40" />
+      </div>
     </aside>
   );
 };
 
 export default SponsorSidebars;
+

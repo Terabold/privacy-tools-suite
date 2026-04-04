@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
 
@@ -46,7 +47,7 @@ const EXAMPLE_JWT =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 const JsonBlock = ({ data }: { data: object }) => (
-  <pre className="text-xs font-mono leading-relaxed whitespace-pre-wrap break-all text-foreground/80 bg-muted/20 p-4 rounded-xl border border-border/40">
+  <pre className="text-xs font-mono leading-relaxed whitespace-pre-wrap break-all text-foreground/80 bg-background/20 p-4 rounded-xl border border-border/40 shadow-inner">
     {JSON.stringify(data, null, 2)}
   </pre>
 );
@@ -105,199 +106,201 @@ const JwtDecoder = () => {
       : null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground theme-utility transition-colors duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-utility transition-colors duration-500 overflow-x-hidden">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
-      
+
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
-        <div className="flex flex-col gap-10">
-          <header className="flex items-center gap-6">
-            <Link to="/">
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
-                JWT <span className="text-primary italic">Decoder</span>
-              </h1>
-              <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">
-                Inspect • Decode • Validate — 100% Local
-              </p>
-            </div>
-          </header>
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                  JWT <span className="text-primary italic">Decoder</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
+                  Inspect • Decode • Validate — 100% Local
+                </p>
+              </div>
+            </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-8">
-                <CardContent className="p-0 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Paste Your JWT</p>
-                      <KbdShortcut />
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start overflow-visible">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-8">
+                  <CardContent className="p-0 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 opacity-60 italic">Paste Your JWT</p>
+                        <KbdShortcut />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 border border-primary/10 rounded-2xl transition-all"
+                        onClick={() => decode(EXAMPLE_JWT)}
+                      >
+                        Load Example
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 border border-primary/10 rounded-2xl"
-                      onClick={() => decode(EXAMPLE_JWT)}
-                    >
-                      Load Example
-                    </Button>
+                    <textarea
+                      value={token}
+                      onChange={(e) => decode(e.target.value)}
+                      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature"
+                      className="min-h-[120px] w-full resize-none bg-background/20 border border-border/30 rounded-xl p-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/40 font-mono leading-relaxed custom-scrollbar break-all shadow-inner"
+                    />
+                    {error && (
+                      <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+                        <AlertTriangle className="h-4 w-4 shrink-0" />
+                        {error}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {result && (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    {/* Expiry Banner */}
+                    {exp && (
+                      <div className={`flex items-center gap-3 p-4 rounded-2xl border font-black text-[10px] uppercase tracking-widest ${isExpired ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"}`}>
+                        <Clock className="h-4 w-4 shrink-0" />
+                        {isExpired
+                          ? `Token expired on ${formatDate(exp)}`
+                          : `Valid · expires ${formatDate(exp)} (${timeLeft ?? "soon"})`}
+                      </div>
+                    )}
+
+                    {/* Header */}
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
+                        <div className="flex items-center gap-3">
+                          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <Key className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Header</h3>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 text-primary border border-primary/10" onClick={() => copy(JSON.stringify(result.header, null, 2), "header")}>
+                          {copiedKey === "header" ? <><Check className="h-3 w-3 mr-1" />Copied</> : <><Copy className="h-3 w-3 mr-1" />Copy</>}
+                        </Button>
+                      </div>
+                      <CardContent className="p-6">
+                        <JsonBlock data={result.header} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Payload */}
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
+                        <div className="flex items-center gap-3">
+                          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Payload</h3>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 text-primary border border-primary/10" onClick={() => copy(JSON.stringify(result.payload, null, 2), "payload")}>
+                          {copiedKey === "payload" ? <><Check className="h-3 w-3 mr-1" />Copied</> : <><Copy className="h-3 w-3 mr-1" />Copy</>}
+                        </Button>
+                      </div>
+                      <CardContent className="p-6">
+                        <JsonBlock data={result.payload} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Signature */}
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
+                        <div className="flex items-center gap-3">
+                          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <Key className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Signature</h3>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 text-primary border border-primary/10" onClick={() => copy(result.signature, "sig")}>
+                          {copiedKey === "sig" ? <><Check className="h-3 w-3 mr-1" />Copied</> : <><Copy className="h-3 w-3 mr-1" />Copy</>}
+                        </Button>
+                      </div>
+                      <CardContent className="p-6">
+                        <p className="text-xs font-mono break-all text-foreground/60 bg-background/20 p-4 rounded-xl border border-border/40 shadow-inner">{result.signature}</p>
+                      </CardContent>
+                    </Card>
                   </div>
-                  <textarea
-                    value={token}
-                    onChange={(e) => decode(e.target.value)}
-                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature"
-                    className="min-h-[120px] w-full resize-none bg-transparent border border-border/30 rounded-xl p-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/40 font-mono leading-relaxed custom-scrollbar break-all"
-                  />
-                  {error && (
-                    <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
-                      <AlertTriangle className="h-4 w-4 shrink-0" />
-                      {error}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {result && (
-                <div className="space-y-4">
-                  {/* Expiry Banner */}
-                  {exp && (
-                    <div className={`flex items-center gap-3 p-4 rounded-2xl border font-medium text-sm ${isExpired ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"}`}>
-                      <Clock className="h-4 w-4 shrink-0" />
-                      {isExpired
-                        ? `Token expired on ${formatDate(exp)}`
-                        : `Valid · expires ${formatDate(exp)} (${timeLeft ?? "soon"})`}
-                    </div>
-                  )}
-
-                  {/* Header */}
-                  <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5">
-                    <div className="bg-blue-500/10 p-5 border-b border-blue-500/10 flex items-center justify-between rounded-t-2xl">
-                      <div className="flex items-center gap-3">
-                        <div className="h-7 w-7 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                          <Key className="h-3.5 w-3.5 text-blue-400" />
-                        </div>
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">Header</h3>
-                      </div>
-                      <Button variant="ghost" size="sm" className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-500/10 text-blue-400 border border-blue-500/10" onClick={() => copy(JSON.stringify(result.header, null, 2), "header")}>
-                        {copiedKey === "header" ? <><Check className="h-3 w-3 mr-1" />Copied</> : <><Copy className="h-3 w-3 mr-1" />Copy</>}
-                      </Button>
-                    </div>
-                    <CardContent className="p-6">
-                      <JsonBlock data={result.header} />
-                    </CardContent>
-                  </Card>
-
-                  {/* Payload */}
-                  <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5">
-                    <div className="bg-violet-500/10 p-5 border-b border-violet-500/10 flex items-center justify-between rounded-t-2xl">
-                      <div className="flex items-center gap-3">
-                        <div className="h-7 w-7 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                          <ShieldCheck className="h-3.5 w-3.5 text-violet-400" />
-                        </div>
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">Payload</h3>
-                      </div>
-                      <Button variant="ghost" size="sm" className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-violet-500/10 text-violet-400 border border-violet-500/10" onClick={() => copy(JSON.stringify(result.payload, null, 2), "payload")}>
-                        {copiedKey === "payload" ? <><Check className="h-3 w-3 mr-1" />Copied</> : <><Copy className="h-3 w-3 mr-1" />Copy</>}
-                      </Button>
-                    </div>
-                    <CardContent className="p-6">
-                      <JsonBlock data={result.payload} />
-                    </CardContent>
-                  </Card>
-
-                  {/* Signature */}
-                  <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5">
-                    <div className="bg-amber-500/10 p-5 border-b border-amber-500/10 flex items-center justify-between rounded-t-2xl">
-                      <div className="flex items-center gap-3">
-                        <div className="h-7 w-7 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                          <Key className="h-3.5 w-3.5 text-amber-400" />
-                        </div>
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400">Signature</h3>
-                      </div>
-                      <Button variant="ghost" size="sm" className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-amber-500/10 hover:text-amber-300 text-amber-400 border border-amber-500/10" onClick={() => copy(result.signature, "sig")}>
-                        {copiedKey === "sig" ? <><Check className="h-3 w-3 mr-1" />Copied</> : <><Copy className="h-3 w-3 mr-1" />Copy</>}
-                      </Button>
-                    </div>
-                    <CardContent className="p-6">
-                      <p className="text-xs font-mono break-all text-foreground/60 bg-muted/20 p-4 rounded-xl border border-border/40">{result.signature}</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              <div className="flex justify-center">
-                <AdPlaceholder format="banner" className="opacity-50 grayscale hover:grayscale-0 transition-all" />
+                )}
               </div>
+
+              <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5">
+                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">Token Stats</h3>
+                    {token && (
+                      <Button onClick={() => { setToken(""); setResult(null); setError(""); }} variant="ghost" size="sm" className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
+                        Reset
+                      </Button>
+                    )}
+                  </div>
+                  <CardContent className="p-8 space-y-6">
+                    {result ? (
+                      <>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
+                            <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none italic">Algorithm</p>
+                            <p className="text-lg font-black italic tracking-tighter text-primary">{result.header.alg ?? "—"}</p>
+                          </div>
+                          <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
+                            <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none italic">Type</p>
+                            <p className="text-lg font-black italic tracking-tighter text-primary">{result.header.typ ?? "—"}</p>
+                          </div>
+                        </div>
+                        {iat && (
+                          <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
+                            <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none italic">Issued At</p>
+                            <p className="text-[11px] font-black italic">{formatDate(iat)}</p>
+                          </div>
+                        )}
+                        {exp && (
+                          <div className={`p-4 rounded-2xl border ${isExpired ? "bg-destructive/5 border-destructive/20" : "bg-emerald-500/5 border-emerald-500/20"}`}>
+                            <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none italic">Expires</p>
+                            <p className="text-[11px] font-black italic">{formatDate(exp)}</p>
+                            <p className={`text-[9px] font-black uppercase mt-1 ${isExpired ? "text-destructive" : "text-emerald-400"}`}>
+                              {isExpired ? "⚠ EXPIRED" : `✓ ${timeLeft ?? "Valid"}`}
+                            </p>
+                          </div>
+                        )}
+                        <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
+                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none italic">Claims</p>
+                          <p className="text-3xl font-black italic tracking-tighter text-primary">{Object.keys(result.payload).length}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-[10px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic py-8 leading-relaxed">Paste a JWT to inspect its bitstream architecture</p>
+                    )}
+                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic leading-relaxed">
+                      Local decode only · Signature not verified
+                    </p>
+                  </CardContent>
+                </Card>
+              </aside>
             </div>
-
-            <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl studio-gradient border-border/20">
-                <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Token Stats</h3>
-                  {token && (
-                    <Button onClick={() => { setToken(""); setResult(null); setError(""); }} variant="ghost" size="sm" className="h-8 px-3 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">
-                      Reset
-                    </Button>
-                  )}
-                </div>
-                <CardContent className="p-8 space-y-6">
-                  {result ? (
-                    <>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Algorithm</p>
-                          <p className="text-lg font-black italic tracking-tighter">{result.header.alg ?? "—"}</p>
-                        </div>
-                        <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Type</p>
-                          <p className="text-lg font-black italic tracking-tighter">{result.header.typ ?? "—"}</p>
-                        </div>
-                      </div>
-                      {iat && (
-                        <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Issued At</p>
-                          <p className="text-xs font-bold">{formatDate(iat)}</p>
-                        </div>
-                      )}
-                      {exp && (
-                        <div className={`p-4 rounded-2xl border ${isExpired ? "bg-destructive/5 border-destructive/20" : "bg-emerald-500/5 border-emerald-500/20"}`}>
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Expires</p>
-                          <p className="text-xs font-bold">{formatDate(exp)}</p>
-                          <p className={`text-[9px] font-black uppercase mt-1 ${isExpired ? "text-destructive" : "text-emerald-400"}`}>
-                            {isExpired ? "⚠ EXPIRED" : `✓ ${timeLeft ?? "Valid"}`}
-                          </p>
-                        </div>
-                      )}
-                      <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
-                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Claims</p>
-                        <p className="text-2xl font-black italic tracking-tighter">{Object.keys(result.payload).length}</p>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-[10px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic py-8">Paste a JWT to inspect</p>
-                  )}
-                  <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic">
-                    Local decode only · Signature not verified
-                  </p>
-                </CardContent>
-              </Card>
-
-              <div className="px-6">
-                <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 transition-all border-border/50" />
-              </div>
-            </aside>
           </div>
-        </div>
         </main>
 
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };

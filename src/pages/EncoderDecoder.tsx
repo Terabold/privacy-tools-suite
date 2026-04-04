@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 
 type Mode = "base64-encode" | "base64-decode" | "url-encode" | "url-decode" | "html-encode" | "html-decode" | "hex-encode" | "hex-decode";
 
@@ -104,29 +105,34 @@ const EncoderDecoder = () => {
          <div className="flex justify-center items-start w-full relative">
             <SponsorSidebars position="left" />
 
-            <main className="container mx-auto max-w-[1400px] px-6 py-12 grow overflow-visible">
+            <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
                <div className="flex flex-col gap-10">
-                  <header className="flex items-center gap-6">
+                  <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
                      <Link to="/">
-                        <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
+                        <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
                            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                         </Button>
                      </Link>
                      <div>
-                        <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
+                        <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
                            Encode / <span className="text-primary italic">Decode</span>
                         </h1>
                         <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">
-                           Base64 · URL · HTML · Hex — Instant Local Conversion
+                           Base64 • URL • HTML • Hex — Instant Local Conversion
                         </p>
                      </div>
                   </header>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+                  {/* Mobile Inline Ad */}
+                  <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+                     <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start overflow-visible">
                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
                         {/* Mode selector */}
-                        <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5 p-6">
+                        <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card p-6">
                            <CardContent className="p-0 space-y-4">
                               {groups.map(group => (
                                  <div key={group} className="flex flex-wrap gap-2">
@@ -146,22 +152,22 @@ const EncoderDecoder = () => {
 
                         {/* Input / Output */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-6">
-                              <CardContent className="p-0 space-y-3">
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Input</p>
-                                 <textarea
+                           <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-6">
+                                <CardContent className="p-0 space-y-3">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Input</p>
+                                <textarea
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     placeholder="Paste your text here…"
-                                    className="min-h-[280px] w-full resize-none bg-transparent border border-border/30 rounded-xl p-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/40 font-mono leading-relaxed custom-scrollbar"
-                                 />
-                                 <Button variant="ghost" size="sm" onClick={() => setInput("")} className="text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-xl h-8 px-3">
+                                    className="min-h-[280px] w-full resize-none bg-background/20 border border-border/30 rounded-xl p-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/40 font-mono leading-relaxed custom-scrollbar shadow-inner"
+                                />
+                                <Button variant="ghost" size="sm" onClick={() => setInput("")} className="text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-xl h-8 px-3">
                                     Clear
-                                 </Button>
-                              </CardContent>
+                                </Button>
+                                </CardContent>
                            </Card>
 
-                           <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-6">
+                           <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-6">
                               <CardContent className="p-0 space-y-3">
                                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Output</p>
                                  {error ? (
@@ -171,7 +177,7 @@ const EncoderDecoder = () => {
                                     </div>
                                  ) : (
                                     <div className="relative">
-                                       <pre className="min-h-[280px] w-full text-sm font-mono leading-relaxed whitespace-pre-wrap break-all text-foreground/80 bg-muted/10 border border-border/30 rounded-xl p-4 custom-scrollbar overflow-auto">
+                                       <pre className="min-h-[280px] w-full text-sm font-mono leading-relaxed whitespace-pre-wrap break-all text-foreground/80 bg-background/20 border border-border/30 rounded-xl p-4 custom-scrollbar overflow-auto shadow-inner">
                                           {output || <span className="text-muted-foreground/30">Result will appear here…</span>}
                                        </pre>
                                     </div>
@@ -180,7 +186,7 @@ const EncoderDecoder = () => {
                                     <Button
                                        onClick={copy}
                                        disabled={!output || !!error}
-                                       className={`flex-1 gap-2 h-10 text-xs font-bold rounded-xl shadow-lg transition-all duration-300 ${copied ? "bg-green-600 hover:bg-green-700 shadow-green-600/20" : "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:scale-[1.01]"}`}
+                                       className={`flex-1 gap-2 h-10 text-xs font-bold rounded-xl shadow-lg transition-all duration-300 ${copied ? "bg-green-600 hover:bg-green-700 shadow-green-600/20" : "bg-primary text-primary-foreground border border-primary/20 hover:scale-[1.01]"}`}
                                     >
                                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                                        {copied ? "Copied!" : "Copy Result"}
@@ -189,7 +195,7 @@ const EncoderDecoder = () => {
                                        onClick={swap}
                                        disabled={!output || !!error}
                                        variant="outline"
-                                       className="gap-2 h-10 text-xs font-bold rounded-xl border-primary/10 hover:bg-primary/5"
+                                       className="gap-2 h-10 text-xs font-bold rounded-xl border-primary/10 hover:bg-primary/5 shadow-md"
                                        title="Use output as next input"
                                     >
                                        <RefreshCw className="h-4 w-4" />
@@ -199,30 +205,26 @@ const EncoderDecoder = () => {
                               </CardContent>
                            </Card>
                         </div>
-
-                        <div className="flex justify-center">
-                           <AdPlaceholder format="banner" className="opacity-50 grayscale hover:grayscale-0 transition-all" />
-                        </div>
                      </div>
 
                      <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                        <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
+                        <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
                            <div className="bg-primary/5 p-5 border-b border-primary/10">
                               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Conversion Stats</h3>
                            </div>
                            <CardContent className="p-8 space-y-6">
                               <div className="grid grid-cols-2 gap-4">
-                                 <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
+                                 <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
                                     <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Input Len</p>
                                     <p className="text-2xl font-black italic tracking-tighter">{input.length}</p>
                                  </div>
-                                 <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
+                                 <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
                                     <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Output Len</p>
                                     <p className="text-2xl font-black italic tracking-tighter">{output.length}</p>
                                  </div>
                               </div>
                               {input && output && !error && (
-                                 <div className="bg-muted/5 p-4 rounded-2xl border border-border/50">
+                                 <div className="bg-background/20 p-4 rounded-2xl border border-border/50">
                                     <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1">Size Ratio</p>
                                     <p className="text-2xl font-black italic tracking-tighter">
                                        {input.length > 0 ? ((output.length / input.length) * 100).toFixed(0) + "%" : "—"}
@@ -234,10 +236,6 @@ const EncoderDecoder = () => {
                               </p>
                            </CardContent>
                         </Card>
-
-                        <div className="px-6">
-                           <AdPlaceholder format="rectangle" className="opacity-40 grayscale hover:grayscale-0 transition-all border-border/50" />
-                        </div>
                      </aside>
                   </div>
                </div>
@@ -246,6 +244,11 @@ const EncoderDecoder = () => {
             <SponsorSidebars position="right" />
          </div>
          <Footer />
+
+         {/* Mobile Sticky Anchor Ad */}
+         <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+            <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+         </div>
       </div>
    );
 };

@@ -6,8 +6,9 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AdPlaceholder from "@/components/AdPlaceholder";
+
 import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -48,7 +49,7 @@ const UniversalVolumeBooster = () => {
     const source = ctx.createMediaElementSource(audio);
     const gain = ctx.createGain();
     const analyser = ctx.createAnalyser();
-    
+
     analyser.fftSize = 256;
     gain.gain.value = volume / 100;
 
@@ -65,7 +66,7 @@ const UniversalVolumeBooster = () => {
   const drawVisualizer = useCallback(() => {
     if (!analyserRef.current || !canvasRef.current || !audioRef.current || audioRef.current.paused) return;
     const canvas = canvasRef.current;
-    
+
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     if (canvas.width !== rect.width * dpr) {
@@ -85,25 +86,25 @@ const UniversalVolumeBooster = () => {
     const width = rect.width;
     const height = rect.height;
     ctx.clearRect(0, 0, width, height);
-    
+
     const barWidth = (width / bufferLength) * 2;
     let x = 0;
 
     for (let i = 0; i < bufferLength; i++) {
       const barHeight = (dataArray[i] / 255) * height;
-      
+
       const gradient = ctx.createLinearGradient(0, height - barHeight, 0, height);
       gradient.addColorStop(0, "#8b5cf6");
       gradient.addColorStop(1, "#6366f1");
-      
+
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.roundRect(x, height - barHeight, barWidth, barHeight, [2, 2, 0, 0]);
       ctx.fill();
-      
+
       x += barWidth + 2;
     }
-    
+
     animationRef.current = requestAnimationFrame(drawVisualizer);
   }, []);
 
@@ -128,10 +129,10 @@ const UniversalVolumeBooster = () => {
     const volumeFactor = volume / 100;
 
     ctx.clearRect(0, 0, width, height);
-    
+
     const barWidth = 2;
     const gap = 1;
-    
+
     for (let i = 0; i < width; i += (barWidth + gap)) {
       let min = 1.0;
       let max = -1.0;
@@ -140,7 +141,7 @@ const UniversalVolumeBooster = () => {
         if (datum < min) min = datum;
         if (datum > max) max = datum;
       }
-      
+
       const barHeight = Math.min(height, Math.max(1, (max - min) * amp * 0.8 * volumeFactor));
       ctx.fillStyle = volume > 150 ? "rgba(139, 92, 246, 0.9)" : "rgba(139, 92, 246, 0.7)";
       ctx.beginPath();
@@ -172,7 +173,7 @@ const UniversalVolumeBooster = () => {
     if (objectUrl) URL.revokeObjectURL(objectUrl);
     if (audioCtxRef.current) {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      audioCtxRef.current.close().catch(() => {});
+      audioCtxRef.current.close().catch(() => { });
       audioCtxRef.current = null;
       gainNodeRef.current = null;
       analyserRef.current = null;
@@ -183,7 +184,7 @@ const UniversalVolumeBooster = () => {
     const url = URL.createObjectURL(f);
     setObjectUrl(url);
     setVolume(100);
-    
+
     try {
       const arrayBuffer = await f.arrayBuffer();
       const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -193,7 +194,7 @@ const UniversalVolumeBooster = () => {
     } catch (e) {
       console.error("Waveform preview failed", e);
     }
-    
+
     toast.success(`${f.name} loaded into studio`);
   };
 
@@ -204,15 +205,15 @@ const UniversalVolumeBooster = () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       if (playheadAnimationRef.current) cancelAnimationFrame(playheadAnimationRef.current);
-      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
+      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => { });
     };
   }, [objectUrl]);
 
   const handlePlay = () => {
     if (!audioRef.current) return;
     ensureAudioGraph();
-    audioCtxRef.current?.resume().catch(() => {});
-    
+    audioCtxRef.current?.resume().catch(() => { });
+
     if (audioRef.current.paused) {
       audioRef.current.play();
       setIsPlaying(true);
@@ -228,7 +229,7 @@ const UniversalVolumeBooster = () => {
 
   const startPlayheadLoop = () => {
     if (playheadAnimationRef.current) cancelAnimationFrame(playheadAnimationRef.current);
-    
+
     const update = () => {
       if (audioRef.current && isPlayingRef.current) {
         setCurrentTime(audioRef.current.currentTime);
@@ -334,168 +335,173 @@ const UniversalVolumeBooster = () => {
   return (
     <div className="min-h-screen bg-background text-foreground theme-audio transition-all duration-500 overflow-x-hidden">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
-      
+
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1400px] px-6 py-12 grow">
-        <div className="flex flex-col gap-10">
-          <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <Link to="/">
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
-                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
-                Universal Volume <span className="text-primary italic">Booster</span>
-              </h1>
-              <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">High-Performance Bitstream Amplification</p>
-            </div>
-          </header>
+        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow text-foreground">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <Link to="/">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                  Universal Volume <span className="text-primary italic">Booster</span>
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">High-Performance Bitstream Amplification • Digital Gain Master</p>
+              </div>
+            </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="lg:col-span-8 space-y-8">
-              {!file ? (
-                <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-muted/5 rounded-2xl shadow-inner p-10 select-none">
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div className="lg:col-span-8 space-y-8">
+                {!file ? (
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                       onClick={() => !processing && inputRef.current?.click()}
-                      className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                      className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-32 bg-background hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                     >
-                       <div className="h-24 w-24 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                          <Volume2 className="h-12 w-12 text-primary" />
-                       </div>
-                       
-                       <div className="px-6 text-center space-y-1">
-                         <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
-                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
-                         <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center">MP3, WAV, OGG, & MP4 Audio Streams Supported • 32-bit Core</p>
-                       </div>
-                      <input ref={inputRef} type="file" className="hidden" accept="audio/*,video/*" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
-                    </div>
-                </Card>
-              ) : (
-                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                  <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-zinc-900/50 group relative overflow-hidden">
-                    <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Volume2 className="h-4 w-4 text-primary" />
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Wave Stage</h3>
-                      </div>
-                    </div>
-                    <CardContent className="p-10">
-                      <div className="space-y-10">
-                      <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
-                               <Music className="h-5 w-5" />
-                            </div>
-                            <div>
-                               <p className="text-[10px] font-black uppercase tracking-widest opacity-40 text-foreground">Gain Level</p>
-                               <p className="text-2xl font-black italic tracking-tight text-primary">{volume.toFixed(0)}%</p>
-                            </div>
-                         </div>
-                          <div className="text-right">
-                             <p className="text-[10px] font-black uppercase tracking-widest opacity-20 text-foreground">Peak Boost</p>
-                             <p className="text-xl font-black text-foreground">+{((volume - 100) / 100 * 12).toFixed(2)} dB</p>
-                          </div>
+                      <div className="h-24 w-24 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                        <Volume2 className="h-12 w-12 text-primary" />
                       </div>
 
-                       <Slider
-                         min={0} max={500} step={1}
-                         value={[volume]}
-                         onValueChange={([v]) => setVolume(v)}
-                         className="py-6"
-                       />
-
-                      <div className="flex justify-between text-[9px] font-black uppercase tracking-widest opacity-30 px-2 italic">
-                        <span>Silent</span>
-                        <span>Standard (100%)</span>
-                        <span>Hyper-Gain (5x)</span>
+                      <div className="px-6 text-center space-y-1">
+                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
+                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
+                        <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center">MP3, WAV, OGG, & MP4 Audio Streams Supported • 32-bit Core</p>
                       </div>
-
-                      <div className="pt-6 border-t border-primary/10 flex flex-col items-center gap-6">
-                        <div 
-                          className="w-full h-32 bg-background/50 rounded-2xl border border-border/50 shadow-inner flex items-center justify-center overflow-hidden relative group/waveform cursor-pointer"
-                          onMouseDown={(e) => {
-                            if (!audioBuffer) return;
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const seekTo = (ev: { clientX: number }) => {
-                              const x = (ev.clientX - rect.left) / rect.width;
-                              const t = Math.max(0, Math.min(x * audioBuffer.duration, audioBuffer.duration));
-                              setCurrentTime(t);
-                              if (audioRef.current) audioRef.current.currentTime = t;
-                            };
-                            seekTo(e);
-                            const onMove = (ev: MouseEvent) => seekTo(ev);
-                            const onUp = () => {
-                              window.removeEventListener('mousemove', onMove);
-                              window.removeEventListener('mouseup', onUp);
-                            };
-                            window.addEventListener('mousemove', onMove);
-                            window.addEventListener('mouseup', onUp);
-                          }}
-                        >
-                           <canvas ref={staticCanvasRef} className="absolute inset-0 w-full h-full opacity-60 pointer-events-none" />
-                           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
-                           {audioBuffer && (
-                              <div 
-                                className="absolute top-0 bottom-0 w-[3px] bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)] z-50 pointer-events-none"
-                                style={{ left: `${(currentTime / audioBuffer.duration) * 100}%` }}
-                              />
-                           )}
-                        </div>
-                        
-                        <div className="w-full flex items-center justify-between gap-6 px-2">
-                           <div className="flex items-center gap-5">
-                              <Button variant="outline" size="icon" className="h-10 w-10 rounded-full border border-primary/20 hover:bg-primary/5 group" onClick={resetPlayback}>
-                                <RotateCcw className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                              </Button>
-                              <button onClick={handlePlay} className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform shadow-xl">
-                                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 fill-current" />}
-                              </button>
-                           </div>
-                           
-                           <div className="text-right">
-                              <p className="text-[10px] font-black uppercase tracking-widest opacity-20">Time Registry</p>
-                              <code className="text-sm font-black text-foreground font-mono">
-                                 {currentTime.toFixed(2)}s <span className="opacity-20 mx-1">/</span> {audioBuffer ? audioBuffer.duration.toFixed(2) : "0.00"}s
-                              </code>
-                           </div>
-                        </div>
-
-                        <audio ref={audioRef} src={objectUrl || ""} className="hidden" />
-                      </div>
-                    </div>
-                  </CardContent>
-                    
-                    <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                       <Button 
-                         onClick={() => { setFile(null); setAudioBuffer(null); setObjectUrl(null); }} 
-                         variant="destructive" 
-                         size="sm" 
-                         className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
-                       >
-                         Reset Stage
-                       </Button>
+                      <input ref={inputRef} type="file" className="hidden" accept="audio/*" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
                     </div>
                   </Card>
-                </div>
-              )}
-            </div>
+                ) : (
+                  <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-hidden">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Volume2 className="h-4 w-4 text-primary" />
+                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Wave Stage</h3>
+                        </div>
+                      </div>
+                      <CardContent className="p-10">
+                        <div className="space-y-10">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                                <Music className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest opacity-40 text-muted-foreground">Gain Level</p>
+                                <p className="text-2xl font-black italic tracking-tight text-primary">{volume.toFixed(0)}%</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-[10px] font-black uppercase tracking-widest opacity-20 text-muted-foreground">Peak Boost</p>
+                              <p className="text-xl font-black text-foreground">+{((volume - 100) / 100 * 12).toFixed(2)} dB</p>
+                            </div>
+                          </div>
 
-            <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-              <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
-                 <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
-                   <Zap className="h-4 w-4 text-primary" />
-                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Power Profile</h3>
-                 </div>
-                 <CardContent className="p-8 space-y-8">
-                    <Button 
-                      onClick={processAndDownload} 
-                      disabled={!file || processing} 
+                          <Slider
+                            min={0} max={500} step={1}
+                            value={[volume]}
+                            onValueChange={([v]) => setVolume(v)}
+                            className="py-6"
+                          />
+
+                          <div className="flex justify-between text-[9px] font-black uppercase tracking-widest opacity-30 px-2 italic text-muted-foreground">
+                            <span>Silent</span>
+                            <span>Standard (100%)</span>
+                            <span>Hyper-Gain (5x)</span>
+                          </div>
+
+                          <div className="pt-6 border-t border-primary/10 flex flex-col items-center gap-6">
+                            <div
+                              className="w-full h-32 bg-background/40 rounded-2xl border border-border/50 shadow-inner flex items-center justify-center overflow-hidden relative group/waveform cursor-pointer"
+                              onMouseDown={(e) => {
+                                if (!audioBuffer) return;
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                const seekTo = (ev: { clientX: number }) => {
+                                  const x = (ev.clientX - rect.left) / rect.width;
+                                  const t = Math.max(0, Math.min(x * audioBuffer.duration, audioBuffer.duration));
+                                  setCurrentTime(t);
+                                  if (audioRef.current) audioRef.current.currentTime = t;
+                                };
+                                seekTo(e);
+                                const onMove = (ev: MouseEvent) => seekTo(ev);
+                                const onUp = () => {
+                                  window.removeEventListener('mousemove', onMove);
+                                  window.removeEventListener('mouseup', onUp);
+                                };
+                                window.addEventListener('mousemove', onMove);
+                                window.addEventListener('mouseup', onUp);
+                              }}
+                            >
+                              <canvas ref={staticCanvasRef} className="absolute inset-0 w-full h-full opacity-60 pointer-events-none" />
+                              <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
+                              {audioBuffer && (
+                                <div
+                                  className="absolute top-0 bottom-0 w-[3px] bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)] z-50 pointer-events-none"
+                                  style={{ left: `${(currentTime / audioBuffer.duration) * 100}%` }}
+                                />
+                              )}
+                            </div>
+
+                            <div className="w-full flex items-center justify-between gap-6 px-2">
+                              <div className="flex items-center gap-5">
+                                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full border border-primary/20 hover:bg-primary/5 group" onClick={resetPlayback}>
+                                  <RotateCcw className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                </Button>
+                                <button onClick={handlePlay} className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform shadow-xl">
+                                  {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 fill-current" />}
+                                </button>
+                              </div>
+
+                              <div className="text-right">
+                                <p className="text-[10px] font-black uppercase tracking-widest opacity-20 text-muted-foreground">Time Registry</p>
+                                <code className="text-sm font-black text-foreground font-mono">
+                                  {currentTime.toFixed(2)}s <span className="opacity-20 mx-1">/</span> {audioBuffer ? audioBuffer.duration.toFixed(2) : "0.00"}s
+                                </code>
+                              </div>
+                            </div>
+
+                            <audio ref={audioRef} src={objectUrl || ""} className="hidden" />
+                          </div>
+                        </div>
+                      </CardContent>
+
+                      <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <Button
+                          onClick={() => { setFile(null); setAudioBuffer(null); setObjectUrl(null); }}
+                          variant="destructive"
+                          size="sm"
+                          className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
+                        >
+                          Reset Stage
+                        </Button>
+                      </div>
+                    </Card>
+                  </div>
+                )}
+              </div>
+
+              <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
+                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
+                    <Zap className="h-4 w-4 text-primary" />
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Power Profile</h3>
+                  </div>
+                  <CardContent className="p-8 space-y-8">
+                    <Button
+                      onClick={processAndDownload}
+                      disabled={!file || processing}
                       className="w-full gap-3 h-16 text-lg font-black rounded-2xl shadow-xl hover:scale-[1.01] transition-all uppercase italic"
                     >
                       <Download className="h-6 w-6" />
@@ -504,20 +510,25 @@ const UniversalVolumeBooster = () => {
                     <p className="text-[9px] text-center mt-4 text-muted-foreground font-black uppercase tracking-widest opacity-40 italic leading-relaxed">
                       High-Precision Bitstream Amplification Engine • Direct-to-Disk High-Fidelity Export.
                     </p>
-                 </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <div className="px-6">
-                 <AdPlaceholder format="rectangle" className="opacity-40 grayscale group-hover:grayscale-0 transition-all" />
-              </div>
-            </aside>
+                <div className="px-6">
+
+                </div>
+              </aside>
+            </div>
           </div>
-        </div>
         </main>
 
         <SponsorSidebars position="right" />
       </div>
       <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+        <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
     </div>
   );
 };
