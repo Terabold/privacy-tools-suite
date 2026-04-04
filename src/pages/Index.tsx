@@ -143,8 +143,8 @@ const Index = () => {
              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
           </div>
 
-          {/* Privacy Manifesto Section */}
-          <section className="py-24 px-12 rounded-2xl bg-zinc-950 text-white dark:bg-zinc-900 border border-white/5 shadow-2xl relative overflow-hidden group mb-32 hover-glow transition-all duration-500">
+          {/* Privacy Manifesto Section (Universal Focal Point) */}
+          <section className="py-28 px-12 rounded-[2.5rem] bg-zinc-950 text-white dark:bg-black border border-primary/20 shadow-[0_0_100px_-20px_rgba(var(--primary),0.15)] relative overflow-hidden group mb-32 hover-glow transition-all duration-700">
              <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 group-hover:scale-[2] transition-transform duration-1000">
                 <ShieldCheck className="h-60 w-60" />
               </div>

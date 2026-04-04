@@ -22,10 +22,13 @@ const Footer = () => {
               Premium, 100% private browser-based utilities. 
               The most secure way to process media and data—completely offline on your device.
             </p>
-            <div className="mt-4">
+            <div className="mt-4 flex items-center gap-3">
               <a href="mailto:hello@privateutils.com" className="text-xs font-bold text-primary hover:underline transition-all">
                 hello@privateutils.com
               </a>
+              <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black tracking-widest uppercase">
+                v1.0
+              </span>
             </div>
           </div>
 
