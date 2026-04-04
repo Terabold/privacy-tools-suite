@@ -114,11 +114,11 @@ const Index = () => {
           <section className="text-center mb-10 relative animate-in fade-in duration-1000">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full -z-10" />
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-foreground font-display mb-6 leading-[0.9]">
-              ClientSide<span className="text-primary italic">Tools</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Creative Sandbox</span>
+              Private<span className="text-primary italic">Utils</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Privacy-First Hub</span>
             </h1>
             <p className="mx-auto max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed font-medium">
-              Professional-grade media processing that runs entirely in your browser. 
-              No accounts, no uploads, and zero tracking—your data never leaves your device.
+              Experience the <span className="font-bold text-foreground">PrivateUtils Engine</span>: Desktop-grade utility tools running 100% in your browser. 
+              No accounts, no tracking, and zero data leakage—your data never reaches a server.
             </p>
           </section>
 
@@ -147,33 +147,34 @@ const Index = () => {
           <section className="py-24 px-12 rounded-2xl bg-zinc-950 text-white dark:bg-zinc-900 border border-white/5 shadow-2xl relative overflow-hidden group mb-32 hover-glow transition-all duration-500">
              <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 group-hover:scale-[2] transition-transform duration-1000">
                 <ShieldCheck className="h-60 w-60" />
-             </div>
-             
-             <div className="relative z-10 max-w-4xl">
-                <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/30 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-10">
-                   <Lock className="h-4 w-4" /> 100% Client-Side Engine
-                </div>
-                <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-none">
-                   Your files are <span className="text-primary italic">nobody's business.</span>
-                </h2>
-                <p className="text-xl text-zinc-400 font-medium mb-16 leading-relaxed max-w-3xl">
-                   Unlike other online tools, we never "upload" your content to a server. Our entire engine runs inside your browser using hardware-accelerated WebAssembly. 
-                   <br /><br />
-                   This means <span className="text-white font-bold underline decoration-primary/50 underline-offset-8">Zero Logs. Zero Tracking. Zero Data Leaks.</span>
-                </p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
-                   <div className="space-y-4 border-l-2 border-primary/30 pl-8 transition-colors hover:border-primary">
-                      <h4 className="text-base font-black uppercase tracking-widest text-primary">Local Compute</h4>
-                      <p className="text-sm text-zinc-500 font-medium leading-relaxed">Processing happens at CPU-speed on your machine. No high-speed internet required for heavy binary operations.</p>
-                   </div>
-                   <div className="space-y-4 border-l-2 border-primary/30 pl-8 transition-colors hover:border-primary">
-                      <h4 className="text-base font-black uppercase tracking-widest text-primary">Absolute Privacy</h4>
-                      <p className="text-sm text-zinc-500 font-medium leading-relaxed">No "Wait Rooms" or queues. Your data stays in the browser's memory sandbox and vanishes on tab close.</p>
-                   </div>
-                </div>
-             </div>
-          </section>
+              </div>
+              
+              <div className="relative z-10 max-w-4xl">
+                 <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/30 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-10">
+                    <Lock className="h-4 w-4" /> The PrivateUtils 100% Browser Engine
+                 </div>
+                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-none">
+                    Engineered for your <span className="text-primary italic">eyes only.</span>
+                 </h2>
+                 <p className="text-xl text-zinc-400 font-medium mb-16 leading-relaxed max-w-3xl">
+                    Most online tools are secretly data collection engines. We changed the paradigm. 
+                    Your binary strictly stays on your hardware, processed by our **Zero-Trust Compute Core**. 
+                    <br /><br />
+                    Using hardware-accelerated WebAssembly, we process sensitive data at wire-speed with <span className="text-white font-bold underline decoration-primary/50 underline-offset-8">Zero Logs. Zero Tracking. Zero Data Leaks.</span>
+                 </p>
+                 
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
+                    <div className="space-y-4 border-l-2 border-primary/30 pl-8 transition-colors hover:border-primary">
+                       <h4 className="text-base font-black uppercase tracking-widest text-primary">Air-Gapped Processing</h4>
+                       <p className="text-sm text-zinc-500 font-medium leading-relaxed">Parallel rendering and complex logic happen entirely in your local RAM sandbox. Our site could be disconnected from the internet and still function.</p>
+                    </div>
+                    <div className="space-y-4 border-l-2 border-primary/30 pl-8 transition-colors hover:border-primary">
+                       <h4 className="text-base font-black uppercase tracking-widest text-primary">Universal Compliance</h4>
+                       <p className="text-sm text-zinc-500 font-medium leading-relaxed">Stay compliant with enterprise security standards. Since no data is transmitted, you are inherently protected from standard man-in-the-middle liabilities.</p>
+                    </div>
+                 </div>
+              </div>
+           </section>
 
           {/* Benefits Grid */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-12 py-12 mb-16">

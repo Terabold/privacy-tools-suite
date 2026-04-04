@@ -10,18 +10,23 @@ const Footer = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
           <div>
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
-              <div className="h-6 w-6 rounded bg-primary flex items-center justify-center font-bold text-primary-foreground text-xs">
-                L
+            <div className="group flex items-center justify-center md:justify-start gap-2 mb-4 cursor-pointer select-none">
+              <div className="h-6 w-6 rounded bg-primary flex items-center justify-center font-bold text-primary-foreground text-[10px]">
+                P
               </div>
-              <span className="text-lg font-bold tracking-tight text-foreground font-display">
-                ClientSide<span className="text-primary">Tools</span>
+              <span className="text-lg font-black tracking-tight text-foreground font-display uppercase italic transition-all duration-300 group-hover:text-shadow-glow flex items-center">
+                Private<span className="not-italic text-primary ml-1">Utils</span>
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              100% private, client-side tools. Your files never leave your computer.
-              The most secure way to process media and data.
+              Premium, 100% private browser-based utilities. 
+              The most secure way to process media and data—completely offline on your device.
             </p>
+            <div className="mt-4">
+              <a href="mailto:hello@privateutils.com" className="text-xs font-bold text-primary hover:underline transition-all">
+                hello@privateutils.com
+              </a>
+            </div>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -42,7 +47,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-          <p>© 2026 CLIENTSIDETOOLS STUDIO</p>
+          <p>© 2026 PRIVATEUTILS STUDIO</p>
           <div className="flex gap-6">
             <span className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-primary cursor-pointer transition-colors">Terms of Use</span>

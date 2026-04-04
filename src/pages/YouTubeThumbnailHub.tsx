@@ -226,7 +226,7 @@ const YouTubeThumbnailHub = () => {
                               <div className="flex items-center gap-4">
                                 <div className={`h-12 w-12 rounded-full border ${ytTheme === 'dark' ? 'bg-[#272727] border-white/5' : 'bg-zinc-200 border-zinc-300'}`} />
                                 <div>
-                                  <p className={`font-black text-base leading-none uppercase tracking-tighter ${ytTheme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>Privacy Suite Labs</p>
+                                  <p className={`font-black text-base leading-none uppercase tracking-tighter ${ytTheme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>PrivateUtils Labs</p>
                                   <p className={`text-[10px] mt-1 uppercase font-black tracking-widest ${ytTheme === 'dark' ? 'text-white/60' : 'text-zinc-500'}`}>1.2M subscribers</p>
                                 </div>
                                 <Button className={`rounded-full font-black text-xs h-10 px-6 ml-4 hover:opacity-90 uppercase tracking-widest transition-all ${ytTheme === 'dark' ? "bg-white text-black" : "bg-zinc-900 text-white"}`}>Subscribe</Button>
@@ -260,7 +260,7 @@ const YouTubeThumbnailHub = () => {
                               </div>
                               <div className="space-y-1 py-0.5 overflow-hidden">
                                 <h4 className={`text-sm font-black leading-snug line-clamp-2 pr-4 overflow-visible transition-colors duration-300 ${ytTheme === 'dark' ? 'text-white/90 group-hover:text-primary' : 'text-zinc-900 group-hover:text-primary'}`}>{i === 1 ? title : getOtherTitle(i)}</h4>
-                                <p className={`text-[10px] mt-1 font-black uppercase tracking-widest ${ytTheme === 'dark' ? 'text-white/40' : 'text-zinc-500'}`}>{i === 1 ? 'Privacy Suite Labs' : `Casual YouTuber ${i}`}</p>
+                                <p className={`text-[10px] mt-1 font-black uppercase tracking-widest ${ytTheme === 'dark' ? 'text-white/40' : 'text-zinc-500'}`}>{i === 1 ? 'PrivateUtils Labs' : `Casual YouTuber ${i}`}</p>
                               </div>
                             </div>
                           ))}
@@ -301,7 +301,7 @@ const YouTubeThumbnailHub = () => {
                               <div className={`h-9 w-9 rounded-full shrink-0 mt-1 border ${ytTheme === 'dark' ? 'bg-[#272727] border-white/5' : 'bg-zinc-200 border-zinc-300'}`} />
                               <div className="space-y-1">
                                 <h3 className={`text-[15px] font-black leading-tight line-clamp-2 tracking-tighter pr-4 overflow-visible transition-colors duration-300 ${i === 1 ? 'text-primary' : (ytTheme === 'dark' ? 'text-white' : 'text-zinc-900')}`}>{i === 1 ? title : getOtherTitle(i)}</h3>
-                                <p className={`text-[10px] mt-1 uppercase font-black tracking-widest ${ytTheme === 'dark' ? 'text-white/40' : 'text-zinc-500'}`}>{i === 1 ? 'Privacy Suite Labs' : `YouTuber ${i}`}</p>
+                                <p className={`text-[10px] mt-1 uppercase font-black tracking-widest ${ytTheme === 'dark' ? 'text-white/40' : 'text-zinc-500'}`}>{i === 1 ? 'PrivateUtils Labs' : `YouTuber ${i}`}</p>
                                 <p className={`text-[10px] uppercase font-black tracking-widest ${ytTheme === 'dark' ? 'text-white/40' : 'text-zinc-500'}`}>1.2M views • 2 hours ago</p>
                               </div>
                             </div>
@@ -349,7 +349,7 @@ const YouTubeThumbnailHub = () => {
                                 </div>
                                 <div className="flex items-center gap-3 py-2">
                                   <div className={`h-6 w-6 rounded-full border ${ytTheme === 'dark' ? 'bg-[#272727] border-white/5' : 'bg-zinc-200 border-zinc-300'}`} />
-                                  <span className={`text-[12px] font-black uppercase tracking-tighter transition-colors duration-300 ${i === 1 ? 'text-primary' : (ytTheme === 'dark' ? 'text-white/60 group-hover:text-white' : 'text-zinc-600 group-hover:text-zinc-900')}`}>{i === 1 ? 'ClientSideTools Labs' : `Channel AI ${i}`}</span>
+                                  <span className={`text-[12px] font-black uppercase tracking-tighter transition-colors duration-300 ${i === 1 ? 'text-primary' : (ytTheme === 'dark' ? 'text-white/60 group-hover:text-white' : 'text-zinc-600 group-hover:text-zinc-900')}`}>{i === 1 ? 'PrivateUtils Labs' : `Channel AI ${i}`}</span>
                                 </div>
                                 <p className={`text-[12px] line-clamp-2 italic leading-relaxed ${ytTheme === 'dark' ? 'text-white/30' : 'text-zinc-500'}`}>Learn how to use state-of-the-art encryption protocols and local-first data processing to ensure your information never leaves your hardware...</p>
                                 <div className="flex gap-2 pt-1">

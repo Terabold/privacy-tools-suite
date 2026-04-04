@@ -111,6 +111,10 @@
     @apply border-border;
   }
 
+  html {
+    @apply overflow-y-scroll;
+  }
+  
   body {
     @apply bg-background text-foreground antialiased text-[16px] pb-20 md:pb-0;
     font-family: 'Outfit', sans-serif;

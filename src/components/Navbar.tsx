@@ -96,19 +96,29 @@ const Navbar = ({
       <div className="container mx-auto max-w-[1500px] flex h-[80px] items-center justify-between px-4 lg:px-8 gap-4 md:gap-12">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group cursor-pointer select-none shrink-0 no-underline">
+        <Link 
+          to="/" 
+          className="group flex items-center justify-start gap-3 cursor-pointer select-none no-underline outline-none shrink-0 md:min-w-[240px]"
+        >
+          {/* Hardware-Stabilized Icon Box */}
           <div 
-            className="h-2 w-10 rounded-full relative overflow-hidden transition-all duration-500"
-            style={{ backgroundColor: `hsl(${activeTheme?.hsl} / 0.1)` }}
+            className="h-11 w-11 rounded-lg flex items-center justify-center text-white shadow-2xl transition-all duration-500 group-hover:scale-105 shrink-0 overflow-hidden"
+            style={{ backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}
           >
-            <div 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-700" 
-              style={{ backgroundColor: `hsl(${activeTheme?.hsl})` }}
-            />
+            <svg 
+              viewBox="0 0 24 24" 
+              fill="currentColor" 
+              className="w-[55%] h-[55%] pointer-events-none" 
+            >
+              <path d="M5 4h9a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-4v6H5V4zm5 7h4a2 2 0 0 0 0-4h-4v4z" />
+            </svg>
           </div>
-          <span className="text-xl font-black tracking-tight text-foreground font-display uppercase italic transition-all duration-300 group-hover:text-shadow-glow flex items-center">
-            ClientSide<span className="not-italic logo-text-transition ml-1" style={{ color: `hsl(${activeTheme?.hsl})` }}>Tools</span>
-          </span>
+          {/* Pixel-Perfect Text Anchor */}
+          <div className="flex h-11 items-center gap-1">
+            <span className="text-[28px] font-black tracking-tighter text-foreground font-display uppercase italic transition-all duration-300 group-hover:text-shadow-glow flex items-center leading-none">
+              Private<span className="not-italic logo-text-transition" style={{ color: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}>Utils</span>
+            </span>
+          </div>
         </Link>
 
         {/* Search + Categories */}
@@ -136,13 +146,11 @@ const Navbar = ({
               <div className="absolute top-12 left-0 right-0 bg-card/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300 z-[110]">
                 <div className="p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
                   {filteredSearchResults.map(tool => (
-                    <button
+                    <Link
                       key={tool.to}
-                      onClick={() => {
-                        navigate(tool.to);
-                        setShowSearchOverlay(false);
-                      }}
-                      className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-primary/10 transition-all text-left group/result border border-transparent hover:border-white/5"
+                      to={tool.to}
+                      onClick={() => setShowSearchOverlay(false)}
+                      className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-all text-left group/result border border-transparent hover:border-white/5 no-underline"
                     >
                       <div 
                         className="h-9 w-9 rounded-full flex items-center justify-center group-hover/result:scale-110 transition-transform shadow-sm flex-shrink-0"
@@ -157,7 +165,7 @@ const Navbar = ({
                         <p className="text-xs text-muted-foreground truncate font-medium italic">{tool.description}</p>
                       </div>
                       <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/result:text-foreground transition-all" />
-                    </button>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -204,23 +212,28 @@ const Navbar = ({
                     {categoryTools.map(tool => (
                       <DropdownMenuItem 
                         key={tool.to}
-                        onClick={() => navigate(tool.to)}
-                        className="rounded-xl cursor-pointer group/item py-2.5 flex items-center gap-3 px-3 transition-colors"
-                        style={{ ["--hover-bg" as any]: `hsl(${theme.hsl} / 0.1)`, ["--hover-text" as any]: `hsl(${theme.hsl})` } as React.CSSProperties}
+                        asChild
+                        className="rounded-xl cursor-pointer p-2 focus:bg-muted/50 focus:text-foreground group/item"
                       >
-                        <div 
-                          className="h-8 w-8 rounded-full flex items-center justify-center group-hover/item:scale-110 transition-all shadow-sm"
-                          style={{ backgroundColor: `hsl(${theme.hsl} / 0.1)`, color: `hsl(${theme.hsl})` }}
+                        <Link
+                          to={tool.to}
+                          className="flex items-center gap-3 w-full no-underline"
+                          style={{ ["--hover-text" as any]: `hsl(${theme.hsl})` } as React.CSSProperties}
                         >
-                          <div className="h-4.5 w-4.5 flex items-center justify-center">
-                            {tool.icon}
+                          <div 
+                            className="h-8 w-8 rounded-full flex items-center justify-center group-hover/item:scale-110 transition-all shadow-sm"
+                            style={{ backgroundColor: `hsl(${theme.hsl} / 0.1)`, color: `hsl(${theme.hsl})` }}
+                          >
+                            <div className="h-4.5 w-4.5 flex items-center justify-center">
+                              {tool.icon}
+                            </div>
                           </div>
-                        </div>
-                        <span 
-                          className="text-sm font-bold transition-colors text-foreground group-hover/item:text-[var(--hover-text)]"
-                        >
-                          {tool.title}
-                        </span>
+                          <span 
+                            className="text-sm font-bold transition-colors text-foreground group-hover/item:text-[var(--hover-text)]"
+                          >
+                            {tool.title}
+                          </span>
+                        </Link>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
