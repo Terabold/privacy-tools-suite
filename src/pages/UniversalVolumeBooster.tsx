@@ -379,7 +379,7 @@ const UniversalVolumeBooster = () => {
                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag master or click</p>
                         <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20 text-center">MP3, WAV, OGG, & MP4 Audio Streams Supported • 32-bit Core</p>
                       </div>
-                      <input ref={inputRef} type="file" className="hidden" accept="audio/*" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
+                      <input ref={inputRef} type="file" className="hidden" accept="audio/*,video/*" onChange={(e) => handleFile(e.target.files?.[0])} disabled={processing} />
                     </div>
                   </Card>
                 ) : (

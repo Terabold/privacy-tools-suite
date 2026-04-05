@@ -44,6 +44,8 @@ const ReverseAudio = lazy(() => import("./pages/ReverseAudio"));
 const BinaryToAudio = lazy(() => import("./pages/BinaryToAudio"));
 const AudioMonoStereo = lazy(() => import("./pages/AudioMonoStereo"));
 const BassBooster = lazy(() => import("./pages/BassBooster"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // --- LOADING FALLBACK ARTIFACT ---
@@ -104,6 +106,8 @@ const App = () => (
             <Route path="/binary-to-audio" element={<BinaryToAudio />} />
             <Route path="/audio-mono-stereo" element={<AudioMonoStereo />} />
             <Route path="/audio-bass-booster" element={<BassBooster />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfUse />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

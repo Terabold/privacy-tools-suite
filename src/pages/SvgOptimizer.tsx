@@ -109,15 +109,15 @@ const SvgOptimizer = () => {
             <header className="flex items-center justify-between flex-wrap gap-8">
               <div className="flex items-center gap-6">
                 <Link to="/">
-                  <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border/50 hover:bg-primary/5 transition-all group/back">
+                  <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border dark:border-white/20 hover:bg-primary/10 dark:hover:bg-primary/20 transition-all group/back bg-background/80 dark:bg-black/60 shadow-xl dark:shadow-2xl">
                     <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-foreground dark:text-white text-shadow-glow">
                     SVG <span className="text-primary italic">Optimizer</span>
                   </h1>
-                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional-Grade SVG Code Minification</p>
+                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-60 dark:opacity-40 text-[10px]">Professional-Grade SVG Code Minification</p>
                 </div>
               </div>
             </header>
@@ -129,28 +129,31 @@ const SvgOptimizer = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-12 items-start">
               <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-black shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
-                  <div className="bg-[#0a0a0a] px-4 py-2 border-b border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-3 relative top-[1px]">
-                      <div className="flex gap-1.5 items-center bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-[#151515]">
-                        <FileCode className="h-3.5 w-3.5 text-orange-400" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">source.svg</span>
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
+
+                  {/* VS Code Style Header */}
+                  <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1.5 items-center bg-white dark:bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-border dark:border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-zinc-50 dark:hover:bg-[#151515]">
+                        <FileCode className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-zinc-400">source.svg</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" onClick={() => { navigator.clipboard.writeText(input); toast.success("Source Copied"); }} disabled={!input}>
+                    <div className="flex items-center gap-1 mb-2">
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white dark:hover:bg-white/10 rounded-lg transition-colors" onClick={() => { navigator.clipboard.writeText(input); toast.success("Source Copied"); }} disabled={!input}>
                         <Copy className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" onClick={() => { setInput(""); setOptimized(""); setStats(null); }} disabled={!input}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/70 hover:text-destructive dark:text-destructive/50 dark:hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/10 rounded-lg transition-colors" onClick={() => { setInput(""); setOptimized(""); setStats(null); }} disabled={!input}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   </div>
 
-                  <div className="flex-1 flex overflow-hidden min-h-[400px] h-[500px]">
+                  {/* Body Content */}
+                  <div className="flex-1 flex overflow-hidden bg-white dark:bg-black min-h-[500px] relative z-0">
                     {/* Line Numbers Gutter */}
-                    <div className="w-12 bg-[#050505] border-r border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-zinc-600 select-none">
+                    <div className="w-12 bg-zinc-50 dark:bg-[#050505] border-r border-border dark:border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-muted-foreground/50 dark:text-zinc-600 select-none">
                       {Array.from({ length: Math.max(1, input.split('\n').length) }).map((_, i) => (
                         <div key={i} className="leading-relaxed h-6">{i + 1}</div>
                       ))}
@@ -160,31 +163,36 @@ const SvgOptimizer = () => {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder='Paste SVG code or XML artifact here...'
-                      className="flex-1 bg-transparent p-6 font-mono text-sm text-[#ce9178] resize-none outline-none selection:bg-primary/30 leading-relaxed scrollbar-hide custom-scrollbar"
+                      className="flex-1 w-full h-full min-h-[500px] bg-transparent p-6 font-mono text-sm text-orange-700 dark:text-[#ce9178] resize-none outline-none selection:bg-primary/20 dark:selection:bg-primary/30 leading-relaxed scrollbar-hide custom-scrollbar whitespace-pre-wrap break-words"
                       spellCheck={false}
                     />
                   </div>
                 </Card>
 
                 {optimized && (
-                  <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-black shadow-2xl rounded-2xl animate-in zoom-in-95 duration-700 flex flex-col">
-                    <div className="bg-[#0a0a0a] px-4 py-2 border-b border-white/5 flex items-center justify-between font-sans">
+                  <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl animate-in zoom-in-95 duration-700 flex flex-col min-h-[400px]">
+
+                    {/* VS Code Style Header */}
+                    <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between font-sans relative z-10">
                       <div className="flex items-center gap-3">
-                        <div className="flex gap-1.5 items-center bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-[#151515]">
-                          <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">optimized.svg</span>
+                        <div className="flex gap-1.5 items-center bg-white dark:bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-border dark:border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-zinc-50 dark:hover:bg-[#151515]">
+                          <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-500" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-zinc-400">optimized.svg</span>
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono text-emerald-500/20">{((stats?.optimized || 0) / 1024).toFixed(2)} KB</span>
+                      <div className="flex items-center mb-2">
+                        <span className="text-[10px] font-mono text-emerald-600/60 dark:text-emerald-500/50 font-bold px-2">{((stats?.optimized || 0) / 1024).toFixed(2)} KB</span>
+                      </div>
                     </div>
 
-                    <div className="flex-1 flex overflow-hidden h-[400px]">
-                      <div className="w-12 bg-[#050505] border-r border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-zinc-700 select-none">
+                    {/* Body Content */}
+                    <div className="flex-1 flex overflow-hidden bg-white dark:bg-black min-h-[400px] relative z-0">
+                      <div className="w-12 bg-zinc-50 dark:bg-[#050505] border-r border-border dark:border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-muted-foreground/50 dark:text-zinc-700 select-none">
                         {Array.from({ length: Math.max(1, optimized.split('\n').length) }).map((_, i) => (
                           <div key={i} className="leading-relaxed h-6">{i + 1}</div>
                         ))}
                       </div>
-                      <div className="flex-1 p-6 font-mono text-sm text-emerald-400 overflow-auto select-all custom-scrollbar bg-black/40 leading-relaxed">
+                      <div className="flex-1 w-full h-full min-h-[400px] bg-transparent p-6 font-mono text-sm text-emerald-700 dark:text-emerald-400 overflow-auto select-all custom-scrollbar leading-relaxed selection:bg-emerald-500/20 whitespace-pre-wrap break-words">
                         {optimized}
                       </div>
                     </div>
@@ -192,18 +200,18 @@ const SvgOptimizer = () => {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <Button onClick={optimizeSvg} className="h-20 text-lg font-black rounded-2xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight">
+                  <Button onClick={optimizeSvg} className="h-20 text-lg font-black rounded-2xl gap-3 shadow-xl dark:shadow-2xl shadow-primary/10 dark:shadow-primary/20 italic uppercase tracking-tight text-white">
                     <Zap className="h-6 w-6" /> Minify SVG Code
                   </Button>
-                  <Button onClick={downloadSvg} disabled={!optimized} variant="secondary" className="h-20 text-lg font-black rounded-2xl gap-3 italic uppercase border border-border/50">
+                  <Button onClick={downloadSvg} disabled={!optimized} variant="secondary" className="h-20 text-lg font-black rounded-2xl gap-3 italic uppercase border border-border/50 dark:border-white/10 bg-secondary/50 dark:bg-secondary text-secondary-foreground hover:bg-secondary/80">
                     <Download className="h-6 w-6" /> Download .SVG File
                   </Button>
                 </div>
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
-                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
+                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card">
+                  <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Performance Metrics</h3>
                     {input && (
                       <Button
@@ -220,8 +228,8 @@ const SvgOptimizer = () => {
                     {stats && (
                       <div className="space-y-6 animate-in slide-in-from-top-4">
                         <div className="flex justify-between items-end">
-                          <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Reduction Ratio</p>
-                          <p className="text-3xl font-black italic tracking-tighter text-emerald-500">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:opacity-40">Reduction Ratio</p>
+                          <p className="text-3xl font-black italic tracking-tighter text-emerald-600 dark:text-emerald-500">
                             {Math.round((1 - stats.optimized / stats.original) * 100)}%
                           </p>
                         </div>
@@ -229,19 +237,16 @@ const SvgOptimizer = () => {
                       </div>
                     )}
 
-                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic pt-4">
+                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-60 dark:opacity-30 italic pt-4">
                       W3C Compliant • Non-Destructive • Bloat Stripped
                     </p>
 
-                    <Button variant="ghost" onClick={copyToClipboard} className="w-full gap-2 h-14 border border-border/50 rounded-2xl font-black uppercase tracking-widest text-[10px]">
+                    <Button variant="ghost" onClick={copyToClipboard} className="w-full gap-2 h-14 border border-border dark:border-border/50 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-muted/30 dark:bg-transparent">
                       <Copy className="h-4 w-4" /> Copy SVG Code
                     </Button>
                   </CardContent>
                 </Card>
 
-                <div className="px-6">
-                  
-                </div>
               </aside>
             </div>
           </div>
@@ -250,15 +255,13 @@ const SvgOptimizer = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
-    
+
       {/* Mobile Sticky Anchor Ad */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-background/80 dark:bg-black/80 backdrop-blur-sm border-t border-border dark:border-white/10 py-2">
         <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
       </div>
-      </div>
+    </div>
   );
 };
 
 export default SvgOptimizer;
-
-

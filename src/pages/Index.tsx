@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import ToolsGrid, { tools } from "@/components/ToolsGrid";
 import Footer from "@/components/Footer";
-import { ShieldCheck, Zap, Lock } from "lucide-react";
+import { ShieldCheck, Zap, Lock, Play, Pause } from "lucide-react";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 
@@ -91,7 +91,7 @@ const Index = () => {
   const isFiltering = searchQuery.length > 0 || selectedCategory !== null;
 
   return (
-    <div className="min-h-screen bg-background font-sans selection:bg-primary/20 relative overflow-x-hidden">
+    <div className="min-h-screen bg-background font-sans selection:bg-primary/20 relative overflow-x-clip">
       <Navbar 
         darkMode={darkMode} 
         onToggleDark={toggleDark}
@@ -137,7 +137,7 @@ const Index = () => {
           </div>
 
           {/* Integrated Ad Break */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-32 opacity-60 transition-all">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-32 opacity-60">
              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
              <div className="hidden md:block h-12 w-[1px] bg-border" />
              <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />

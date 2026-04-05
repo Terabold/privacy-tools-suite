@@ -1,11 +1,12 @@
 import AdBox from "./AdBox";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
     <footer className="mt-20 border-t bg-muted/30">
       <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col items-center mb-10">
-          <AdBox width={728} height={90} label="728x90 BANNER AD" className="max-w-full h-auto" />
+        <div className="flex flex-col items-center mb-10 w-full">
+          <AdBox width="60%" height={90} label="DYNAMIC BANNER AD" className="w-full md:w-[60%] max-w-full h-auto" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
@@ -52,8 +53,8 @@ const Footer = () => {
         <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground uppercase tracking-widest font-semibold">
           <p>© 2026 PRIVATEUTILS STUDIO</p>
           <div className="flex gap-6">
-            <span className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-primary cursor-pointer transition-colors">Terms of Use</span>
+            <Link to="/privacy" className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-primary cursor-pointer transition-colors">Terms of Use</Link>
           </div>
         </div>
       </div>

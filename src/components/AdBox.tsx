@@ -59,8 +59,8 @@ const AdBox = ({ width, height, label = "AD SPACE", className, isSticky }: AdBox
       <ins
         className="adsbygoogle"
         style={{ display: "block", width: "100%", height: "100%" }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" /* עליך להחליף את זה במספר הלקוח שלך מגוגל */
-        data-ad-slot="YYYYYYYYYY"               /* עליך להחליף את זה במספר המודעה שלך מגוגל */
+        data-ad-client="ca-pub-8938339685834274" 
+        data-ad-slot="3087709280"               /* PrivacySuite_Sidebars Ad Unit */
         data-ad-format="auto"
         data-full-width-responsive="true"
       ></ins>

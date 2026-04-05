@@ -26,7 +26,7 @@ const SearchNavigator = ({
   categories,
 }: SearchNavigatorProps) => {
   return (
-    <div className="sticky top-20 z-40 py-6 px-2 bg-background/80 backdrop-blur-xl border-b border-primary/5 transition-all duration-300">
+    <div className="sticky top-20 z-40 py-6 px-2 bg-background/80 backdrop-blur-xl border-b border-primary/5 transition-theme">
       <div className="container mx-auto max-w-[1400px] flex flex-col gap-8">
         <div className="flex flex-col md:flex-row items-center gap-6 justify-between">
           {/* Search Input */}

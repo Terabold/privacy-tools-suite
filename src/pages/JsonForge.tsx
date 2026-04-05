@@ -152,15 +152,15 @@ const JsonForge = () => {
           <div className="flex flex-col gap-10">
             <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border dark:border-white/20 hover:bg-primary/10 dark:hover:bg-primary/20 transition-all group/back bg-background/80 dark:bg-black/60 shadow-xl dark:shadow-2xl">
                   <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-foreground dark:text-white text-shadow-glow">
                   JSON <span className="text-primary italic">Studio</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Professional Data Architecture & Validation</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-60 dark:opacity-40 text-[10px]">Professional Data Architecture & Validation</p>
               </div>
             </header>
 
@@ -171,35 +171,38 @@ const JsonForge = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-12 items-start overflow-visible">
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-primary/10 overflow-hidden relative bg-card shadow-2xl rounded-2xl group flex flex-col min-h-[600px] border-2 border-primary/5">
-                  <div className="bg-background/40 px-4 py-2 border-b border-primary/10 flex items-center justify-between">
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
+
+                  {/* VS Code Style Header */}
+                  <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
                     <div className="flex items-center gap-3">
-                      <div className="flex gap-2 items-center bg-background/20 px-4 py-2 rounded-t-lg border-x border-t border-primary/10 -mb-[px] relative z-10 shadow-[0_-4px_10px_rgba(0,0,0,0.5)]">
-                        <FileJson className="h-3.5 w-3.5 text-yellow-500" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/80 italic">dataset.json</span>
+                      <div className="flex gap-2 items-center bg-white dark:bg-[#111111] px-4 py-2 rounded-t-lg border-x border-t border-border dark:border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-zinc-50 dark:hover:bg-[#151515]">
+                        <FileJson className="h-3.5 w-3.5 text-yellow-600 dark:text-yellow-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-zinc-400 italic">dataset.json</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/50 hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors" onClick={undo} disabled={historyIndex <= 0}>
+                    <div className="flex items-center gap-1 mb-2">
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-lg transition-colors" onClick={undo} disabled={historyIndex <= 0}>
                         <Undo className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/50 hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors" onClick={redo} disabled={historyIndex >= history.length - 1}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-lg transition-colors" onClick={redo} disabled={historyIndex >= history.length - 1}>
                         <Redo className="h-3.5 w-3.5" />
                       </Button>
-                      <div className="w-[1px] h-4 bg-primary/10 mx-1" />
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/50 hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors" onClick={copyToClipboard} disabled={!input}>
+                      <div className="w-[1px] h-4 bg-border dark:bg-white/10 mx-1" />
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-lg transition-colors" onClick={copyToClipboard} disabled={!input}>
                         <Copy className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" onClick={clearInput} disabled={!input}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/70 hover:text-destructive dark:text-destructive/50 dark:hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/10 rounded-lg transition-colors" onClick={clearInput} disabled={!input}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   </div>
 
-                  <div className="flex-1 flex overflow-hidden relative bg-background/20">
+                  {/* Body Content */}
+                  <div className="flex-1 flex overflow-hidden bg-white dark:bg-black min-h-[500px] relative z-0">
                     {/* Line Numbers Gutter */}
-                    <div className="w-12 bg-background/40 border-r border-primary/10 flex flex-col py-6 items-center font-mono text-[10px] text-muted-foreground select-none opacity-40">
+                    <div className="w-12 bg-zinc-50 dark:bg-[#050505] border-r border-border dark:border-white/5 flex flex-col py-6 items-center font-mono text-[10px] text-muted-foreground/50 dark:text-zinc-600 select-none min-h-[500px]">
                       {Array.from({ length: Math.max(1, input.split('\n').length) }).map((_, i) => (
                         <div key={i} className="leading-relaxed h-6">{i + 1}</div>
                       ))}
@@ -208,7 +211,8 @@ const JsonForge = () => {
                     <textarea
                       value={input}
                       onChange={(e) => handleInput(e.target.value)}
-                      className="flex-1 bg-transparent p-6 font-mono text-sm text-foreground/80 resize-none outline-none selection:bg-primary/30 leading-relaxed custom-scrollbar shadow-inner"
+                      placeholder='{\n  "status": "ready",\n  "data": []\n}'
+                      className="flex-1 w-full h-full min-h-[500px] bg-transparent p-6 font-mono text-sm text-orange-700 dark:text-[#ce9178] resize-none outline-none selection:bg-primary/20 dark:selection:bg-primary/30 leading-relaxed scrollbar-hide custom-scrollbar whitespace-pre-wrap break-words"
                       spellCheck={false}
                     />
 
@@ -225,38 +229,38 @@ const JsonForge = () => {
                 </Card>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <Button onClick={formatJson} disabled={!isValid} className="h-20 text-lg font-black rounded-2xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight">
+                  <Button onClick={formatJson} disabled={!isValid} className="h-20 text-lg font-black rounded-2xl gap-3 shadow-xl dark:shadow-2xl shadow-primary/20 dark:shadow-primary/20 italic uppercase tracking-tight text-white">
                     <Maximize2 className="h-6 w-6" /> Prettify Code
                   </Button>
-                  <Button onClick={minifyJson} disabled={!isValid} variant="secondary" className="h-20 text-lg font-black rounded-2xl gap-3 italic uppercase border border-border/50">
+                  <Button onClick={minifyJson} disabled={!isValid} variant="secondary" className="h-20 text-lg font-black rounded-2xl gap-3 italic uppercase border border-border dark:border-white/10 bg-secondary/50 dark:bg-secondary text-secondary-foreground hover:bg-secondary/80">
                     <Minimize2 className="h-6 w-6" /> Mass Minify
                   </Button>
                 </div>
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5">
-                  <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
+                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card border-2 dark:border-primary/5">
+                  <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">Status Console</h3>
-                    {!error && input.length > 0 && <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse"><Check className="h-3 w-3" /> Valid Architecture</span>}
+                    {!error && input.length > 0 && <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest animate-pulse"><Check className="h-3 w-3" /> Valid Architecture</span>}
                   </div>
                   <CardContent className="p-8 space-y-10">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-background/40 p-5 rounded-2xl border border-border/50">
-                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none">Characters</p>
-                        <p className="text-2xl font-black italic tracking-tighter text-foreground">{input.length}</p>
+                      <div className="bg-muted/50 dark:bg-black/40 p-5 rounded-2xl border border-border dark:border-white/5 shadow-inner">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:opacity-40 mb-1 leading-none">Characters</p>
+                        <p className="text-2xl font-black italic tracking-tighter text-foreground dark:text-white">{input.length}</p>
                       </div>
-                      <div className="bg-background/40 p-5 rounded-2xl border border-border/50">
-                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-1 leading-none">Lines</p>
-                        <p className="text-2xl font-black italic tracking-tighter text-foreground">{input.split('\n').length}</p>
+                      <div className="bg-muted/50 dark:bg-black/40 p-5 rounded-2xl border border-border dark:border-white/5 shadow-inner">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:opacity-40 mb-1 leading-none">Lines</p>
+                        <p className="text-2xl font-black italic tracking-tighter text-foreground dark:text-white">{input.split('\n').length}</p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-background/20 rounded-2xl border border-border/50">
+                      <div className="flex items-center justify-between p-4 bg-muted/30 dark:bg-background/20 rounded-2xl border border-border dark:border-white/5 shadow-sm">
                         <div className="space-y-0.5">
-                          <Label className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-foreground italic"><Wand2 className="h-3.5 w-3.5" /> Auto-Prettify</Label>
-                          <p className="text-[9px] text-muted-foreground uppercase font-black opacity-30">Format while typing</p>
+                          <Label className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-foreground dark:text-white italic"><Wand2 className="h-3.5 w-3.5" /> Auto-Prettify</Label>
+                          <p className="text-[9px] text-muted-foreground uppercase font-black dark:opacity-30">Format while typing</p>
                         </div>
                         <Switch checked={autoPrettify} onCheckedChange={setAutoPrettify} />
                       </div>
@@ -265,13 +269,13 @@ const JsonForge = () => {
                         onClick={restoreValid}
                         disabled={!lastValid || isValid}
                         variant="outline"
-                        className="w-full h-12 gap-2 text-xs font-black uppercase tracking-widest border-border/50 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-all rounded-xl"
+                        className="w-full h-12 gap-2 text-xs font-black uppercase tracking-widest border-border dark:border-border/50 hover:bg-emerald-500/10 hover:text-emerald-600 dark:hover:text-emerald-500 hover:border-emerald-500/30 transition-all rounded-xl"
                       >
                         <ShieldCheck className="h-4 w-4" /> Restore Last Valid State
                       </Button>
                     </div>
 
-                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic leading-relaxed">V8 native parsing • ECMA-404 compliant • Recursive deep-scan</p>
+                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest dark:opacity-30 italic leading-relaxed">V8 native parsing • ECMA-404 compliant • Recursive deep-scan</p>
                   </CardContent>
                 </Card>
               </aside>
@@ -284,7 +288,7 @@ const JsonForge = () => {
       <Footer />
 
       {/* Mobile Sticky Anchor Ad */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-background/80 dark:bg-black/80 backdrop-blur-sm border-t border-border dark:border-white/10 py-2">
         <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
       </div>
     </div>

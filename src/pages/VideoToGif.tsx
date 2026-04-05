@@ -236,7 +236,7 @@ const VideoToGif = () => {
                         <KbdShortcut />
                       </div>
                       <label htmlFor="gif-upload-input" className="sr-only">Upload Video for GIF</label>
-                      <input id="gif-upload-input" name="gif-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*,image/*,audio/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+                      <input id="gif-upload-input" name="gif-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
                     </div>
                   </Card>
                 ) : (

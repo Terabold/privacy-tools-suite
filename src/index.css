@@ -34,6 +34,10 @@
     --input: 240 10% 90%;
     --ring: 250 85% 60%;
     --radius: 0.75rem;
+
+    /* Global Scroll-Lock Stability Override */
+    /* Prevents libraries like Radix from adding padding-right by nullifying the detected scrollbar size */
+    --removed-body-scroll-bar-size: 0px !important;
   }
 
   .dark {
@@ -112,12 +116,49 @@
   }
 
   html {
-    @apply overflow-y-scroll;
+    scrollbar-gutter: stable !important;
+    overflow-y: scroll !important;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased text-[16px] pb-20 md:pb-0;
     font-family: 'Outfit', sans-serif;
+    width: 100% !important;
+    overflow-x: hidden !important;
+    transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out, border-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+  }
+
+  /* Absolute Layout stability for Radix Modals */
+  :root {
+    --removed-body-scroll-bar-size: 0px !important;
+  }
+
+  body[data-scroll-locked],
+  body[style*="overflow: hidden"] {
+    padding-right: 0px !important;
+    margin-right: 0px !important;
+    overflow: hidden !important;
+  }
+
+  /* Custom Utilities */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Center the content regardless of scrollbar state */
+  body[data-scroll-locked] header,
+  body[data-scroll-locked] main,
+  body[data-scroll-locked] footer,
+  body[data-scroll-locked] .container {
+    padding-right: 0px !important;
+    margin-right: auto !important;
+    /* Force layout properties to be instant, but let COLORS be smooth */
+    transition-property: background-color, color, border-color, opacity, text-shadow !important;
+    transition-duration: 500ms !important;
   }
 }
 
@@ -136,11 +177,17 @@
 
 @layer utilities {
   .glass-morphism {
-    @apply backdrop-blur-md bg-white/70 dark:bg-black/40 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 dark:shadow-none transition-all duration-300;
+    @apply backdrop-blur-md bg-white/70 dark:bg-black/40 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 dark:shadow-none;
+    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
   }
 
   .studio-gradient {
-    @apply bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 dark:border-primary/20 transition-all duration-300;
+    @apply bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 dark:border-primary/20;
+    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+  }
+
+  .transition-theme {
+    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out, opacity 0.4s ease-in-out !important;
   }
 
   .text-shadow-glow {
@@ -200,8 +247,13 @@
 }
 
 @keyframes sweep {
-  from { left: -100%; }
-  to { left: 100%; }
+  from {
+    left: -100%;
+  }
+
+  to {
+    left: 100%;
+  }
 }
 
 .logo-text-transition {
@@ -220,4 +272,29 @@
 
 .animate-scanline {
   animation: scanline 4s linear infinite;
+}
+
+/* Horizontal Navigation Fade & Scroll Masks */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.mask-fade-right {
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+.mask-fade-left {
+  mask-image: linear-gradient(to left, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, black 85%, transparent 100%);
+}
+
+.mask-fade-both {
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
 }

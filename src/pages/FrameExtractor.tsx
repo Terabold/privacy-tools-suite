@@ -203,13 +203,13 @@ const FrameExtractor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-300 overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground theme-video transition-all duration-300 overflow-x-clip">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
 
       <div className="flex justify-center items-start w-full relative">
         <SponsorSidebars position="left" />
 
-        <main className="grow transition-all duration-300 container mx-auto max-w-[1240px] px-6 py-12">
+        <main className="grow container mx-auto max-w-[1240px] px-6 py-12">
           <div className="flex flex-col gap-10">
             <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
@@ -249,7 +249,7 @@ const FrameExtractor = () => {
                       <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic">Drag master or click</p>
                     </div>
                     <label htmlFor="frame-upload-input" className="sr-only">Upload Video for Extraction</label>
-                    <input id="frame-upload-input" name="frame-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*,image/*,audio/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+                    <input id="frame-upload-input" name="frame-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
                   </div>
                 </Card>
               ) : (
@@ -264,79 +264,28 @@ const FrameExtractor = () => {
                         <video
                           ref={videoRef}
                           src={videoUrl!}
-                          className="w-full h-full object-contain bg-black cursor-pointer shadow-2xl"
+                          className="w-full h-full object-contain bg-black cursor-pointer shadow-2xl relative z-10"
                           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
                           onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+                          onClick={() => {
+                            if (videoRef.current?.paused) {
+                              videoRef.current.play();
+                              setIsPlaying(true);
+                            } else {
+                              videoRef.current?.pause();
+                              setIsPlaying(false);
+                            }
+                          }}
                           crossOrigin="anonymous"
                         />
 
-                        {/* Control Overlay (Visible in Fullscreen) */}
-                        <div className={cn(
-                          "absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 flex flex-col gap-4",
-                          isFullscreen ? "opacity-100" : "opacity-0 group-hover/video:opacity-100"
-                        )}>
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex bg-background/40 p-2 rounded-2xl border border-white/20 backdrop-blur-2xl shrink-0 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                              <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.0333) }} className="h-12 w-12 text-foreground/50 hover:text-primary transition-all hover:bg-white/5 rounded-xl">
-                                <ChevronLeft className="h-6 w-6" />
-                              </Button>
-                              <Button
-                                onClick={() => {
-                                  if (videoRef.current?.paused) {
-                                    videoRef.current.play();
-                                    setIsPlaying(true);
-                                  } else {
-                                    videoRef.current?.pause();
-                                    setIsPlaying(false);
-                                  }
-                                }}
-                                className="h-12 w-16 bg-primary text-primary-foreground rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-105 active:scale-95 transition-all mx-2 border border-white/20"
-                              >
-                                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 fill-current" />}
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 0.0333) }} className="h-12 w-12 text-foreground/50 hover:text-primary transition-all hover:bg-white/5 rounded-xl">
-                                <ChevronRight className="h-6 w-6" />
-                              </Button>
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                              <Button
-                                onClick={captureFrame}
-                                disabled={processing}
-                                className="h-14 px-8 rounded-2xl bg-white text-black font-black italic uppercase tracking-tighter shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all gap-3 border-2 border-white"
-                              >
-                                <Camera className={`h-5 w-5 ${processing ? "animate-spin" : ""}`} />
-                                <span className="text-sm">Capture Moment</span>
-                              </Button>
-                              <div className="hidden sm:flex items-center gap-2 shrink-0 bg-background/40 px-5 py-3 rounded-2xl border border-white/20 backdrop-blur-xl shadow-inner">
-                                <span className="text-2xl font-black italic tracking-tighter text-primary font-mono">{displayTime.toFixed(3)}s</span>
-                              </div>
-                            </div>
-
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={toggleFullScreen}
-                              className="h-14 w-14 bg-background/40 hover:bg-primary text-foreground hover:text-white rounded-2xl backdrop-blur-2xl border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all"
-                            >
-                              <Maximize2 className="h-6 w-6" />
-                            </Button>
-                          </div>
-
-                          <div className="w-full">
-                            <VideoTimeline
-                              videoRef={videoRef}
-                              src={videoUrl}
-                              currentTime={currentTime}
-                              duration={duration}
-                              onSeek={(t) => {
-                                if (videoRef.current) videoRef.current.currentTime = t;
-                                setCurrentTime(t);
-                              }}
-                              showRange={false}
-                            />
+                        {/* Hover Play/Pause Indicator */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                          <div className="h-20 w-20 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-2xl opacity-0 scale-50 group-hover/video:opacity-100 group-hover/video:scale-100 transition-all duration-200 ease-out">
+                            {isPlaying ? <Pause className="h-10 w-10" /> : <Play className="h-10 w-10 fill-current ml-2" />}
                           </div>
                         </div>
+
                       </div>
 
                       {!isFullscreen && (
@@ -513,9 +462,9 @@ const FrameExtractor = () => {
             </div>
 
             {/* GALLERY MODAL */}
-            <Dialog open={showGallery} onOpenChange={setShowGallery}>
-              <DialogContent className="max-w-6xl h-[85vh] flex flex-col p-0 glass-morphism border-primary/20 bg-card transition-all overflow-hidden studio-gradient shadow-[0_0_100px_rgba(0,0,0,0.8)] theme-video outline-none rounded-[40px]">
-                <DialogHeader className="p-10 border-b border-white/5 shrink-0 bg-background/40 backdrop-blur-3xl">
+            <Dialog modal={false} open={showGallery} onOpenChange={setShowGallery}>
+              <DialogContent className="max-w-6xl h-[85vh] flex flex-col p-0 glass-morphism border-primary/20 bg-card transition-all overflow-hidden studio-gradient shadow-[0_0_100px_rgba(0,0,0,0.8)] theme-video outline-none rounded-[40px] z-[200] top-[5vh] translate-y-0">
+                <DialogHeader className="p-10 border-b border-white/5 shrink-0 bg-background/40 backdrop-blur-3xl rounded-t-[40px]">
                   <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="space-y-1">
                       <DialogTitle className="text-5xl font-bold italic tracking-tighter uppercase text-shadow-glow">Capture <span className="text-primary italic">Registry</span></DialogTitle>
