@@ -54,11 +54,11 @@ const AdBox = ({ width, height, label = "AD SPACE", className, isSticky }: AdBox
         isSticky && "sticky top-24",
         className
       )}
-      style={styleParams}
+      style={{ minHeight: styleParams.height, width: '100%' }}
     >
       <ins
         className="adsbygoogle"
-        style={{ display: "block", width: "100%", height: "100%" }}
+        style={{ display: "block", minHeight: styleParams.height, width: "100%" }}
         data-ad-client="ca-pub-8938339685834274" 
         data-ad-slot="3087709280"               /* PrivacySuite_Sidebars Ad Unit */
         data-ad-format="auto"
