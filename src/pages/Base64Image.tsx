@@ -198,13 +198,13 @@ const Base64Image = () => {
 
                     <div className="space-y-5">
                        <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] group">
-                          <div className="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 transition-transform group-hover:scale-110">
+                          <div className="h-8 w-8 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 transition-transform group-hover:scale-110">
                             <Zap className="h-4 w-4" />
                           </div>
                           <span>Bit-Perfect Mapping</span>
                        </div>
                        <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] group">
-                          <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary transition-transform group-hover:scale-110">
+                          <div className="h-8 w-8 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary transition-transform group-hover:scale-110">
                             <ShieldCheck className="h-4 w-4" />
                           </div>
                           <span>Encrypted Local Hub</span>

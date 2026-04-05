@@ -142,7 +142,7 @@ const MetadataScrubber = () => {
                       {/* Retro-Futuristic Privacy Shield Overlay */}
                       {!scrubbed && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 group-hover:bg-transparent transition-all duration-700 rounded-xl pointer-events-none group-hover:opacity-0">
-                           <div className="p-8 bg-background/80 backdrop-blur-2xl rounded-[2.5rem] border border-primary/20 shadow-2xl scale-100 group-hover:scale-110 transition-all duration-500 flex flex-col items-center gap-4">
+                           <div className="p-8 bg-background/80 backdrop-blur-2xl rounded-2xl border border-primary/20 shadow-2xl scale-100 group-hover:scale-110 transition-all duration-500 flex flex-col items-center gap-4">
                               <ShieldX className="h-12 w-12 text-primary animate-pulse" />
                               <div className="text-center">
                                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Identity Obscured</p>
@@ -154,7 +154,7 @@ const MetadataScrubber = () => {
 
                       {scrubbed && (
                         <div className="absolute inset-0 bg-primary/5 backdrop-blur-[1px] flex flex-col items-center justify-center animate-in fade-in duration-500">
-                          <div className="bg-background/90 p-8 rounded-3xl border border-primary/20 shadow-2xl scale-110 flex flex-col items-center gap-4">
+                          <div className="bg-background/90 p-8 rounded-2xl border border-primary/20 shadow-2xl scale-110 flex flex-col items-center gap-4">
                              <FileCheck className="h-12 w-12 text-primary" />
                              <p className="text-xl font-black uppercase italic tracking-tighter text-primary">Sanitized</p>
                              <Button onClick={downloadCleared} size="lg" className="h-14 px-8 rounded-2xl gap-3 font-black uppercase italic tracking-widest shadow-xl">
@@ -177,7 +177,7 @@ const MetadataScrubber = () => {
                       </div>
                     </Card>
                     
-                    <div className="p-8 rounded-3xl bg-card border border-primary/5 flex items-center justify-between shadow-xl">
+                    <div className="p-8 rounded-2xl bg-card border border-primary/5 flex items-center justify-between shadow-xl">
                        <div className="flex items-center gap-6">
                           <div className="p-4 bg-primary/10 rounded-2xl shadow-inner border border-primary/20">
                              <ShieldX className="h-8 w-8 text-primary" />
@@ -189,9 +189,9 @@ const MetadataScrubber = () => {
                        </div>
                        {!scrubbed && (
                           <div className="flex gap-2">
-                             {report?.gps && <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-lg border border-destructive/20 animate-pulse uppercase tracking-widest">GPS LEAK</span>}
-                             {report?.camera && <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-lg border border-destructive/20 animate-pulse uppercase tracking-widest">CAMERA ID</span>}
-                             {report?.software && <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-lg border border-destructive/20 animate-pulse uppercase tracking-widest">SOFTWARE ID</span>}
+                             {report?.gps && <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">GPS LEAK</span>}
+                             {report?.camera && <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">CAMERA ID</span>}
+                             {report?.software && <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">SOFTWARE ID</span>}
                           </div>
                        )}
                     </div>
@@ -200,7 +200,7 @@ const MetadataScrubber = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-3xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Smartphone className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Scrub Logic Pipeline</h3>

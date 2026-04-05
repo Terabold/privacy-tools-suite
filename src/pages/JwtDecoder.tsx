@@ -184,7 +184,7 @@ const JwtDecoder = () => {
                     <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <div className="h-7 w-7 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <Key className="h-3.5 w-3.5 text-primary" />
                           </div>
                           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Header</h3>
@@ -202,7 +202,7 @@ const JwtDecoder = () => {
                     <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <div className="h-7 w-7 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <ShieldCheck className="h-3.5 w-3.5 text-primary" />
                           </div>
                           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Payload</h3>
@@ -220,7 +220,7 @@ const JwtDecoder = () => {
                     <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <div className="h-7 w-7 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <Key className="h-3.5 w-3.5 text-primary" />
                           </div>
                           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Signature</h3>

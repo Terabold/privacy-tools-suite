@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Copy, Check, Ruler, Weight, Thermometer, Zap } from "lucide-react";
+import { ArrowLeft, Copy, Check, Ruler, Weight, Thermometer, Zap, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -129,7 +130,7 @@ const UnitConverter = () => {
                 </div>
 
                 {/* Input Card */}
-                <Card className="glass-morphism border-primary/10 rounded-3xl shadow-xl bg-muted/5 p-8 border-2 border-primary/5">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-muted/5 p-8 border-2 border-primary/5">
                   <CardContent className="p-0 flex flex-col md:flex-row gap-6 items-end">
                     <div className="flex-1 space-y-3">
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Value</p>
@@ -142,15 +143,28 @@ const UnitConverter = () => {
                     </div>
                     <div className="w-48 space-y-3">
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">From</p>
-                      <select
-                        value={fromUnit}
-                        onChange={(e) => setFromUnit(e.target.value)}
-                        className="w-full bg-zinc-950/40 border border-primary/10 rounded-2xl px-4 h-14 text-sm font-black uppercase tracking-tighter focus:outline-none focus:border-primary/40 text-foreground transition-all shadow-inner"
-                      >
-                        {currentCat.units.map(u => (
-                          <option key={u.id} value={u.id} className="bg-background">{u.label}</option>
-                        ))}
-                      </select>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full bg-zinc-950/40 border border-primary/10 rounded-2xl px-4 h-14 text-sm font-black uppercase tracking-tighter flex items-center justify-between hover:bg-zinc-900/60 shadow-inner"
+                          >
+                            <span className="truncate">{currentCat.units.find(u => u.id === fromUnit)?.label || fromUnit}</span>
+                            <ChevronDown className="h-4 w-4 opacity-50" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="glass-morphism border-primary/20 min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                          {currentCat.units.map(u => (
+                            <DropdownMenuItem
+                              key={u.id}
+                              onClick={() => setFromUnit(u.id)}
+                              className="font-black py-3 text-xs uppercase cursor-pointer"
+                            >
+                              {u.label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </CardContent>
                 </Card>
@@ -188,7 +202,7 @@ const UnitConverter = () => {
               </div>
 
               <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-3xl overflow-hidden shadow-xl border-2 border-primary/5">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5">
                   <div className="bg-primary/10 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Converter Insights</h3>
@@ -201,7 +215,7 @@ const UnitConverter = () => {
 
                     <div className="space-y-5">
                       <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] group">
-                        <div className="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 transition-transform group-hover:scale-110">
+                        <div className="h-8 w-8 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 transition-transform group-hover:scale-110">
                           <Zap className="h-4 w-4" />
                         </div>
                         <span>Local Arithmetic</span>

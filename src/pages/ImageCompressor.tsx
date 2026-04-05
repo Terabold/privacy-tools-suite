@@ -1,11 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Download, RefreshCw, Layers, Zap, Activity, ShieldCheck, Settings2, ImageIcon, CloudUpload, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, RefreshCw, Layers, Zap, Activity, ShieldCheck, Settings2, ImageIcon, CloudUpload, Sparkles, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
@@ -217,9 +217,9 @@ const ImageCompressor = () => {
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                       onClick={() => !processing && inputRef.current?.click()}
-                      className="absolute inset-4 flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-primary/40 text-center cursor-pointer bg-background/40 hover:border-primary hover:bg-primary/5 shadow-2xl transition-all duration-300 group/upload"
+                      className="absolute inset-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 text-center cursor-pointer bg-background/40 hover:border-primary hover:bg-primary/5 shadow-2xl transition-all duration-300 group/upload"
                     >
-                      <div className="h-20 w-20 bg-primary/20 rounded-3xl flex items-center justify-center mb-6 transition-all duration-700 group-hover/upload:scale-110 shadow-inner ring-2 ring-primary/40">
+                      <div className="h-20 w-20 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-700 group-hover/upload:scale-110 shadow-inner ring-2 ring-primary/40">
                         <CloudUpload className="h-10 w-10 text-primary" />
                       </div>
                       <div className="px-6 space-y-2">
@@ -265,7 +265,7 @@ const ImageCompressor = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-8 text-center animate-in zoom-in-95 duration-500">
-                          <div className="h-20 w-20 bg-primary/20 rounded-3xl flex items-center justify-center relative border border-primary/40 shadow-2xl overflow-hidden">
+                          <div className="h-20 w-20 bg-primary/20 rounded-2xl flex items-center justify-center relative border border-primary/40 shadow-2xl overflow-hidden">
                             <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                           </div>
                           <div className="space-y-2">
@@ -356,16 +356,37 @@ const ImageCompressor = () => {
                     <div className="space-y-4 pt-4 border-t border-white/10">
                       <div className="space-y-3">
                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic leading-none px-1">Target Spec</label>
-                        <Select value={targetFormat} onValueChange={(v) => setTargetFormat(v)}>
-                          <SelectTrigger className="h-12 bg-card border-white/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-6 hover:bg-accent transition-colors text-foreground">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="glass-morphism border-white/20 bg-background backdrop-blur-3xl font-sans">
-                            <SelectItem value="webp" className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20">WEBP CORE</SelectItem>
-                            <SelectItem value="jpg" className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20">JPG LEGACY</SelectItem>
-                            <SelectItem value="png" className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20">PNG QUANT</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="w-full h-12 bg-card border-white/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-6 flex items-center justify-between hover:bg-muted/10 transition-colors text-foreground"
+                            >
+                              <span className="truncate">{targetFormat === "webp" ? "WEBP CORE" : targetFormat === "jpg" ? "JPG LEGACY" : "PNG QUANT"}</span>
+                              <ChevronDown className="h-4 w-4 opacity-50" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="glass-morphism border-white/20 bg-background backdrop-blur-3xl font-sans min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                            <DropdownMenuItem 
+                              onClick={() => setTargetFormat("webp")}
+                              className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
+                            >
+                              WEBP CORE
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setTargetFormat("jpg")}
+                              className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
+                            >
+                              JPG LEGACY
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setTargetFormat("png")}
+                              className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
+                            >
+                              PNG QUANT
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
 
                       <div className="space-y-3 pb-1">

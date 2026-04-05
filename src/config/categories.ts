@@ -15,19 +15,19 @@ export const categoryConfig: Record<string, { icon: any, gradient: string, theme
     tagColor: "#f97316",
     hsl: "24.6 95% 53.1%"
   },
-  "Audio Lab": { 
-    icon: Music, 
-    gradient: "from-emerald-500 to-teal-500", 
-    themeClass: "theme-audio", 
-    tagColor: "#10b981",
-    hsl: "142.1 76.2% 36.3%"
-  },
   "Privacy Belt": { 
     icon: ShieldCheck, 
     gradient: "from-violet-500 to-fuchsia-400", 
     themeClass: "theme-privacy", 
     tagColor: "#8b5cf6",
     hsl: "280 85% 60%"
+  },
+  "Audio Lab": { 
+    icon: Music, 
+    gradient: "from-emerald-500 to-teal-500", 
+    themeClass: "theme-audio", 
+    tagColor: "#10b981",
+    hsl: "142.1 76.2% 36.3%"
   },
   "Utility Belt": { 
     icon: Wrench, 

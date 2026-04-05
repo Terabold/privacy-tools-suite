@@ -119,7 +119,7 @@ const CsvJsonForge = () => {
                   <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-10 items-start">
                      <div className="space-y-10">
                         {/* Control Bar */}
-                        <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-border dark:border-white/10 p-4 rounded-[2rem] shadow-lg dark:shadow-2xl backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-border dark:border-white/10 p-4 rounded-2xl shadow-lg dark:shadow-2xl backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
                            <div className="flex gap-2.5">
                               <button
                                  onClick={() => setMode('csv2json')}
@@ -158,7 +158,7 @@ const CsvJsonForge = () => {
                                        </div>
                                     </div>
                                     <div className="flex items-center gap-1 mb-2">
-                                       <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white dark:hover:bg-white/10 rounded-lg transition-colors" onClick={() => { setInput(""); setOutput(""); }} disabled={!input}>
+                                       <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={() => { setInput(""); setOutput(""); }} disabled={!input}>
                                           <RefreshCw className="h-3.5 w-3.5" />
                                        </Button>
                                     </div>
@@ -195,7 +195,7 @@ const CsvJsonForge = () => {
                                        </div>
                                     </div>
                                     <div className="flex items-center gap-1 mb-2">
-                                       <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white dark:hover:bg-white/10 rounded-lg transition-colors" onClick={copy} disabled={!output}>
+                                       <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={copy} disabled={!output}>
                                           {copied ? <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                                        </Button>
                                     </div>
@@ -221,7 +221,7 @@ const CsvJsonForge = () => {
                      </div>
 
                      <aside className="space-y-8 lg:sticky lg:top-24 h-fit pb-10">
-                        <Card className="glass-morphism border-border dark:border-primary/20 rounded-[2rem] overflow-hidden shadow-lg dark:shadow-2xl bg-card animate-in slide-in-from-right-4 duration-500 border-l-4">
+                        <Card className="glass-morphism border-border dark:border-primary/20 rounded-2xl overflow-hidden shadow-lg dark:shadow-2xl bg-card animate-in slide-in-from-right-4 duration-500 border-l-4">
                            <div className="bg-primary/5 dark:bg-primary/10 p-6 border-b border-border dark:border-white/10 flex items-center justify-between">
                               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic">Forge Metrics</h3>
                               <Sparkles className="h-4 w-4 text-primary animate-pulse" />

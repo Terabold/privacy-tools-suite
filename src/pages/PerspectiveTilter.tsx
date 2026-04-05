@@ -368,7 +368,7 @@ const PerspectiveTilter = () => {
                               <button
                                 key={m}
                                 onClick={() => setScalingMode(m as any)}
-                                className={`py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-all ${scalingMode === m ? "bg-primary border-primary text-white shadow-lg" : "border-border/50 hover:bg-primary/5 text-muted-foreground"}`}
+                                className={`py-1 rounded-2xl border text-[9px] font-black uppercase tracking-widest transition-all ${scalingMode === m ? "bg-primary border-primary text-white shadow-lg" : "border-border/50 hover:bg-primary/5 text-muted-foreground"}`}
                               >
                                 {m}
                               </button>

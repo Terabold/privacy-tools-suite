@@ -1,4 +1,5 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
+import { preloadFFmpeg } from "@/lib/ffmpegSingleton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -53,7 +54,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const LoadingArtifact = () => (
   <div className="flex h-screen w-screen items-center justify-center bg-background">
     <div className="flex flex-col items-center gap-6 animate-pulse">
-      <div className="h-16 w-16 bg-primary/10 rounded-3xl border-2 border-dashed border-primary/20 flex items-center justify-center">
+      <div className="h-16 w-16 bg-primary/10 rounded-2xl border-2 border-dashed border-primary/20 flex items-center justify-center">
          <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
       <div className="text-center">
@@ -64,8 +65,14 @@ const LoadingArtifact = () => (
   </div>
 );
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  useEffect(() => {
+    const t = setTimeout(preloadFFmpeg, 2000); // start loading 2s after app mount
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -117,6 +124,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

@@ -156,7 +156,7 @@ const ColorPaletteGenerator = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
               {/* Left: Palette Preview */}
               <div className="space-y-8 animate-in fade-in slide-in-from-left-6 duration-700 lg:sticky lg:top-24">
-                <div className="flex flex-col h-[600px] rounded-[32px] overflow-hidden shadow-2xl border border-white/10 group bg-card backdrop-blur-3xl">
+                <div className="flex flex-col h-[600px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group bg-card backdrop-blur-3xl">
                   {palette.map((hex, i) => (
                     <div 
                       key={i} 
@@ -175,7 +175,7 @@ const ColorPaletteGenerator = () => {
 
               {/* Right: Controls & Export */}
               <div className="space-y-8 animate-in fade-in slide-in-from-right-6 duration-700 overflow-visible">
-                <Card className="glass-morphism border-primary/10 rounded-[32px] shadow-2xl bg-card p-10 overflow-hidden relative">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-10 overflow-hidden relative">
                   <CardContent className="p-0 space-y-12 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                       <div className="space-y-6">
@@ -202,12 +202,12 @@ const ColorPaletteGenerator = () => {
                     </div>
 
                     <div className="pt-10 border-t border-white/5 flex flex-col xl:flex-row items-center justify-between gap-10">
-                      <div className="flex bg-background/20 p-1.5 rounded-[22px] border border-white/5 w-full xl:w-auto">
+                      <div className="flex bg-background/20 p-1.5 rounded-xl border border-white/5 w-full xl:w-auto">
                         {['monochromatic', 'analogous', 'complementary', 'triadic'].map((m) => (
                           <button
                             key={m}
                             onClick={() => setMode(m)}
-                            className={`flex-1 xl:flex-none px-6 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${
+                            className={`flex-1 xl:flex-none px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                               mode === m 
                                 ? 'bg-primary text-primary-foreground shadow-lg scale-105 z-10' 
                                 : 'text-muted-foreground hover:bg-background/40'
@@ -227,21 +227,21 @@ const ColorPaletteGenerator = () => {
                         <h3 className="text-xl font-black uppercase italic tracking-tighter text-foreground">Export <span className="text-primary">Pipeline</span></h3>
                       </header>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <button onClick={() => { navigator.clipboard.writeText(palette.join('\n')); toast.success("HEX Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                        <button onClick={() => { navigator.clipboard.writeText(palette.join('\n')); toast.success("HEX Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-black text-primary uppercase tracking-widest">HEX</span>
                             <Database className="h-4 w-4 opacity-20" />
                           </div>
                           <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Hex List</p>
                         </button>
-                        <button onClick={() => { navigator.clipboard.writeText(palette.map((h, i) => `--color-${i+1}: ${h};`).join('\n')); toast.success("CSS Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                        <button onClick={() => { navigator.clipboard.writeText(palette.map((h, i) => `--color-${i+1}: ${h};`).join('\n')); toast.success("CSS Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-black text-primary uppercase tracking-widest">CSS</span>
                             <Code className="h-4 w-4 opacity-20" />
                           </div>
                           <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Variables</p>
                         </button>
-                        <button onClick={() => { navigator.clipboard.writeText(JSON.stringify(palette)); toast.success("JSON Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-3xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                        <button onClick={() => { navigator.clipboard.writeText(JSON.stringify(palette)); toast.success("JSON Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-black text-primary uppercase tracking-widest">JSON</span>
                             <FileJson className="h-4 w-4 opacity-20" />

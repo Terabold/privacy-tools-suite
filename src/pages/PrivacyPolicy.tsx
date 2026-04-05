@@ -73,7 +73,7 @@ const PrivacyPolicy = () => {
           </section>
 
           {/* AdSense Disclosure (Mandatory) */}
-          <section className="bg-muted/30 border border-white/5 rounded-3xl p-8 md:p-12 space-y-6">
+          <section className="bg-muted/30 border border-white/5 rounded-2xl p-8 md:p-12 space-y-6">
             <div className="flex items-center gap-3 text-foreground font-black italic uppercase tracking-tighter text-xl">
               <Cookie className="h-6 w-6 text-primary" />
               Advertising Disclosure

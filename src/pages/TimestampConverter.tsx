@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Copy, Check, Clock, RefreshCw } from "lucide-react";
+import { ArrowLeft, Copy, Check, Clock, RefreshCw, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -102,7 +103,7 @@ const TimestampConverter = () => {
   const CopyBtn = ({ val, id }: { val: string; id: string }) => (
     <button
       onClick={() => copy(val, id)}
-      className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all ml-2 opacity-0 group-hover:opacity-100 shadow-sm"
+      className="p-2 rounded-2xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all ml-2 opacity-0 group-hover:opacity-100 shadow-sm"
     >
       {copiedKey === id ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
     </button>
@@ -169,15 +170,28 @@ const TimestampConverter = () => {
                       </div>
                       <div className="space-y-2">
                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Timezone</p>
-                        <select
-                          value={timezone}
-                          onChange={(e) => setTimezone(e.target.value)}
-                          className="bg-muted/10 border border-border/30 rounded-xl px-4 h-12 text-sm font-mono focus:outline-none focus:border-primary/40 text-foreground"
-                        >
-                          {TIMEZONES.map(tz => (
-                            <option key={tz} value={tz} className="bg-background">{tz}</option>
-                          ))}
-                        </select>
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="w-full bg-muted/10 border border-border/30 rounded-xl px-4 h-12 text-sm font-mono flex items-center justify-between hover:bg-muted/20 transition-all"
+                            >
+                              <span className="truncate">{timezone}</span>
+                              <ChevronDown className="h-4 w-4 opacity-50 ml-2" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="max-h-[300px] overflow-y-auto glass-morphism border-border/30 min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                            {TIMEZONES.map(tz => (
+                              <DropdownMenuItem
+                                key={tz}
+                                onClick={() => setTimezone(tz)}
+                                className="font-mono py-2 text-xs cursor-pointer"
+                              >
+                                {tz}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
 

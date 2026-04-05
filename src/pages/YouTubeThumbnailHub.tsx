@@ -132,7 +132,7 @@ const YouTubeThumbnailHub = () => {
                     <button
                       key={m}
                       onClick={() => setLayoutMode(m)}
-                      className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${layoutMode === m ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`px-4 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${layoutMode === m ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       {m === 'watch' ? 'Watch' : m === 'home' ? 'Home' : 'Search'}
                     </button>
@@ -145,13 +145,13 @@ const YouTubeThumbnailHub = () => {
                 <div className="flex bg-background/40 p-1 rounded-xl border border-white/10 h-11">
                   <button
                     onClick={() => setYtTheme('dark')}
-                    className={`flex items-center justify-center gap-2 px-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${ytTheme === 'dark' ? "bg-zinc-800 text-white shadow-lg" : "text-zinc-500 hover:text-zinc-400"}`}
+                    className={`flex items-center justify-center gap-2 px-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${ytTheme === 'dark' ? "bg-zinc-800 text-white shadow-lg" : "text-zinc-500 hover:text-zinc-400"}`}
                   >
                     <Youtube className="h-3 w-3" /> Dark
                   </button>
                   <button
                     onClick={() => setYtTheme('light')}
-                    className={`flex items-center justify-center gap-2 px-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${ytTheme === 'light' ? "bg-white text-zinc-900 shadow-lg" : "text-zinc-500 hover:text-zinc-400"}`}
+                    className={`flex items-center justify-center gap-2 px-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${ytTheme === 'light' ? "bg-white text-zinc-900 shadow-lg" : "text-zinc-500 hover:text-zinc-400"}`}
                   >
                     <Youtube className="h-3 w-3 text-red-600" /> Light
                   </button>
@@ -195,7 +195,7 @@ const YouTubeThumbnailHub = () => {
                     >
                       <div ref={watchRef} className={`grid grid-cols-1 xl:grid-cols-12 gap-10 p-8 rounded-2xl transition-all duration-300 shadow-2xl ${ytTheme === 'dark' ? 'bg-[#0f0f0f] border border-white/5 text-white' : 'bg-[#f9f9f9] border border-zinc-200 text-black'}`}>
                         <div className="xl:col-span-8 space-y-6">
-                          <div className="relative aspect-video w-full bg-black rounded-lg overflow-hidden shadow-2xl border border-white/5 group select-none">
+                          <div className="relative aspect-video w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/5 group select-none">
                             <img
                               crossOrigin="anonymous"
                               src={image}
@@ -244,7 +244,7 @@ const YouTubeThumbnailHub = () => {
                         <div className="xl:col-span-4 space-y-4 relative">
                           {[1, 2, 3, 4, 5, 6].map((i) => (
                             <div key={i} className={`flex gap-2 group cursor-pointer border-t py-3 first:border-0 first:pt-0 ${ytTheme === 'dark' ? 'border-white/5' : 'border-zinc-200'}`}>
-                              <div className={`w-[168px] aspect-video rounded-lg overflow-hidden shrink-0 relative border ${ytTheme === 'dark' ? 'bg-[#272727] border-white/5' : 'bg-zinc-100 border-zinc-200'}`}>
+                              <div className={`w-[168px] aspect-video rounded-2xl overflow-hidden shrink-0 relative border ${ytTheme === 'dark' ? 'bg-[#272727] border-white/5' : 'bg-zinc-100 border-zinc-200'}`}>
                                 <img
                                   crossOrigin="anonymous"
                                   src={i === 1 ? (image || "") : getOtherThumb(i)}

@@ -122,7 +122,7 @@ const HashLab = () => {
                     <Card key={algo.id} className="glass-morphism border-primary/10 rounded-xl shadow-md bg-card overflow-hidden group">
                       <div className="bg-primary/5 p-3 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                          <div className="h-6 w-6 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Fingerprint className="h-3 w-3" />
                           </div>
                           <h3 className="text-[9px] font-black uppercase tracking-widest text-primary leading-none">{algo.label}</h3>
@@ -132,13 +132,13 @@ const HashLab = () => {
                           size="sm"
                           disabled={!hashes[algo.id]}
                           onClick={() => copy(hashes[algo.id], algo.id)}
-                          className="h-6 px-2 rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-primary/20 text-primary border border-primary/10 transition-all"
+                          className="h-6 px-2 rounded-2xl text-[8px] font-black uppercase tracking-widest hover:bg-primary/20 text-primary border border-primary/10 transition-all"
                         >
                           {copiedKey === algo.id ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                         </Button>
                       </div>
                       <CardContent className="p-3">
-                        <div className="bg-background/20 border border-border/30 rounded-lg p-2 min-h-[40px] flex items-center shadow-inner">
+                        <div className="bg-background/20 border border-border/30 rounded-2xl p-2 min-h-[40px] flex items-center shadow-inner">
                           <code className="text-[10px] font-mono break-all text-foreground/70 line-clamp-2">
                             {hashes[algo.id] || <span className="opacity-20 italic">Waiting for input...</span>}
                           </code>

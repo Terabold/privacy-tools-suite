@@ -1,9 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Zap, Download, Copy, Smartphone } from "lucide-react";
+import { ArrowLeft, Zap, Download, Copy, Smartphone, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -98,7 +99,7 @@ const QrForge = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-12 items-start">
               <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-primary/10 p-10 rounded-[32px] bg-zinc-950/50 shadow-2xl relative group overflow-hidden border-2 border-primary/5">
+                <Card className="glass-morphism border-primary/10 p-10 rounded-2xl bg-zinc-950/50 shadow-2xl relative group overflow-hidden border-2 border-primary/5">
                   <div className="absolute top-0 right-0 p-8 opacity-[0.03] scale-150 rotate-12 pointer-events-none transition-opacity group-hover:opacity-[0.05]">
                     <Smartphone className="h-24 w-24" />
                   </div>
@@ -130,7 +131,7 @@ const QrForge = () => {
 
                 {input && (
                   <div className="flex flex-col items-center gap-8 animate-in zoom-in-95 duration-700">
-                    <div className="bg-white p-8 rounded-3xl shadow-2xl border-8 border-white/10 group-hover:scale-[1.02] transition-transform duration-500 overflow-hidden">
+                    <div className="bg-white p-8 rounded-2xl shadow-2xl border-8 border-white/10 group-hover:scale-[1.02] transition-transform duration-500 overflow-hidden">
                       {qrUrl ? (
                         <img src={qrUrl} className="w-64 h-64 object-contain mx-auto" alt="QR Artifact" />
                       ) : (
@@ -188,12 +189,27 @@ const QrForge = () => {
 
                     <div className="space-y-4">
                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Artifact Size</label>
-                      <select value={size} onChange={(e) => setSize(parseInt(e.target.value))} className="w-full h-12 bg-zinc-950/40 rounded-2xl border border-white/5 text-[10px] font-black px-4 outline-none appearance-none cursor-pointer text-white">
-                        <option value={128} className="bg-zinc-900">Small (128x128 artifact)</option>
-                        <option value={256} className="bg-zinc-900">Medium (256x256 artifact)</option>
-                        <option value={512} className="bg-zinc-900">Large (512x512 artifact)</option>
-                        <option value={1024} className="bg-zinc-900">Ultra (1024x1024 artifact)</option>
-                      </select>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full h-12 bg-zinc-950/40 rounded-2xl border-white/5 text-[10px] font-black px-4 flex items-center justify-between hover:bg-zinc-900/60 shadow-inner"
+                          >
+                            <span className="truncate">
+                              {size === 128 ? "Small (128x128 artifact)" :
+                                size === 256 ? "Medium (256x256 artifact)" :
+                                size === 512 ? "Large (512x512 artifact)" : "Ultra (1024x1024 artifact)"}
+                            </span>
+                            <ChevronDown className="h-4 w-4 opacity-50" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="glass-morphism border-primary/20 min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                          <DropdownMenuItem onClick={() => setSize(128)} className="font-black py-3 text-[10px] uppercase cursor-pointer">Small (128x128 artifact)</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSize(256)} className="font-black py-3 text-[10px] uppercase cursor-pointer">Medium (256x256 artifact)</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSize(512)} className="font-black py-3 text-[10px] uppercase cursor-pointer">Large (512x512 artifact)</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSize(1024)} className="font-black py-3 text-[10px] uppercase cursor-pointer">Ultra (1024x1024 artifact)</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
 
                     <div className="space-y-4">

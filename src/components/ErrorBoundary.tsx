@@ -31,7 +31,7 @@ class ErrorBoundary extends Component<Props, State> {
       if (this.props.fallback) return this.props.fallback;
 
       return (
-        <div className="flex h-[450px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-destructive/20 bg-destructive/5 p-12 text-center animate-in fade-in duration-500">
+        <div className="flex h-[450px] w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-destructive/20 bg-destructive/5 p-12 text-center animate-in fade-in duration-500">
           <div className="h-20 w-20 bg-destructive/10 rounded-full flex items-center justify-center mb-8 shadow-inner">
             <AlertCircle className="h-10 w-10 text-destructive" />
           </div>

@@ -206,7 +206,7 @@ const VideoAspectStudio = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
               <div className="lg:col-span-8 space-y-8 flex flex-col items-center w-full">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[500px] w-full flex flex-col items-center justify-center relative bg-card rounded-3xl shadow-2xl p-10 select-none animate-in fade-in zoom-in-95 duration-500">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[500px] w-full flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-2xl p-10 select-none animate-in fade-in zoom-in-95 duration-500">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
@@ -229,7 +229,7 @@ const VideoAspectStudio = () => {
                   </Card>
                 ) : (
                   <div className="space-y-8 w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-6 duration-300">
-                    <Card className="glass-morphism border-primary/10 rounded-[32px] overflow-hidden bg-black shadow-2xl relative border-border/50 w-full max-w-4xl flex items-center justify-center p-3 min-h-[40vh]">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden bg-black shadow-2xl relative border-border/50 w-full max-w-4xl flex items-center justify-center p-3 min-h-[40vh]">
                       <div className="relative w-full h-full flex items-center justify-center cursor-crosshair active:cursor-grabbing">
                         {/* Reset Stage Button - Integrated with Frame Container */}
                         <div className="absolute top-8 right-8 z-20 flex gap-2 p-2 bg-background/40 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-500">
@@ -269,7 +269,7 @@ const VideoAspectStudio = () => {
                     </Card>
 
                     <div className="w-full space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
-                      <div className="glass-morphism border-primary/5 bg-primary/5 p-3 rounded-[20px] space-y-3 shadow-2xl border-border/20">
+                      <div className="glass-morphism border-primary/5 bg-primary/5 p-3 rounded-2xl space-y-3 shadow-2xl border-border/20">
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex bg-background/20 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner">
                             <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.0333) }} className="h-9 w-9 text-muted-foreground hover:text-primary transition-colors">
@@ -285,7 +285,7 @@ const VideoAspectStudio = () => {
                                   setIsPlaying(false);
                                 }
                               }}
-                              className="h-9 w-14 bg-primary text-primary-foreground rounded-lg shadow-lg hover:scale-105 active:scale-95 transition-all mx-1.5"
+                              className="h-9 w-14 bg-primary text-primary-foreground rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all mx-1.5"
                             >
                               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
                             </Button>
@@ -323,7 +323,7 @@ const VideoAspectStudio = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-[32px] overflow-hidden shadow-xl border-border/20 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-border/20 bg-card">
                   <div className="bg-primary/5 p-6 border-b border-primary/10 flex items-center justify-between">
                     <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Mapping System</h2>
                   </div>
@@ -387,7 +387,7 @@ const VideoAspectStudio = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 1.05 }}
-                            className="bg-background/50 p-6 rounded-3xl border border-primary/20 backdrop-blur-xl shadow-2xl"
+                            className="bg-background/50 p-6 rounded-2xl border border-primary/20 backdrop-blur-xl shadow-2xl"
                           >
                             <div className="flex flex-col items-center gap-6 text-center">
                               <div className="h-14 w-14 bg-primary/20 rounded-2xl flex items-center justify-center animate-pulse shadow-glow">
@@ -412,7 +412,7 @@ const VideoAspectStudio = () => {
                           >
                             <Button
                               onClick={processVideo}
-                              className="w-full h-16 text-lg font-black rounded-[24px] gap-3 shadow-xl shadow-primary/10 italic uppercase bg-primary text-primary-foreground border-b-4 border-primary-foreground/20 active:border-b-0 active:translate-y-1 transition-all hover:scale-[1.01] relative overflow-hidden group/btn"
+                              className="w-full h-16 text-lg font-black rounded-2xl gap-3 shadow-xl shadow-primary/10 italic uppercase bg-primary text-primary-foreground border-b-4 border-primary-foreground/20 active:border-b-0 active:translate-y-1 transition-all hover:scale-[1.01] relative overflow-hidden group/btn"
                             >
                               <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                               <RefreshCw className="h-5 w-5 relative z-10" />

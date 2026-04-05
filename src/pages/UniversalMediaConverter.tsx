@@ -1,35 +1,35 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Download, RefreshCw, Terminal, CloudUpload, Zap, Activity, ShieldCheck, Settings2, FileType } from "lucide-react";
+import { ArrowLeft, Download, RefreshCw, Terminal, CloudUpload, Activity, ShieldCheck, Settings2, FileType, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { toast } from "sonner";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { fetchFile } from "@ffmpeg/util";
 import { imageDataToBmp } from "@/utils/bmpEncoder";
+import { getFFmpeg, resetFFmpeg, ffmpeg as ffmpegInstance } from "@/lib/ffmpegSingleton";
+
+const FFMPEG_SIZE_LIMIT = 100 * 1024 * 1024; // 100MB
 
 const UniversalMediaConverter = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
+  const [isLargeFile, setIsLargeFile] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [targetFormat, setTargetFormat] = useState<string>("");
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [progressTarget, setProgressTarget] = useState(0);
-  const [videoSpeed, setVideoSpeed] = useState<string>("1.0");
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [resultSize, setResultSize] = useState<number>(0);
   const [detectedMime, setDetectedMime] = useState<string>("");
   const [originalSize, setOriginalSize] = useState<number>(0);
-  const ffmpegRef = useRef(new FFmpeg());
   const inputRef = useRef<HTMLInputElement>(null);
-  const loadingRef = useRef(false);
 
   const toggleDark = useCallback(() => {
     const next = !darkMode;
@@ -38,57 +38,93 @@ const UniversalMediaConverter = () => {
     localStorage.setItem("theme", next ? "dark" : "light");
   }, [darkMode]);
 
-  const handleFile = (f: File | undefined) => {
+  const handleFile = (inputFile: File | undefined) => {
+    let f = inputFile;
     if (!f) return;
+    const ext = f.name.split('.').pop()?.toLowerCase();
+    const isTs = ext === 'ts' || ext === 'm2ts';
+    if (isTs && !f.type.startsWith('video/')) {
+      // browser misdetects .ts as text/javascript — treat as video
+      f = new File([f], f.name, { type: 'video/mp2t' });
+    }
+
+    if (f.type.startsWith('video/') && f.size > 500 * 1024 * 1024) {
+      toast.error("Video exceeds 500MB limit.");
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+
     setFile(f);
+    setIsLargeFile((f.type.startsWith('video/') || f.type.startsWith('audio/')) && f.size > FFMPEG_SIZE_LIMIT);
     setOriginalSize(f.size);
     setResultUrl(null);
     setResultSize(0);
     setDetectedMime("");
     setTargetFormat("");
     setProgress(0);
-    setProgressTarget(0);
     toast.success(`${f.name} staged for processing`);
     if (inputRef.current) inputRef.current.value = "";
   };
 
-  // Resource Cleanup Engine (Prevent Memory Leaks)
   useEffect(() => {
     return () => {
       if (resultUrl) URL.revokeObjectURL(resultUrl);
     };
   }, [resultUrl]);
 
-  // Progress Smoothing Engine (Professional Crawl)
-  useEffect(() => {
-    if (progress < progressTarget) {
-      const timeout = setTimeout(() => setProgress(p => Math.min(p + 1, progressTarget)), 30);
-      return () => clearTimeout(timeout);
-    }
-  }, [progress, progressTarget]);
-
   usePasteFile(handleFile);
 
-  const loadFFmpeg = async () => {
-    const ffmpeg = ffmpegRef.current;
-    if (ffmpeg.loaded) return true;
-    if (loadingRef.current) return false;
+  const convertToWebmNative = async (file: File): Promise<Blob> => {
+    // Step 1: record via MediaRecorder
+    const rawBlob = await new Promise<Blob>((resolve, reject) => {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(file);
+      video.volume = 0;
+      video.onloadedmetadata = () => {
+        const stream = (video as any).captureStream(30);
+        const recorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp8,opus",
+          videoBitsPerSecond: 2_500_000,
+        });
+        const chunks: Blob[] = [];
+        recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = () => {
+          URL.revokeObjectURL(video.src);
+          resolve(new Blob(chunks, { type: "video/webm" }));
+        };
+        video.ontimeupdate = () => {
+          setProgress(Math.round((video.currentTime / video.duration) * 45));
+        };
+        video.onended = () => recorder.stop();
+        video.onerror = reject;
+        recorder.start(250);
+        video.play();
+      };
+      video.onerror = reject;
+    });
 
-    loadingRef.current = true;
+    // Step 2: remux through ffmpeg to fix duration/seekability
+    toast.info("Fixing WebM duration metadata...");
+    setProgress(50);
+    const ffmpeg = await getFFmpeg();
+    if (!ffmpeg) return rawBlob; // fallback to raw if engine unavailable
+    const inputData = new Uint8Array(await rawBlob.arrayBuffer());
+    await ffmpeg.writeFile('webm_raw.webm', inputData);
     try {
-      const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
-      await ffmpeg.load({
-        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
-      });
-      return true;
-    } catch (error) {
-      console.error("FFmpeg Load Error:", error);
-      toast.error("WASM Engine failed to initialize.");
-      return false;
-    } finally {
-      loadingRef.current = false;
+      await ffmpeg.exec(['-i', 'webm_raw.webm', '-c', 'copy', 'webm_fixed.webm']);
+    } catch (e: any) {
+      if (!e?.message?.includes('Aborted')) throw e;
     }
+    setProgress(90);
+    let fixedData: any;
+    try {
+      fixedData = await ffmpeg.readFile('webm_fixed.webm');
+    } catch {
+      return rawBlob;
+    }
+    try { await ffmpeg.deleteFile('webm_raw.webm'); } catch (_) { }
+    try { await ffmpeg.deleteFile('webm_fixed.webm'); } catch (_) { }
+    return new Blob([fixedData], { type: 'video/webm' });
   };
 
   const convertFile = async () => {
@@ -100,6 +136,7 @@ const UniversalMediaConverter = () => {
     const imageFormats = ['png', 'jpg', 'webp', 'bmp'];
     const isNativeImage = imageFormats.includes(targetFormat);
 
+    // Native canvas pipeline for images
     if (isNativeImage) {
       try {
         const reader = new FileReader();
@@ -131,10 +168,11 @@ const UniversalMediaConverter = () => {
           setResultUrl(URL.createObjectURL(blob));
           setResultSize(blob.size);
           setDetectedMime(blob.type);
-          setProgressTarget(100);
           setProgress(100);
-          setProcessing(false);
-          toast.success("Artifact Generated via Native Pipeline");
+          setTimeout(() => {
+            setProcessing(false);
+            toast.success("Artifact Generated via Native Pipeline");
+          }, 300);
         };
 
         reader.readAsDataURL(file);
@@ -146,100 +184,181 @@ const UniversalMediaConverter = () => {
       }
     }
 
+    // FFmpeg multi-threaded pipeline for video/audio
+    if (targetFormat === 'webm') {
+      try {
+        const blob = await convertToWebmNative(file);
+        setResultUrl(URL.createObjectURL(blob));
+        setResultSize(blob.size);
+        setProgress(100);
+        setProcessing(false);
+        toast.success("Artifact Generated via Native Pipeline");
+        return;
+      } catch (err: any) {
+        toast.error(`Native WebM Fault: ${err.message}`);
+        setProcessing(false);
+        return;
+      }
+    }
 
-    // PATH C: FFmpeg WASM (Small Video, Audio)
     let inputName = "";
     let outputName = "";
 
     try {
-      const loaded = await loadFFmpeg();
-      if (!loaded) return;
-      const ffmpeg = ffmpegRef.current;
-
+      if (!ffmpegInstance.loaded) {
+        toast.info("Loading engine from CDN, this may take a moment...");
+      }
+      const ffmpeg = await getFFmpeg();
+      if (!ffmpeg) throw new Error("Failed to load processing engine.");
       inputName = `input_${file.name.replace(/\s+/g, '_')}`;
       outputName = `output.${targetFormat}`;
 
-      ffmpeg.on('log', ({ message }) => console.log('[FFmpeg]', message));
-      await ffmpeg.writeFile(inputName, await fetchFile(file));
-
-      ffmpeg.on('progress', ({ progress }) => {
-        setProgressTarget(Math.min(100, Math.round(progress * 100)));
-      });
-
-      // Complexity adjustment based on format
       let args = ['-i', inputName];
-      args.push('-threads', '1'); // Force single-thread for memory containment
 
       const isVideoFile = file.type.startsWith('video/');
       const isAudioFile = file.type.startsWith('audio/');
 
-      if (videoSpeed !== '1.0') {
-        const speed = parseFloat(videoSpeed);
-        if (isVideoFile) {
-          args.push('-filter:v', `setpts=${1 / speed}*PTS`);
-        } else if (isAudioFile) {
-          args.push('-filter:a', `atempo=${speed}`);
-        }
-      }
+      const srcExt = file.name.split('.').pop()?.toLowerCase();
+      const canStreamCopy =
+        (srcExt === 'mp4' && ['mkv', 'mov', 'ts'].includes(targetFormat)) ||
+        (srcExt === 'mkv' && ['mp4', 'mov'].includes(targetFormat)) ||
+        (srcExt === 'mov' && ['mp4', 'mkv'].includes(targetFormat)) ||
+        (srcExt === 'ts' && ['mp4', 'mkv'].includes(targetFormat)) ||
+        (srcExt === 'm2ts' && ['mp4', 'mkv'].includes(targetFormat));
 
-      // Format-Specific Codec Selection
-      switch (targetFormat) {
-        case 'mp4':
-          args.push('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'ultrafast', '-crf', '28', '-c:a', 'aac');
-          break;
-        case 'webm':
-          args.push('-c:v', 'libvpx-vp9', '-c:a', 'libopus');
-          break;
-        case 'mkv':
-        case 'avi':
-          args.push('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac');
-          break;
-        case 'mp3':
-          args.push('-c:a', 'libmp3lame', '-ab', '192k');
-          break;
-        case 'wav':
-          args.push('-c:a', 'pcm_s16le');
-          break;
-        case 'flac':
-          args.push('-c:a', 'flac');
-          break;
+      if (canStreamCopy) {
+        args.push('-c:v', 'copy', '-c:a', 'copy');
+        if (targetFormat === 'ts') args.push('-f', 'mpegts');
+      } else {
+        switch (targetFormat) {
+          case 'mp4':
+            args.push('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'ultrafast', '-crf', '28', '-c:a', 'aac');
+            break;
+          case 'mkv':
+            args.push('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac');
+            break;
+          case 'mov':
+            args.push('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-f', 'mov');
+            break;
+          case 'ts':
+            args.push('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-f', 'mpegts');
+            break;
+          case 'mp3':
+            args.push('-c:a', 'libmp3lame', '-ab', '192k');
+            break;
+          case 'wav':
+            args.push('-c:a', 'pcm_s16le');
+            break;
+          case 'ogg':
+            args.push('-c:a', 'libvorbis', '-q:a', '4');
+            break;
+          case 'flac':
+            args.push('-c:a', 'flac');
+            break;
+          case 'aac':
+          case 'm4a':
+            args.push('-c:a', 'aac', '-b:a', '192k');
+            break;
+        }
       }
 
       args.push(outputName);
 
-      await ffmpeg.exec(args);
+      let requiresPadding = false;
+      const logHandler = ({ message }: { message: string }) => {
+        console.log('[FFmpeg]', message);
+        if (message.includes("not divisible by") || message.includes("width and height must be a multiple of")) {
+          requiresPadding = true;
+        }
+      };
 
-      const data = await ffmpeg.readFile(outputName);
+      const progressHandler = ({ progress }: { progress: number }) => {
+        if (progress >= 0 && progress <= 1) {
+          setProgress(Math.round(progress * 100));
+        }
+      };
+
+      ffmpeg.on('log', logHandler);
+      ffmpeg.on('progress', progressHandler);
+
+      await ffmpeg.writeFile(inputName, await fetchFile(file));
+
+      let code = 0;
+      try {
+        code = await ffmpeg.exec(args);
+      } catch (execErr: any) {
+        const isAbort = execErr?.message?.includes("Aborted") || execErr?.message?.includes("abort");
+        if (!isAbort) throw execErr;
+      }
+
+      if (code !== 0) {
+        if (requiresPadding && isVideoFile) {
+          console.log("[Auto-Correct] Injecting padding filter...");
+          const padFilter = "pad=ceil(iw/2)*2:ceil(ih/2)*2";
+          const vfIndex = args.indexOf('-filter:v');
+          if (vfIndex !== -1) {
+            args[vfIndex + 1] = args[vfIndex + 1] + "," + padFilter;
+          } else {
+            const outIdx = args.indexOf(outputName);
+            args.splice(outIdx, 0, '-filter:v', padFilter);
+          }
+          try {
+            code = await ffmpeg.exec(args);
+          } catch (execErr: any) {
+            const isAbort = execErr?.message?.includes("Aborted") || execErr?.message?.includes("abort");
+            if (!isAbort) throw execErr;
+            code = 0;
+          }
+        }
+
+      }
+
+      let data: any;
+      try {
+        data = await ffmpeg.readFile(outputName);
+      } catch {
+        throw new Error("Output file could not be read. Conversion may have failed silently.");
+      }
 
       const mimeMap: Record<string, string> = {
-        'mp4': 'video/mp4',
-        'webm': 'video/webm',
-        'mkv': 'video/x-matroska',
-        'avi': 'video/x-msvideo',
-        'mp3': 'audio/mpeg',
-        'wav': 'audio/wav',
-        'flac': 'audio/flac'
+        'mp4': 'video/mp4', 'webm': 'video/webm', 'mkv': 'video/x-matroska',
+        'avi': 'video/x-msvideo', 'ts': 'video/mp2t', 'mov': 'video/quicktime',
+        'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'flac': 'audio/flac',
+        'm4a': 'audio/mp4', 'aac': 'audio/aac', 'ogg': 'audio/ogg'
       };
 
       const blob = new Blob([data as any], { type: mimeMap[targetFormat] || 'application/octet-stream' });
 
+      // revoke previous result to free memory
+      if (resultUrl) URL.revokeObjectURL(resultUrl);
       setResultUrl(URL.createObjectURL(blob));
       setResultSize(blob.size);
       setDetectedMime(blob.type);
-      setProgressTarget(100);
       setProgress(100);
-      toast.success("Artifact Generated via FFmpeg Pipeline");
+
+      setTimeout(() => {
+        setProcessing(false);
+        toast.success("Artifact Generated via FFmpeg Pipeline");
+      }, 500);
+
+      ffmpeg.off('log', logHandler);
+      ffmpeg.off('progress', progressHandler);
+
     } catch (err: any) {
-      console.error(err);
-      toast.error(err?.message || "Out of memory: File too complex for browser execution.");
+      console.error("[Conversion Error]", err);
+      if (err?.message?.includes("memory") || err?.message?.includes("bounds")) {
+        await resetFFmpeg();
+        toast.error("Device memory exhausted. Try a smaller file or close other tabs.");
+      } else {
+        toast.error(err?.message || "Conversion failed.");
+      }
+      setProcessing(false);
     } finally {
-      if (ffmpegRef.current && ffmpegRef.current.loaded) {
+      if (ffmpegInstance.loaded) {
         try {
-          if (inputName) await ffmpegRef.current.deleteFile(inputName);
-          if (outputName) await ffmpegRef.current.deleteFile(outputName);
-        } catch (cleanupErr) {
-          console.warn("WASM RAM cleanup suppressed:", cleanupErr);
-        }
+          if (inputName) await ffmpegInstance.deleteFile(inputName);
+          if (outputName) await ffmpegInstance.deleteFile(outputName);
+        } catch (_) { }
       }
       setProcessing(false);
     }
@@ -253,16 +372,29 @@ const UniversalMediaConverter = () => {
     a.click();
   };
 
-  const isVideo = file?.type.startsWith("video/");
-  const isImage = file?.type.startsWith("image/");
-  const isAudio = file?.type.startsWith("audio/");
-  const sourceExt = file?.name.split('.').pop()?.toLowerCase() || "";
+  const srcExt = file?.name.split('.').pop()?.toLowerCase() || "";
+  const VIDEO_EXTS = ['mp4', 'mkv', 'mov', 'ts', 'm2ts', 'webm'];
+  const AUDIO_EXTS = ['mp3', 'wav', 'flac', 'ogg', 'aac', 'm4a', 'wma'];
+  const IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'bmp', 'gif', 'tiff'];
 
-  let formats = isVideo ? ["mp4", "webm", "mkv", "avi"] :
-    isAudio ? ["mp3", "wav", "ogg", "flac"] :
+  const isVideo = file?.type.startsWith("video/") || VIDEO_EXTS.includes(srcExt);
+  const isAudio = !isVideo && (file?.type.startsWith("audio/") || AUDIO_EXTS.includes(srcExt));
+  const isImage = !isVideo && !isAudio && (file?.type.startsWith("image/") || IMAGE_EXTS.includes(srcExt));
+
+  let formats = isVideo ? ["mp4", "mkv", "mov", "ts", "webm"] :
+    isAudio ? ["mp3", "wav", "ogg", "flac", "m4a", "aac"] :
       isImage ? ["png", "jpg", "webp", "bmp"] : [];
 
-  const filteredFormats = formats.filter(f => f !== sourceExt && f !== 'gif');
+  const filteredFormats = formats.filter(f => f !== srcExt && f !== 'gif');
+  
+  const isWebmNative = targetFormat === 'webm' && file?.type.startsWith('video/');
+  const willStreamCopy = !isWebmNative && (
+    (srcExt === 'mp4' && ['mkv', 'mov', 'ts'].includes(targetFormat)) ||
+    (srcExt === 'mkv' && ['mp4', 'mov'].includes(targetFormat)) ||
+    (srcExt === 'mov' && ['mp4', 'mkv'].includes(targetFormat)) ||
+    (srcExt === 'ts' && ['mp4', 'mkv'].includes(targetFormat)) ||
+    (srcExt === 'm2ts' && ['mp4', 'mkv'].includes(targetFormat))
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-all duration-300 theme-video overflow-x-hidden">
@@ -287,23 +419,45 @@ const UniversalMediaConverter = () => {
               </div>
             </header>
 
-            {/* Mobile Inline Ad */}
             <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
               <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
-              <div className="lg:col-span-8 space-y-8">
+            <div className="flex flex-col lg:flex-row gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div className={`w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-8 ${file ? 'lg:w-[58.333%]' : 'lg:w-[66.666%]'}`}>
                 <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl relative group bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Activity className="h-4 w-4 text-primary" />
                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Studio Workbench</h3>
                     </div>
+                    {file && (
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setFile(null);
+                          setResultUrl(null);
+                          setProcessing(false);
+                          setProgress(0);
+                        }}
+                        variant="destructive"
+                        size="sm"
+                        className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
+                      >
+                        Delete File
+                      </Button>
+                    )}
                   </div>
-                  <CardContent className="p-10">
+                  <CardContent className="p-10 relative">
+                    <AnimatePresence mode="popLayout" initial={false}>
                     {!file ? (
-                      <div
+                      <motion.div
+                        key="upload"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3 }}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                         onClick={() => !processing && inputRef.current?.click()}
@@ -315,19 +469,36 @@ const UniversalMediaConverter = () => {
                         <div className="px-6 space-y-2">
                           <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
                           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-50">Drag master or click</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-primary/60 italic pt-2">Max video size: 500MB</p>
                         </div>
-                        <input ref={inputRef} type="file" accept="video/*,image/*,audio/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
-                      </div>
+                        <input ref={inputRef} type="file" accept="video/*,image/*,audio/*,.mov,.mkv,.ts,.m2ts" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+                      </motion.div>
                     ) : (
-                      <div className="relative group w-full bg-background/40 p-10 rounded-3xl border border-primary/10 shadow-inner overflow-hidden min-h-[450px] flex flex-col items-center justify-center studio-gradient backdrop-blur-3xl">
+                      <motion.div
+                        key="processing"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                        className="relative group w-full bg-background/40 p-10 rounded-2xl border border-primary/10 shadow-inner overflow-hidden min-h-[450px] flex flex-col items-center justify-center studio-gradient backdrop-blur-3xl"
+                      >
                         {processing ? (
                           <div className="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 duration-500">
-                            <div className="h-24 w-24 bg-primary/20 text-primary rounded-3xl flex items-center justify-center mb-8 shadow-2xl border border-primary/20 relative">
+                            <div className="h-24 w-24 bg-primary/20 text-primary rounded-2xl flex items-center justify-center mb-8 shadow-2xl border border-primary/20 relative">
                               <RefreshCw className="h-10 w-10 animate-spin" />
                               <div className="absolute inset-0 bg-primary/20 blur-xl animate-pulse -z-10 rounded-full" />
                             </div>
                             <div className="space-y-4 max-w-sm">
                               <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Baking Bitstream</p>
+                              {willStreamCopy ? (
+                                <div className="mt-4 px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[10px] font-black uppercase tracking-widest text-center shadow-inner">
+                                  ⚡ Instant Migration (Lossless)
+                                </div>
+                              ) : (
+                                <div className="mt-4 px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/30 text-orange-400 text-[10px] font-black uppercase tracking-widest text-center shadow-inner">
+                                  🛠️ Deep Re-encoding (High Compatibility)
+                                </div>
+                              )}
                               <div className="space-y-4">
                                 <div className="flex justify-between items-end px-1">
                                   <span className="text-[9px] font-black text-primary uppercase tracking-widest italic">Temporal capture active</span>
@@ -344,7 +515,7 @@ const UniversalMediaConverter = () => {
                           </div>
                         ) : resultUrl ? (
                           <div className="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 duration-500">
-                            <div className="h-24 w-24 bg-emerald-500/20 text-emerald-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl border border-emerald-500/20">
+                            <div className="h-24 w-24 bg-emerald-500/20 text-emerald-500 rounded-2xl flex items-center justify-center mb-8 shadow-2xl border border-emerald-500/20">
                               <ShieldCheck className="h-10 w-10" />
                             </div>
                             <div className="space-y-2">
@@ -357,62 +528,59 @@ const UniversalMediaConverter = () => {
                           </div>
                         ) : (
                           <div className="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 duration-500">
-                            <div className="h-24 w-24 bg-primary/20 text-primary rounded-3xl flex items-center justify-center mb-8 shadow-2xl border border-primary/20">
+                            <div className="h-24 w-24 bg-primary/20 text-primary rounded-2xl flex items-center justify-center mb-8 shadow-2xl border border-primary/20">
                               <Activity className="h-10 w-10 animate-spin-slow" />
                             </div>
                             <div className="space-y-2 max-w-md">
                               <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Artifact Scoped</p>
                               <p className="text-xs font-black text-primary truncate italic uppercase opacity-80 mt-2">{file.name}</p>
                               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-4">{(file.size / 1024 / 1024).toFixed(2)} MB • READY FOR DISPATCH</p>
+                              {isLargeFile && (
+                                <div className="mt-6 px-6 py-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 max-w-sm text-center space-y-2">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-yellow-400">Large File Detected</p>
+                                  <p className="text-[9px] text-muted-foreground font-black uppercase tracking-wider leading-relaxed">
+                                    Files over 50MB are processed in-browser but may be slow or fail on low-memory devices.
+                                    For best results with large videos, use a desktop tool like HandBrake or FFmpeg CLI.
+                                  </p>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
 
-                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-auto">
-                          <Button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setFile(null);
-                              setResultUrl(null);
-                              setProcessing(false);
-                              setProgress(0);
-                            }}
-                            variant="destructive"
-                            size="sm"
-                            className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
-                          >
-                            Clear Stage
-                          </Button>
-                        </div>
-                      </div>
+
+                      </motion.div>
                     )}
+                    </AnimatePresence>
                   </CardContent>
                 </Card>
-                <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-[0.4em] opacity-30 italic">Native GPU Pipeline • Zero Server Persistence • Studio Integrity</p>
+                <div className="space-y-2 pt-2">
+                  <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-[0.4em] opacity-30 italic">Native GPU Pipeline • Zero Server Persistence • Studio Integrity</p>
+                  <p className="text-[10px] font-black text-center text-muted-foreground opacity-60">Note: Browser-based conversion relies on available RAM. For massive files, a dedicated server tool is recommended.</p>
+                </div>
               </div>
 
-              <aside className="lg:col-span-4 space-y-4 lg:sticky lg:top-24 h-fit">
+              <aside className={`w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 lg:sticky lg:top-24 h-fit ${file ? 'lg:w-[41.666%]' : 'lg:w-[33.333%]'}`}>
                 <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-b-2 border-r-2 bg-card">
                   {resultUrl && (
                     <div className="bg-primary/10 border-b border-primary/10 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-3xl">
                       <div className="p-4 flex items-center justify-between border-b border-primary/5">
                         <div className="flex items-center gap-2">
                           <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">Production Integrity</h3>
+                          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary italic">Production Integrity</h3>
                         </div>
-                        <span className="text-[8px] font-black px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 uppercase tracking-widest">Verified</span>
+                        <span className="text-[10px] font-black px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 uppercase tracking-widest">Verified</span>
                       </div>
-                      <div className="px-4 py-4 grid grid-cols-2 gap-4 bg-primary/5">
-                        <div className="space-y-0.5">
-                          <span className="text-[8px] font-black text-muted-foreground/50 uppercase tracking-widest">Weight</span>
-                          <p className="text-sm font-black text-primary italic">{(resultSize / 1024 / 1024).toFixed(2)} MB</p>
+                      <div className="px-5 py-5 grid grid-cols-2 gap-5 bg-primary/5">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">Weight</span>
+                          <p className="text-lg font-black text-primary italic">{(resultSize / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
-                        <div className="space-y-0.5 text-right">
-                          <span className="text-[8px] font-black text-muted-foreground/50 uppercase tracking-widest">Descriptor</span>
-                          <p className="text-[10px] font-black text-foreground uppercase truncate">{targetFormat}</p>
+                        <div className="space-y-1 text-right">
+                          <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">Descriptor</span>
+                          <p className="text-lg font-black text-foreground uppercase truncate">{targetFormat}</p>
                         </div>
-                        <Button onClick={download} size="sm" variant="secondary" className="col-span-2 h-10 gap-2 text-[10px] font-black rounded-lg uppercase italic shadow-lg border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/5 transition-all">
+                        <Button onClick={download} size="sm" variant="secondary" className="col-span-2 h-12 gap-2 text-xs font-black rounded-2xl uppercase italic shadow-lg border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/5 transition-all">
                           <Download className="h-4 w-4" /> Re-Download Artifact
                         </Button>
                       </div>
@@ -435,39 +603,33 @@ const UniversalMediaConverter = () => {
 
                       <div className="space-y-4">
                         <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Target Spec</label>
-                        <Select
-                          value={targetFormat}
-                          onValueChange={setTargetFormat}
-                          disabled={processing || !file}
-                        >
-                          <SelectTrigger className="h-14 bg-background border-primary/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-4 overflow-hidden">
-                            <SelectValue placeholder="SET FORMAT" />
-                          </SelectTrigger>
-                          <SelectContent className="glass-morphism border-primary/20">
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              disabled={processing || !file}
+                              className="w-full h-14 bg-background border-primary/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-4 flex items-center justify-between hover:bg-background/80"
+                            >
+                              <span className="truncate">{targetFormat ? targetFormat.toUpperCase() : "SET FORMAT"}</span>
+                              <ChevronDown className="h-4 w-4 opacity-50" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="glass-morphism border-primary/20 min-w-[var(--radix-dropdown-menu-trigger-width)]">
                             {filteredFormats.map(fmt => (
-                              <SelectItem key={fmt} value={fmt} className="font-black py-3 text-sm uppercase tracking-widest">{fmt.toUpperCase()}</SelectItem>
+                              <DropdownMenuItem
+                                key={fmt}
+                                onClick={() => setTargetFormat(fmt)}
+                                className="font-black py-3 text-sm uppercase tracking-widest cursor-pointer text-center justify-center"
+                              >
+                                {fmt.toUpperCase()}
+                              </DropdownMenuItem>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
 
 
-                    {isVideo && (
-                      <div className="space-y-4 animate-in slide-in-from-left-4 duration-300">
-                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Temporal Shift</label>
-                        <Select value={videoSpeed} onValueChange={setVideoSpeed} disabled={processing || !file}>
-                          <SelectTrigger className="h-14 bg-background border-primary/10 rounded-2xl font-black uppercase tracking-tighter text-sm shadow-inner px-6">
-                            <SelectValue placeholder="SET SPEED" />
-                          </SelectTrigger>
-                          <SelectContent className="glass-morphism border-primary/20">
-                            {["0.5", "0.75", "1.0", "1.25", "1.5", "2.0"].map(s => (
-                              <SelectItem key={s} value={s} className="font-black py-3 text-sm">{s}x Speed</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
 
                     <Button
                       onClick={convertFile}
@@ -488,7 +650,6 @@ const UniversalMediaConverter = () => {
       </div>
       <Footer />
 
-      {/* Mobile Sticky Anchor Ad */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2">
         <AdBox height={50} label="320x50 ANCHOR AD" className="w-full" />
       </div>

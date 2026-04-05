@@ -300,7 +300,7 @@ const ImageColorExtractor = () => {
                           <button
                             key={i}
                             onClick={() => { setColor(c); navigator.clipboard.writeText(c.hex); toast.success("Copied!"); }}
-                            className="group relative aspect-square rounded-lg border border-white/5 shadow-md overflow-hidden transition-transform hover:scale-110 active:scale-95"
+                            className="group relative aspect-square rounded-2xl border border-white/5 shadow-md overflow-hidden transition-transform hover:scale-110 active:scale-95"
                             style={{ backgroundColor: c.hex }}
                           >
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">

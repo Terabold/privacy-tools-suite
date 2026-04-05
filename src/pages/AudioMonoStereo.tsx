@@ -1,9 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, RefreshCw, Download, Play, Pause, Music, Zap, CloudUpload, Layers, Radio, RotateCcw } from "lucide-react";
+import { ArrowLeft, RefreshCw, Download, Play, Pause, Music, Zap, CloudUpload, Layers, Radio, RotateCcw, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -452,15 +452,31 @@ const AudioMonoStereo = () => {
                   <CardContent className="p-8 space-y-8">
                     <div className="space-y-4">
                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground leading-none">Mapping Mode</label>
-                      <Select value={mode} onValueChange={(v: any) => { setMode(v); setProcessedUrl(null); }}>
-                        <SelectTrigger className="h-14 rounded-2xl border-white/10 bg-background/40 font-black uppercase tracking-tighter italic">
-                          <SelectValue placeholder="Mode" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-white/20 bg-background backdrop-blur-3xl">
-                          <SelectItem value="mono-to-stereo" className="font-black uppercase tracking-tighter text-xs">Mono ➔ Stereo</SelectItem>
-                          <SelectItem value="stereo-to-mono" className="font-black uppercase tracking-tighter text-xs">Stereo ➔ Mono</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full h-14 rounded-2xl border-white/10 bg-background/40 font-black uppercase tracking-tighter italic flex items-center justify-between hover:bg-background/60 transition-all px-4"
+                          >
+                            <span className="truncate">{mode === "mono-to-stereo" ? "Mono ➔ Stereo" : "Stereo ➔ Mono"}</span>
+                            <ChevronDown className="h-4 w-4 opacity-50" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="rounded-2xl border-white/20 bg-background backdrop-blur-3xl min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                          <DropdownMenuItem 
+                            onClick={() => { setMode("mono-to-stereo"); setProcessedUrl(null); }}
+                            className="font-black uppercase tracking-tighter text-xs cursor-pointer py-3"
+                          >
+                            Mono ➔ Stereo
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => { setMode("stereo-to-mono"); setProcessedUrl(null); }}
+                            className="font-black uppercase tracking-tighter text-xs cursor-pointer py-3"
+                          >
+                            Stereo ➔ Mono
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
 
                     {processedUrl ? (

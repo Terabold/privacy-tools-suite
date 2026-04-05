@@ -33,7 +33,7 @@
     --border: 240 10% 90%;
     --input: 240 10% 90%;
     --ring: 250 85% 60%;
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Global Scroll-Lock Stability Override */
     /* Prevents libraries like Radix from adding padding-right by nullifying the detected scrollbar size */
@@ -144,6 +144,7 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -211,7 +212,7 @@
 
   /* Universal Premium Containers */
   .studio-workbench {
-    @apply relative w-full h-full flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-primary/20 text-center transition-all bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner;
+    @apply relative w-full h-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all bg-background/50 hover:border-primary/40 hover:bg-primary/5 shadow-inner;
   }
 
   /* Accessible Hover Fix: Ensure high-contrast on hover */
@@ -297,4 +298,36 @@
 .mask-fade-both {
   mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+
+/* Remove native HTML spinners from number inputs globally */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Style native color pickers to match the premium rounded UI */
+input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  padding: 0;
+  border-radius: 1rem;
+  /* Same as rounded-2xl */
+  overflow: hidden;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 1rem;
 }

@@ -592,8 +592,8 @@ const SpriteStudio = () => {
 
                     <div className="p-5 pb-5 overflow-y-auto custom-scrollbar grow">
                       <div className="flex bg-primary/5 backdrop-blur-md p-2 rounded-xl border border-primary/10 gap-2 shadow-inner mb-6">
-                        <button onClick={() => setMode("manual")} className={`flex-1 py-4 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${mode === "manual" ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:bg-primary/10"}`}>Manual</button>
-                        <button onClick={() => setMode("grid")} className={`flex-1 py-4 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${mode === "grid" ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:bg-primary/10"}`}>Grid</button>
+                        <button onClick={() => setMode("manual")} className={`flex-1 py-4 text-xs font-black uppercase tracking-widest rounded-2xl transition-all ${mode === "manual" ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:bg-primary/10"}`}>Manual</button>
+                        <button onClick={() => setMode("grid")} className={`flex-1 py-4 text-xs font-black uppercase tracking-widest rounded-2xl transition-all ${mode === "grid" ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:bg-primary/10"}`}>Grid</button>
                       </div>
 
                       <div className="space-y-6">
@@ -608,29 +608,29 @@ const SpriteStudio = () => {
                         {mode === "grid" && (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 animate-in slide-in-from-top-4 duration-500">
                             <div className="flex bg-primary/5 backdrop-blur-md p-1.5 rounded-xl border border-primary/10 shadow-inner mb-2">
-                              <button onClick={() => setGridMode("count")} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg transition-all ${gridMode === "count" ? "bg-primary text-white shadow-md font-bold" : "text-muted-foreground hover:text-primary"}`}>Fixed</button>
-                              <button onClick={() => setGridMode("pixel")} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg transition-all ${gridMode === "pixel" ? "bg-primary text-white shadow-md font-bold" : "text-muted-foreground hover:text-primary"}`}>Pixel</button>
+                              <button onClick={() => setGridMode("count")} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all ${gridMode === "count" ? "bg-primary text-white shadow-md font-bold" : "text-muted-foreground hover:text-primary"}`}>Fixed</button>
+                              <button onClick={() => setGridMode("pixel")} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all ${gridMode === "pixel" ? "bg-primary text-white shadow-md font-bold" : "text-muted-foreground hover:text-primary"}`}>Pixel</button>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                               <div className="space-y-1.5">
                                 <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">{gridMode === 'count' ? 'Rows' : 'Width'}</Label>
-                                <Input type="number" value={gridMode === 'count' ? gridConfig.rows : gridConfig.cellW} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'rows' : 'cellW']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
+                                <Input type="number" value={gridMode === 'count' ? gridConfig.rows : gridConfig.cellW} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'rows' : 'cellW']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-2xl bg-background/40 border-white/10" />
                               </div>
                               <div className="space-y-1.5">
                                 <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">{gridMode === 'count' ? 'Cols' : 'Height'}</Label>
-                                <Input type="number" value={gridMode === 'count' ? gridConfig.cols : gridConfig.cellH} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'cols' : 'cellH']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
+                                <Input type="number" value={gridMode === 'count' ? gridConfig.cols : gridConfig.cellH} onChange={(e) => setGridConfig({ ...gridConfig, [gridMode === 'count' ? 'cols' : 'cellH']: parseInt(e.target.value) || 1 })} className="h-7 text-[10px] font-black rounded-2xl bg-background/40 border-white/10" />
                               </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                               <div className="space-y-1.5">
                                 <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">Gap X</Label>
-                                <Input type="number" value={gridConfig.gapX} onChange={(e) => setGridConfig({ ...gridConfig, gapX: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
+                                <Input type="number" value={gridConfig.gapX} onChange={(e) => setGridConfig({ ...gridConfig, gapX: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-2xl bg-background/40 border-white/10" />
                               </div>
                               <div className="space-y-1.5">
                                 <Label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground italic">Gap Y</Label>
-                                <Input type="number" value={gridConfig.gapY} onChange={(e) => setGridConfig({ ...gridConfig, gapY: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-lg bg-background/40 border-white/10" />
+                                <Input type="number" value={gridConfig.gapY} onChange={(e) => setGridConfig({ ...gridConfig, gapY: parseInt(e.target.value) || 0 })} className="h-7 text-[10px] font-black rounded-2xl bg-background/40 border-white/10" />
                               </div>
                             </div>
 
@@ -670,7 +670,7 @@ const SpriteStudio = () => {
                       <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Partition Stack</h3>
                     </div>
                     {slices.length > 0 && (
-                      <Button onClick={() => setSlices([])} variant="ghost" size="sm" className="h-6 px-2.5 text-[7px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-lg transition-all">Purge</Button>
+                      <Button onClick={() => setSlices([])} variant="ghost" size="sm" className="h-6 px-2.5 text-[7px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 border border-destructive/10 rounded-2xl transition-all">Purge</Button>
                     )}
                   </div>
                   <CardContent className="p-0 overflow-y-auto grow custom-scrollbar">
@@ -698,7 +698,7 @@ const SpriteStudio = () => {
                             </div>
                             <div className="flex items-center gap-2 pointer-events-none">
                               <span className="text-[8px] font-black text-muted-foreground italic">{slice.w}x{slice.h}</span>
-                              <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); deleteSlice(slice.id); }} className="h-6 w-6 text-destructive opacity-40 hover:opacity-100 transition-opacity hover:bg-destructive/10 rounded-lg pointer-events-auto"><Trash2 className="h-3 w-3" /></Button>
+                              <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); deleteSlice(slice.id); }} className="h-6 w-6 text-destructive opacity-40 hover:opacity-100 transition-opacity hover:bg-destructive/10 rounded-2xl pointer-events-auto"><Trash2 className="h-3 w-3" /></Button>
                             </div>
                           </Reorder.Item>
                         ))}

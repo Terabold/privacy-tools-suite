@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Camera, Download, Trash2, CloudUpload, Play, Pause, ChevronLeft, ChevronRight, Maximize2, Undo2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Camera, Download, Trash2, CloudUpload, Play, Pause, ChevronLeft, ChevronRight, Maximize2, Undo2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
@@ -240,33 +241,73 @@ const FrameExtractor = () => {
               <AdBox height={250} label="300x250 AD" className="w-full max-w-[400px]" />
             </div>
 
-            <div className="w-full flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-8 duration-300">
-              {!file ? (
-                <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[500px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
-                  <div
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
-                    onClick={() => inputRef.current?.click()}
-                    className="relative w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer py-24 bg-background/40 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
-                  >
-                    <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                      <CloudUpload className="h-10 w-10 text-primary" />
-                    </div>
-                    <div className="px-6 space-y-1">
-                      <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
-                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic">Drag master or click</p>
-                    </div>
-                    <label htmlFor="frame-upload-input" className="sr-only">Upload Video for Extraction</label>
-                    <input id="frame-upload-input" name="frame-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
-                  </div>
-                </Card>
-              ) : (
-                <div className="w-full space-y-12">
-                  <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
-                    {/* LEFT COLUMN: SOURCE WORKBENCH */}
-                    <div className="space-y-6 flex flex-col items-center w-full">
+            <motion.div layout className={`flex flex-col lg:flex-row items-start w-full gap-8 ${!file ? 'justify-center' : 'justify-start'}`}>
+              <motion.div 
+                layout 
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className={`glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl bg-card flex flex-col relative w-full ${!file ? 'max-w-3xl' : 'lg:w-[55%]'}`}
+              >
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {!file ? (
+                    <motion.div
+                      key="upload"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.4 }}
+                      className="w-full h-full flex-1 flex flex-col p-10 min-h-[500px]"
+                    >
+                      <div
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                        onClick={() => inputRef.current?.click()}
+                        className="relative w-full h-full flex-1 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/40 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                      >
+                        <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
+                          <CloudUpload className="h-10 w-10 text-primary" />
+                        </div>
+                        <div className="px-6 space-y-1">
+                          <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
+                          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic">Drag master or click</p>
+                        </div>
+                        <label htmlFor="frame-upload-input" className="sr-only">Upload Video for Extraction</label>
+                        <input id="frame-upload-input" name="frame-upload-input" ref={inputRef} type="file" className="hidden" accept="video/*" onChange={(e) => handleFile(e.target.files?.[0])} />
+                      </div>
+                    </motion.div>
+                  ) : (<motion.div
+                      key="editor"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="w-full"
+                    >
+                        {!isFullscreen && (
+                          <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between shrink-0">
+                            <div className="flex items-center gap-3">
+                              <Activity className="h-4 w-4 text-primary" />
+                              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Video Preview</h3>
+                            </div>
+                            <Button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setFile(null);
+                                setVideoUrl(null);
+                                setFrames([]);
+                                setCurrentTime(0);
+                              }}
+                              variant="destructive"
+                              size="sm"
+                              className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
+                            >
+                              Delete File
+                            </Button>
+                          </div>
+                        )}
+                        <CardContent className={`flex flex-col items-center w-full ${isFullscreen ? 'p-0' : 'p-6 space-y-6'}`}>
                       <div ref={containerRef} className={cn(
-                        "w-full rounded-3xl overflow-hidden shadow-2xl relative border-2 border-primary/10 bg-black aspect-video flex items-center justify-center studio-gradient focus-within:ring-2 focus-within:ring-primary/20 group/video",
+                        "w-full rounded-2xl overflow-hidden shadow-2xl relative border-2 border-primary/10 bg-black aspect-video flex items-center justify-center studio-gradient focus-within:ring-2 focus-within:ring-primary/20 group/video",
                         isFullscreen && "rounded-none border-0"
                       )}>
                         <video
@@ -297,7 +338,7 @@ const FrameExtractor = () => {
                       </div>
 
                       {!isFullscreen && (
-                        <div className="w-full glass-morphism border-primary/10 bg-primary/5 p-4 md:p-6 rounded-[28px] space-y-4 shadow-2xl studio-gradient border-border/20">
+                        <div className="w-full glass-morphism border-primary/10 bg-primary/5 p-4 md:p-6 rounded-2xl space-y-4 shadow-2xl studio-gradient border-border/20">
                           <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between gap-4">
                               <div className="flex bg-background/40 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner">
@@ -314,7 +355,7 @@ const FrameExtractor = () => {
                                       setIsPlaying(false);
                                     }
                                   }}
-                                  className="h-10 w-14 bg-primary text-primary-foreground rounded-lg shadow-lg hover:scale-105 active:scale-95 transition-all mx-1.5"
+                                  className="h-10 w-14 bg-primary text-primary-foreground rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all mx-1.5"
                                 >
                                   {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
                                 </Button>
@@ -353,11 +394,24 @@ const FrameExtractor = () => {
                           </div>
                         </div>
                       )}
-                    </div>
+                    </CardContent>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              </motion.div>
 
-                    {/* RIGHT COLUMN: LATEST CAPTURE WORKBENCH */}
-                    <div className="space-y-6">
-                      <Card className="w-full rounded-3xl overflow-hidden shadow-2xl relative border border-white/5 bg-card max-h-[38vh] aspect-video flex items-center justify-center group/latest">
+              <AnimatePresence mode="popLayout">
+                {file && (
+                  <motion.div 
+                    layout
+                    key="sidebar"
+                    initial={{ opacity: 0, x: 40, filter: "blur(10px)" }}
+                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, x: 40, filter: "blur(10px)" }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-full lg:w-[45%] space-y-6"
+                  >
+                      <Card className="w-full rounded-2xl overflow-hidden shadow-2xl relative border border-white/5 bg-card max-h-[38vh] aspect-video flex items-center justify-center group/latest">
                         {frames.length > 0 ? (
                           <div className="relative w-full h-full animate-in fade-in zoom-in-95 duration-500">
                             <img
@@ -429,7 +483,7 @@ const FrameExtractor = () => {
 
                       <div
                         onClick={() => setShowGallery(true)}
-                        className="bg-background/40 rounded-3xl border border-border/50 p-4 min-h-[160px] relative overflow-hidden group studio-gradient shadow-2xl cursor-pointer hover:border-primary/40 transition-all flex flex-col"
+                        className="bg-background/40 rounded-2xl border border-border/50 p-4 min-h-[160px] relative overflow-hidden group studio-gradient shadow-2xl cursor-pointer hover:border-primary/40 transition-all flex flex-col"
                       >
                         <header className="mb-3 flex items-center justify-between px-1">
                           <div className="flex items-center gap-3">
@@ -456,22 +510,21 @@ const FrameExtractor = () => {
                         ) : (
                           <div className="grid grid-cols-4 gap-2 flex-1 auto-rows-fr">
                             {frames.slice(0, 8).map((frame) => (
-                              <div key={frame.id} className="relative rounded-lg overflow-hidden border border-white/5 opacity-80 hover:opacity-100 transition-opacity shadow-sm bg-background/40">
+                              <div key={frame.id} className="relative rounded-2xl overflow-hidden border border-white/5 opacity-80 hover:opacity-100 transition-opacity shadow-sm bg-background/40">
                                 <img src={frame.url} className="w-full h-full object-cover aspect-video" alt="History Thumb" />
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+                    </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
             {/* GALLERY MODAL */}
             <Dialog modal={false} open={showGallery} onOpenChange={setShowGallery}>
-              <DialogContent className="max-w-6xl h-[85vh] flex flex-col p-0 glass-morphism border-primary/20 bg-card transition-all overflow-hidden studio-gradient shadow-[0_0_100px_rgba(0,0,0,0.8)] theme-video outline-none rounded-[40px] z-[200] top-[5vh] translate-y-0">
+              <DialogContent className="max-w-6xl h-[85vh] flex flex-col p-0 glass-morphism border-primary/20 bg-card transition-all overflow-hidden studio-gradient shadow-[0_0_100px_rgba(0,0,0,0.8)] theme-video outline-none rounded-2xl z-[200] top-[5vh] translate-y-0">
                 <DialogHeader className="p-10 border-b border-white/5 shrink-0 bg-background/40 backdrop-blur-3xl rounded-t-[40px]">
                   <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="space-y-1">
@@ -519,7 +572,7 @@ const FrameExtractor = () => {
                             <img src={frame.url} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" alt={`Capture at ${frame.time}s`} />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover/card:opacity-100 transition-opacity" />
 
-                            <div className="absolute top-4 left-4 px-3 py-1 bg-background/60 rounded-lg border border-white/10 backdrop-blur-md">
+                            <div className="absolute top-4 left-4 px-3 py-1 bg-background/60 rounded-2xl border border-white/10 backdrop-blur-md">
                               <span className="text-[10px] font-bold text-primary italic tracking-widest">{frame.time.toFixed(3)}s</span>
                             </div>
                           </div>
@@ -561,7 +614,7 @@ const FrameExtractor = () => {
 
             <footer className="pt-20 border-t border-border/50">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="glass-morphism border-primary/10 p-6 rounded-3xl bg-primary/5">
+                <Card className="glass-morphism border-primary/10 p-6 rounded-2xl bg-primary/5">
                   <p className="text-[9px] font-bold uppercase tracking-widest text-primary mb-4 italic">Precision Engine</p>
                   <p className="text-[11px] leading-relaxed opacity-60">Utilize Arrow Keys (left/right) for precision frame-stepping. Captured moments are exported as lossless 8-bit PNG artifacts.</p>
                 </Card>

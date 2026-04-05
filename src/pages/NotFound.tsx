@@ -29,7 +29,7 @@ const NotFound = () => {
         {/* Hardware Error Icon */}
         <div className="relative inline-flex items-center justify-center">
             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110 animate-pulse" />
-            <div className="h-28 w-28 rounded-[2rem] bg-card border-2 border-primary/20 flex items-center justify-center shadow-2xl relative">
+            <div className="h-28 w-28 rounded-2xl bg-card border-2 border-primary/20 flex items-center justify-center shadow-2xl relative">
                <ShieldAlert className="h-12 w-12 text-primary" />
             </div>
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border-2 border-background shadow-lg">

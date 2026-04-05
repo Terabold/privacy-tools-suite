@@ -168,7 +168,7 @@ const LoremGenerator = () => {
                             type="checkbox"
                             checked={startWithLorem}
                             onChange={e => { setStartWithLorem(e.target.checked); generate(style, unit, count, e.target.checked); }}
-                            className="accent-primary w-4 h-4 rounded-lg"
+                            className="accent-primary w-4 h-4 rounded-2xl"
                           />
                           <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 opacity-60 italic">Start with "Lorem ipsum"</span>
                         </label>

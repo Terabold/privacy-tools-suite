@@ -307,16 +307,18 @@ const RegexPlayground = () => {
                               </div>
                               <div className="space-y-3 pt-4 border-t border-border dark:border-white/5">
                                  <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:opacity-30 italic">Cheat Sheet</p>
-                                 {[
-                                    [".", "any char"], ["\\d", "digit"], ["\\w", "word char"], ["\\s", "whitespace"],
-                                    ["^", "start"], ["$", "end"], ["+", "1+"], ["*", "0+"], ["?", "0 or 1"],
-                                    ["{n}", "exactly n"], ["(a|b)", "a or b"], ["(?:)", "non-capture"],
-                                 ].map(([sym, desc]) => (
-                                    <div key={sym} className="flex items-center gap-3">
-                                       <code className="text-[10px] text-primary font-mono font-black bg-primary/10 dark:bg-primary/20 px-2 py-0.5 rounded shadow-sm w-16 text-center">{sym}</code>
-                                       <span className="text-[9px] text-muted-foreground font-medium">{desc}</span>
-                                    </div>
-                                 ))}
+                                 <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+                                    {[
+                                       [".", "any char"], ["\\d", "digit"], ["\\w", "word char"], ["\\s", "whitespace"],
+                                       ["^", "start"], ["$", "end"], ["+", "1+"], ["*", "0+"], ["?", "0 or 1"],
+                                       ["{n}", "exactly n"], ["(a|b)", "a or b"], ["(?:)", "non-capture"],
+                                    ].map(([sym, desc]) => (
+                                       <div key={sym} className="flex items-center gap-2">
+                                          <code className="text-[10px] text-primary font-mono font-black bg-primary/10 dark:bg-primary/20 px-1.5 py-0.5 rounded shadow-sm w-8 shrink-0 text-center">{sym}</code>
+                                          <span className="text-[8px] text-muted-foreground font-medium truncate">{desc}</span>
+                                       </div>
+                                    ))}
+                                 </div>
                               </div>
                               <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest dark:opacity-30 italic pt-4 border-t border-border dark:border-white/5">
                                  Native JS engine · Zero uploads

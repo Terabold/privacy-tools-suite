@@ -159,7 +159,11 @@ const VideoToGif = () => {
       ];
 
       setLogs(prev => [...prev, "Spawning Palette Generation Thread..."]);
-      await ffmpeg.exec(args);
+      try {
+        await ffmpeg.exec(args);
+      } catch (execErr: any) {
+        if (!execErr?.message?.includes("Aborted")) throw execErr;
+      }
       setLogs(prev => [...prev, "Palette Generated.", "Rendering Final GIF Frame Data..."]);
 
       const data = await ffmpeg.readFile(outputName);
@@ -220,12 +224,12 @@ const VideoToGif = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
               <div className="lg:col-span-8 space-y-8">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[600px] flex flex-col items-center justify-center relative bg-card rounded-[32px] shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[600px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                       onClick={() => !processing && inputRef.current?.click()}
-                      className={`relative w-full h-full flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-48 bg-background hover:bg-primary/5 shadow-inner" : "py-48 opacity-50"}`}
+                      className={`relative w-full h-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/20 text-center transition-all ${!processing ? "cursor-pointer py-48 bg-background hover:bg-primary/5 shadow-inner" : "py-48 opacity-50"}`}
                     >
                       <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
                         <CloudUpload className="h-10 w-10 text-primary" />
@@ -241,7 +245,7 @@ const VideoToGif = () => {
                   </Card>
                 ) : (
                   <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-300">
-                    <Card className="glass-morphism border-primary/10 rounded-[32px] overflow-hidden bg-black shadow-2xl relative border border-border/50 max-w-2xl w-full mx-auto group">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden bg-black shadow-2xl relative border border-border/50 max-w-2xl w-full mx-auto group">
                       <video
                         ref={videoRef}
                         src={videoUrl!}
@@ -268,7 +272,7 @@ const VideoToGif = () => {
                     </Card>
 
                     <div className="space-y-6">
-                      <div className="glass-morphism border-primary/5 bg-primary/5 p-6 rounded-[32px] space-y-6 shadow-xl">
+                      <div className="glass-morphism border-primary/5 bg-primary/5 p-6 rounded-2xl space-y-6 shadow-xl">
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-4">
                             <Button

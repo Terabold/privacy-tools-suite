@@ -171,7 +171,7 @@ const QuickClipboardHub = () => {
                            {history.map((h, i) => (
                              <div key={i} className="p-4 flex items-center justify-between hover:bg-white/5 transition-colors group">
                                 <div className="flex items-center gap-4">
-                                   <div className="h-10 w-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-500">
+                                   <div className="h-10 w-10 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500">
                                       <FileCheck className="h-5 w-5" />
                                    </div>
                                    <div>
@@ -179,7 +179,7 @@ const QuickClipboardHub = () => {
                                       <p className="text-[10px] font-mono text-muted-foreground opacity-60">{h.size} • {h.time}</p>
                                    </div>
                                 </div>
-                                <Button size="icon" variant="ghost" className="rounded-lg h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity" asChild>
+                                <Button size="icon" variant="ghost" className="rounded-2xl h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity" asChild>
                                    <a href={h.url} download={h.name}>
                                       <Download className="h-4 w-4" />
                                    </a>
