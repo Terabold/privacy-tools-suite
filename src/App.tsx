@@ -31,6 +31,9 @@ const CsvJsonForge = lazy(() => import("./pages/CsvJsonForge.tsx"));
 const QrForge = lazy(() => import("./pages/QrForge.tsx"));
 const PiiMasker = lazy(() => import("./pages/PiiMasker.tsx"));
 const SvgOptimizer = lazy(() => import("./pages/SvgOptimizer.tsx"));
+const SvgToImage = lazy(() => import("./pages/SvgToImage.tsx"));
+const ImageToPdf = lazy(() => import("./pages/ImageToPdf.tsx"));
+const TextDiffChecker = lazy(() => import("./pages/TextDiffChecker.tsx"));
 const QuickClipboardHub = lazy(() => import("./pages/QuickClipboardHub.tsx"));
 const JwtDecoder = lazy(() => import("./pages/JwtDecoder.tsx"));
 const EncoderDecoder = lazy(() => import("./pages/EncoderDecoder.tsx"));
@@ -100,6 +103,9 @@ const App = () => {
               <Route path="/qr-forge" element={<QrForge />} />
               <Route path="/pii-masker" element={<PiiMasker />} />
               <Route path="/svg-optimizer" element={<SvgOptimizer />} />
+              <Route path="/svg-to-image" element={<SvgToImage />} />
+              <Route path="/image-to-pdf" element={<ImageToPdf />} />
+              <Route path="/text-diff-checker" element={<TextDiffChecker />} />
               <Route path="/quick-clipboard" element={<QuickClipboardHub />} />
               <Route path="/jwt-decoder" element={<JwtDecoder />} />
               <Route path="/encoder-decoder" element={<EncoderDecoder />} />

@@ -163,5 +163,20 @@
     "to": "/image-compressor",
     "seoTitle": "In-Browser Image Compressor - Privacy-First Size Reduction",
     "seoDescription": "Reduce image file sizes locally by up to 90% without loss. Fast, secure, and zero-upload."
+  },
+  {
+    "to": "/svg-to-image",
+    "seoTitle": "Free SVG to PNG/JPG Converter - In-Browser, No Uploads | PrivateUtils",
+    "seoDescription": "Convert SVG vectors to high-quality PNG or JPG images entirely client-side. Zero server uploads, 100% private, utilizing native browser canvas rendering."
+  },
+  {
+    "to": "/text-diff-checker",
+    "seoTitle": "Private Text Diff Checker - Compare Content Side-by-Side | PrivateUtils",
+    "seoDescription": "Compare two text versions entirely client-side. Visualize additions and deletions with high-precision line and word diffing. 100% private with zero data uploads."
+  },
+  {
+    "to": "/image-to-pdf",
+    "seoTitle": "In-Browser Image to PDF Converter - Private & Multi-Page | PrivateUtils",
+    "seoDescription": "Compile JPG, PNG, and WebP images into a single multi-page PDF document entirely client-side. Reorder images and generate PDFs with zero server uploads."
   }
 ]

@@ -1,4 +1,4 @@
-import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap, ClipboardCopy, KeyRound, Binary, Clock, SearchCode, FileText, Palette, Fingerprint, Ruler, FileJson, FileStack, Monitor, RefreshCw, Database } from "lucide-react";
+import { Volume2, Type, Pipette, Video, Layers, Layout, Scissors, Music, ShieldX, ImageIcon, ShieldCheck, Wrench, Sparkles, Camera, Code, QrCode, Zap, ClipboardCopy, KeyRound, Binary, Clock, SearchCode, FileText, Palette, Fingerprint, Ruler, FileJson, FileStack, Monitor, RefreshCw, Database, Split } from "lucide-react";
 import ToolCard from "./ToolCard";
 import { Button } from "@/components/ui/button";
 import toolsMetadata from "@/data/toolsMetadata.json";
@@ -133,6 +133,22 @@ const toolsData = [
     tags: ["SVG", "FAST"]
   },
   {
+    title: "SVG to Image",
+    description: "High-precision vector-to-raster rendering: convert SVG to high-quality PNG or JPG",
+    icon: <ImageIcon className="h-5 w-5" />,
+    to: "/svg-to-image",
+    category: "Image Studio",
+    tags: ["RASTER", "PNG"]
+  },
+  {
+    title: "Image to PDF",
+    description: "Multi-page PDF architect: compile JPG, PNG, and WebP images into a single document with reordering support",
+    icon: <FileStack className="h-5 w-5" />,
+    to: "/image-to-pdf",
+    category: "Image Studio",
+    tags: ["PDF", "COMPILE"]
+  },
+  {
     title: "Text Case Formatter",
     description: "Professional case transformations for code or content lists",
     icon: <Type className="h-5 w-5" />,
@@ -147,6 +163,14 @@ const toolsData = [
     to: "/quick-clipboard",
     category: "Utility Belt",
     tags: ["EXTRACT", "ZAP"]
+  },
+  {
+    title: "Text Diff Checker",
+    description: "Professional-grade content comparison: visualize additions and deletions side-by-side",
+    icon: <Split className="h-5 w-5" />,
+    to: "/text-diff-checker",
+    category: "Utility Belt",
+    tags: ["COMPARE", "PRO"]
   },
   {
     title: "JWT Decoder",

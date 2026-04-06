@@ -1,0 +1,478 @@
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Download, FileCode, Trash2, Copy, ImageIcon, Sliders } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ToolExpertSection from "@/components/ToolExpertSection";
+import SponsorSidebars from "@/components/SponsorSidebars";
+import AdBox from "@/components/AdBox";
+import { toast } from "sonner";
+import { usePasteFile } from "@/hooks/usePasteFile";
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+const isPixel = (val: string | null): val is string =>
+  !!val && /^[0-9.]+(px)?$/i.test(val.trim());
+
+/**
+ * Fetch a URL and return a data: URL.
+ */
+const toDataUrl = async (url: string): Promise<string> => {
+  const res = await fetch(url, { mode: "cors" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+};
+
+/**
+ * Inline external images to prevent canvas tainting.
+ */
+const inlineExternalImages = async (svgEl: Element): Promise<void> => {
+  const images = Array.from(svgEl.querySelectorAll("image"));
+  await Promise.all(
+    images.map(async (img) => {
+      const href =
+        img.getAttribute("href") ||
+        img.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+      if (!href || href.startsWith("data:")) return;
+
+      try {
+        const dataUrl = await toDataUrl(href);
+        img.setAttribute("href", dataUrl);
+        img.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+      } catch (e) {
+        console.warn("Could not inline external image:", href, e);
+      }
+    })
+  );
+};
+
+/**
+ * Improved dimension resolver — handles missing dimensions, em/rem, and complex content
+ */
+const resolveSvgDimensions = (svgEl: Element): { w: number; h: number } => {
+  // 1. viewBox is best
+  const viewBox = svgEl.getAttribute("viewBox");
+  if (viewBox) {
+    const p = viewBox.trim().split(/[\s,]+/).map(Number);
+    if (p.length >= 4 && p[2] > 0 && p[3] > 0) {
+      return { w: Math.ceil(p[2]), h: Math.ceil(p[3]) };
+    }
+  }
+
+  // 2. Explicit width/height with pixel or em/rem support
+  const widthAttr = svgEl.getAttribute("width")?.trim();
+  const heightAttr = svgEl.getAttribute("height")?.trim();
+
+  const parseLength = (val: string | null): number | null => {
+    if (!val) return null;
+    const num = parseFloat(val);
+    if (isNaN(num) || num <= 0) return null;
+
+    const lower = val.toLowerCase();
+    if (lower.endsWith("em") || lower.endsWith("rem")) {
+      return num * 16; // approximate root font size
+    }
+    return num;
+  };
+
+  let w = parseLength(widthAttr);
+  let h = parseLength(heightAttr);
+
+  if (w && h) return { w: Math.ceil(w), h: Math.ceil(h) };
+
+  // 3. Robust fallback using getBBox()
+  const container = document.createElement("div");
+  container.style.position = "absolute";
+  container.style.left = "-99999px";
+  container.style.top = "-99999px";
+  container.style.visibility = "hidden";
+  container.style.overflow = "hidden";
+  document.body.appendChild(container);
+
+  const clone = svgEl.cloneNode(true) as SVGSVGElement;
+
+  // Give temporary size so percentages and relative units can resolve
+  if (!clone.hasAttribute("width")) clone.setAttribute("width", "800");
+  if (!clone.hasAttribute("height")) clone.setAttribute("height", "600");
+  if (!clone.hasAttribute("viewBox")) clone.setAttribute("viewBox", "0 0 800 600");
+
+  container.appendChild(clone);
+
+  let finalW = 800;
+  let finalH = 600;
+
+  try {
+    const bbox = clone.getBBox();
+    if (bbox.width > 5 && bbox.height > 5) {
+      finalW = Math.ceil(bbox.x + bbox.width);
+      finalH = Math.ceil(bbox.y + bbox.height);
+    }
+  } catch (e) {
+    console.warn("getBBox() failed, using fallback", e);
+  } finally {
+    document.body.removeChild(container);
+  }
+
+  return { w: finalW, h: finalH };
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+const SvgToImage = () => {
+  const [darkMode, setDarkMode] = useState(() =>
+    document.documentElement.classList.contains("dark")
+  );
+  const [input, setInput] = useState("");
+  const [exportFormat, setExportFormat] = useState<"png" | "jpeg">("png");
+  const [scale, setScale] = useState(2);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [processedInput, setProcessedInput] = useState("");
+
+  const toggleDark = useCallback(() => {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }, [darkMode]);
+
+  const handleFile = (file: File | undefined) => {
+    if (!file) return;
+    if (file.type !== "image/svg+xml" && !file.name.endsWith(".svg")) {
+      toast.error("Format mismatch. Deploy SVG artifact only.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setInput(content);
+      toast.success("SVG Artifact Staged");
+    };
+    reader.readAsText(file);
+  };
+
+  usePasteFile(handleFile);
+
+  // ── PREVIEW ENGINE ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!input.trim()) {
+      setProcessedInput("");
+      return;
+    }
+
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(input.trim(), "image/svg+xml");
+      const svgEl = doc.querySelector("svg");
+      if (!svgEl) return;
+
+      if (!svgEl.getAttribute("xmlns")) {
+        svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      }
+
+      // Resolve dimensions and ensure viewBox exists
+      const { w, h } = resolveSvgDimensions(svgEl);
+      if (!svgEl.getAttribute("viewBox")) {
+        svgEl.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      }
+
+      // Consistent preview sizing
+      svgEl.setAttribute("width", "100%");
+      svgEl.setAttribute("height", "100%");
+      svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+      setProcessedInput(new XMLSerializer().serializeToString(svgEl));
+    } catch (err) {
+      console.error("Preview sanitization failed:", err);
+    }
+  }, [input]);
+
+  // ── EXPORT ──────────────────────────────────────────────────────────────────
+  const convertAndDownload = async () => {
+    if (!input.trim()) {
+      toast.error("No SVG code detected");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(input.trim(), "image/svg+xml");
+      const svgEl = doc.querySelector("svg");
+
+      if (!svgEl) throw new Error("No <svg> element found");
+
+      if (!svgEl.getAttribute("xmlns")) {
+        svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      }
+
+      // Inline external images
+      await inlineExternalImages(svgEl);
+
+      // Get reliable dimensions
+      const { w: finalW, h: finalH } = resolveSvgDimensions(svgEl);
+
+      // Prepare SVG for canvas rendering
+      if (!svgEl.getAttribute("viewBox")) {
+        svgEl.setAttribute("viewBox", `0 0 ${finalW} ${finalH}`);
+      }
+      svgEl.setAttribute("width", finalW.toString());
+      svgEl.setAttribute("height", finalH.toString());
+
+      const svgString = new XMLSerializer().serializeToString(svgEl);
+      const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";   // ← Critical for avoiding taint
+
+      img.onload = () => {
+        try {
+          const canvas = canvasRef.current;
+          if (!canvas) throw new Error("Canvas element not found");
+
+          canvas.width = finalW * scale;
+          canvas.height = finalH * scale;
+
+          const ctx = canvas.getContext("2d", { alpha: exportFormat === "png" });
+          if (!ctx) throw new Error("Failed to initialize canvas context");
+
+          // White background for JPEG
+          if (exportFormat === "jpeg") {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          const dataUrl = canvas.toDataURL(
+            `image/${exportFormat}`,
+            exportFormat === "jpeg" ? 0.92 : undefined
+          );
+
+          const link = document.createElement("a");
+          link.download = `converted_${Date.now()}.${exportFormat}`;
+          link.href = dataUrl;
+          link.click();
+
+          toast.success(`SVG Converted to ${exportFormat.toUpperCase()}`);
+        } catch (err) {
+          console.error(err);
+          toast.error("Render failed. Try simplifying the SVG.");
+        } finally {
+          URL.revokeObjectURL(url);
+          setIsProcessing(false);
+        }
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        setIsProcessing(false);
+        toast.error("Failed to load SVG for rendering.");
+      };
+
+      img.src = url;
+    } catch (err) {
+      console.error(err);
+      toast.error("Export failed. Check SVG syntax.");
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500">
+      <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
+
+      <div className="flex justify-center items-start w-full relative">
+        <SponsorSidebars position="left" />
+
+        <main className="container mx-auto max-w-[1800px] px-4 py-8 grow">
+          <div className="flex flex-col gap-10">
+            <header className="flex items-center justify-between flex-wrap gap-8">
+              <div className="flex items-center gap-6">
+                <Link to="/">
+                  <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-border dark:border-white/20 hover:bg-primary/10 dark:hover:bg-primary/20 transition-all group/back bg-background/80 dark:bg-black/60 shadow-xl dark:shadow-2xl">
+                    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-foreground dark:text-white text-shadow-glow">
+                    SVG to <span className="text-primary italic">Image</span>
+                  </h1>
+                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-60 dark:opacity-40 text-[10px]">Client-Side Vector to Raster Conversion</p>
+                </div>
+              </div>
+            </header>
+
+            {/* Mobile Inline Ad */}
+            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+              <AdBox adFormat="horizontal" height={250} label="400x250 AD" className="w-full max-w-[400px]" />
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-4 items-start">
+              <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[550px]">
+                  {/* Header */}
+                  <div className="px-4 pt-2 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1.5 items-center bg-white dark:bg-[#111111] px-4 py-1.5 rounded-t-lg border-x border-t border-border dark:border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-zinc-50 dark:hover:bg-[#151515]">
+                        <FileCode className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-zinc-400">Vector Workspace</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1.5 relative z-20">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className={`h-11 px-4 text-[10px] font-black rounded-xl gap-2 italic uppercase tracking-widest transition-all duration-700 border border-emerald-500/20 shadow-none hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] ${!input ? 'bg-emerald-600 text-white shadow-[0_0_25px_rgba(5,150,105,0.4)] hover:bg-emerald-700 hover:shadow-[0_0_35px_rgba(5,150,105,0.6)] animate-pulse duration-[4000ms] border-emerald-500' : 'text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/40'}`}
+                      >
+                        <label className="cursor-pointer">
+                          <ImageIcon className="h-3.5 w-3.5" /> Upload SVG
+                          <input type="file" accept=".svg" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+                        </label>
+                      </Button>
+                      <div className="w-px h-6 bg-border dark:bg-white/10 mx-1" />
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={() => { navigator.clipboard.writeText(input); toast.success("Source Copied"); }} disabled={!input}>
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive/70 hover:text-destructive dark:text-destructive/50 dark:hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/10 rounded-2xl transition-colors" onClick={() => { setInput(""); }} disabled={!input}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 flex flex-col md:flex-row bg-white dark:bg-black min-h-[550px]">
+                    {/* Textarea Input */}
+                    <div className="flex-1 border-b md:border-b-0 md:border-r border-border dark:border-white/5 flex flex-col">
+                      <textarea
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder='Paste SVG code or upload a file...'
+                        className="flex-1 w-full p-6 font-mono text-xs text-blue-700 dark:text-blue-400 bg-transparent resize-none outline-none selection:bg-primary/20 leading-relaxed custom-scrollbar whitespace-pre-wrap break-words"
+                        spellCheck={false}
+                      />
+                    </div>
+
+                    {/* Preview Area */}
+                    <div className="flex-1 flex flex-col items-center justify-center p-4 bg-zinc-50/50 dark:bg-zinc-950/20 relative group/preview overflow-hidden">
+                      <div className="absolute top-4 left-4 flex items-center gap-2 opacity-40">
+                        <ImageIcon className="h-3 w-3" />
+                        <span className="text-[8px] font-black uppercase tracking-[0.2em]">Real-time Render</span>
+                      </div>
+
+                      {processedInput ? (
+                        <div
+                          className="relative w-full h-full flex items-center justify-center p-6 bg-transparent transition-transform duration-500 [&>svg]:max-w-full [&>svg]:max-h-full"
+                          dangerouslySetInnerHTML={{ __html: processedInput }}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center gap-4 text-muted-foreground/30 text-center animate-pulse">
+                          <div className="h-16 w-16 rounded-2xl border-2 border-dashed border-current flex items-center justify-center">
+                            <FileCode className="h-8 w-8" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest">No Content Staged</p>
+                            <p className="text-[8px] font-medium mt-1">Upload or Paste SVG to start conversion</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Sidebar Controls */}
+              <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
+                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-x-clip shadow-lg dark:shadow-xl bg-card">
+                  <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between rounded-t-2xl overflow-hidden">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                      <Sliders className="h-3 w-3" /> Rendering Engine
+                    </h3>
+                  </div>
+                  <CardContent className="p-6 space-y-4">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Output Format</Label>
+                        <span className="text-[9px] font-bold text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">RASTER</span>
+                      </div>
+                      <div className="flex p-1 bg-zinc-200 dark:bg-black/40 border border-border dark:border-white/10 rounded-xl">
+                        <button
+                          onClick={() => setExportFormat("png")}
+                          className={`flex-1 h-10 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${exportFormat === "png" ? "bg-primary text-white shadow-lg" : "text-muted-foreground hover:bg-zinc-300 dark:hover:bg-white/5"}`}
+                        >PNG</button>
+                        <button
+                          onClick={() => setExportFormat("jpeg")}
+                          className={`flex-1 h-10 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${exportFormat === "jpeg" ? "bg-primary text-white shadow-lg" : "text-muted-foreground hover:bg-zinc-300 dark:hover:bg-white/5"}`}
+                        >JPG</button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-8">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Scale Multiplier</Label>
+                        <span className="text-[10px] font-black italic tracking-tighter text-primary">{scale}x</span>
+                      </div>
+                      <Slider value={[scale]} onValueChange={(val) => setScale(val[0])} max={8} min={1} step={0.5} className="py-4" />
+                      <p className="text-[11px] text-muted-foreground italic font-black uppercase tracking-tighter opacity-80 leading-snug text-center">Increasing scale produces higher resolution raster output from the vector source.</p>
+                    </div>
+
+                    <div className="pt-2">
+                      <Button
+                        onClick={convertAndDownload}
+                        disabled={!input || isProcessing}
+                        variant="default"
+                        className={`w-full h-11 text-[10px] font-black rounded-xl gap-2 italic uppercase tracking-widest transition-all duration-700 shadow-[0_0_20px_var(--primary)] hover:shadow-[0_0_35px_var(--primary)] ${input ? 'bg-primary text-white border border-primary scale-[1.02]' : 'bg-zinc-800 text-zinc-400 opacity-50'}`}
+                      >
+                        <Download className={`h-4 w-4 ${isProcessing ? 'animate-spin' : ''}`} />
+                        {isProcessing ? "Rendering Engine..." : "Export Image"}
+                      </Button>
+                    </div>
+
+                    <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-60 dark:opacity-30 italic py-2">
+                      Native Canvas GPU Acceleration • Zero Uploads
+                    </p>
+                  </CardContent>
+                </Card>
+              </aside>
+            </div>
+
+            <ToolExpertSection
+              title="SVG to Raster Conversion Studio"
+              description="Our SVG to Image studio provides high-precision vector-to-raster rendering. It is designed for developers and designers who need to convert scalable graphics into web-optimized PNG or JPG formats without sacrificing privacy."
+              transparency="The rendering process occurs entirely within your browser's local sandbox. We utilize the HTML5 Canvas API to create a hardware-accelerated drawing surface. When you provide SVG code, we generate a local Blob URL, render it to the canvas at your specified scale, and extract the pixel data directly. No image data is ever transmitted through a server."
+              limitations="While most SVG features (gradients, masks, paths) are supported by standard browser canvas implementations, certain complex internal CSS animations or non-standard SVG extensions may not render identically to a vector viewer. We recommend checking the live preview before initiating the export."
+              accent="blue"
+            />
+          </div>
+        </main>
+
+        <SponsorSidebars position="right" />
+      </div>
+
+      <canvas ref={canvasRef} className="hidden" />
+
+      <Footer />
+
+      {/* Mobile Sticky Anchor Ad */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-background/80 dark:bg-black/80 backdrop-blur-sm border-t border-border dark:border-white/10 py-2 h-[66px] overflow-x-clip">
+        <AdBox adFormat="horizontal" height={50} label="320x50 ANCHOR AD" className="w-full" />
+      </div>
+    </div>
+  );
+};
+
+export default SvgToImage;
