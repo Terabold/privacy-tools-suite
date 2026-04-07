@@ -27,4 +27,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    emptyOutDir: true,
+    minify: 'esbuild',
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 2000,
+  },
 });

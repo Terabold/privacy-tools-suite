@@ -18,6 +18,10 @@
   <meta name="description"
     content="A professional collection of client-side developer and media tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private." />
   <meta name="author" content="PrivateUtils Studio" />
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8938339685834274"
     crossorigin="anonymous"></script>
@@ -58,6 +62,21 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <!-- RECOVERY SCRIPT: Forcing Hard Refresh on Module Load Failure -->
+  <script>
+    window.addEventListener('error', function (e) {
+      if (e.target && e.target.tagName === 'SCRIPT' && e.target.type === 'module') {
+        console.warn('Module Load Fault Detected. Triggering Engine Re-alignment...');
+        const lastReload = localStorage.getItem('forge-recovery-timestamp');
+        const now = Date.now();
+        if (!lastReload || now - parseInt(lastReload) > 3000) {
+          localStorage.setItem('forge-recovery-timestamp', now.toString());
+          window.location.reload(true);
+        }
+      }
+    }, true);
+  </script>
 </body>
 
 </html>
