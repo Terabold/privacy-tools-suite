@@ -114,17 +114,17 @@ const Index = () => {
           <section className="text-center mb-10 relative animate-in fade-in duration-1000">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full -z-10" />
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-foreground font-display mb-6 leading-[0.9]">
-              Private<span className="text-primary italic">Utils</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Privacy-First Hub</span>
+              Private<span className="text-primary italic">Utils</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Coding & Media Tools</span>
             </h1>
             <p className="mx-auto max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed font-medium">
-              Experience the <span className="font-bold text-foreground">PrivateUtils Engine</span>: Desktop-grade utility tools running 100% in your browser. 
+              Experience the <span className="font-bold text-foreground">PrivateUtils Engine</span>: {tools.length} Desktop-grade utility tools running 100% in your browser. 
               No accounts, no tracking, and zero data leakage—your data never reaches a server.
             </p>
           </section>
 
           {/* Mobile Inline Ad */}
           <div className="flex min-[1600px]:hidden justify-center mb-10 w-full">
-            <AdBox adFormat="horizontal" adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+            <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
           </div>
 
           {/* Tools Section */}
@@ -138,9 +138,9 @@ const Index = () => {
 
           {/* Integrated Ad Break */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-32 opacity-60">
-             <AdBox adFormat="horizontal" adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+             <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
              <div className="hidden md:block h-12 w-[1px] bg-border" />
-             <AdBox adFormat="horizontal" adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
+             <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
           </div>
 
           {/* Privacy Manifesto Section (Universal Focal Point) */}
@@ -213,7 +213,7 @@ const Index = () => {
 
       {/* Mobile Sticky Anchor Ad */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2 h-[66px] overflow-x-clip">
-        <AdBox adFormat="horizontal" adFormat="horizontal" height={50} label="320x50 ANCHOR AD" className="w-full" />
+        <AdBox adFormat="horizontal" height={50} label="320x50 ANCHOR AD" className="w-full" />
       </div>
     </div>
   );

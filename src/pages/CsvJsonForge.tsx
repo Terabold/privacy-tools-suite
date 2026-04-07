@@ -11,20 +11,45 @@ import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 
-// Simple CSV to JSON
+// Robust CSV to JSON Parser
 function csvToJson(csv: string) {
-   const lines = csv.split(/\r?\n/).filter(line => line.trim() !== "");
-   if (lines.length < 2) return "[]";
-   const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-   const result = lines.slice(1).map(line => {
-      const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
-      const obj: any = {};
-      headers.forEach((header, i) => {
-         obj[header] = values[i] || "";
-      });
-      return obj;
-   });
-   return JSON.stringify(result, null, 2);
+  const lines = csv.split(/\r?\n/).filter(line => line.trim() !== "");
+  if (lines.length < 2) return "[]";
+
+  const parseLine = (line: string) => {
+    const values = [];
+    let curValue = "";
+    let insideQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        if (insideQuotes && line[i + 1] === '"') {
+          curValue += '"';
+          i++;
+        } else {
+          insideQuotes = !insideQuotes;
+        }
+      } else if (char === ',' && !insideQuotes) {
+        values.push(curValue.trim());
+        curValue = "";
+      } else {
+        curValue += char;
+      }
+    }
+    values.push(curValue.trim());
+    return values;
+  };
+
+  const headers = parseLine(lines[0]);
+  const result = lines.slice(1).map(line => {
+    const values = parseLine(line);
+    const obj: any = {};
+    headers.forEach((header, i) => {
+      obj[header] = values[i] || "";
+    });
+    return obj;
+  });
+  return JSON.stringify(result, null, 2);
 }
 
 // Simple JSON to CSV
@@ -147,7 +172,7 @@ const CsvJsonForge = () => {
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                            {/* LEFT PANEL */}
                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                              <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl flex flex-col group">
+                              <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
 
                                  <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
                                     <div className="flex items-center gap-3">
@@ -184,7 +209,7 @@ const CsvJsonForge = () => {
 
                            {/* RIGHT PANEL */}
                            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-                              <Card className="glass-morphism border-border dark:border-emerald-500/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl flex flex-col group">
+                              <Card className="glass-morphism border-border dark:border-emerald-500/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl flex flex-col group min-h-[500px]">
 
                                  <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
                                     <div className="flex items-center gap-3">
@@ -222,7 +247,7 @@ const CsvJsonForge = () => {
                      </div>
 
                      <aside className="space-y-8 lg:sticky lg:top-24 h-fit pb-10">
-                        <Card className="glass-morphism border-border dark:border-primary/20 rounded-2xl overflow-x-clip shadow-lg dark:shadow-2xl bg-card animate-in slide-in-from-right-4 duration-500 border-l-4">
+                        <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card border-2 dark:border-primary/5">
                            <div className="bg-primary/5 dark:bg-primary/10 p-6 border-b border-border dark:border-white/10 flex items-center justify-between">
                               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic">Forge Metrics</h3>
                               <Sparkles className="h-4 w-4 text-primary animate-pulse" />

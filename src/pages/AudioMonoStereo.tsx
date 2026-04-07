@@ -22,13 +22,6 @@ const AudioMonoStereo = () => {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [processedUrl, setProcessedUrl] = useState<string | null>(null);
 
-  // Resource Cleanup Engine (Prevent Memory Leaks)
-  useEffect(() => {
-    return () => {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-      if (processedUrl) URL.revokeObjectURL(processedUrl);
-    };
-  }, [objectUrl, processedUrl]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [mode, setMode] = useState<"mono-to-stereo" | "stereo-to-mono">("mono-to-stereo");
@@ -156,6 +149,9 @@ const AudioMonoStereo = () => {
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       if (processedUrl) URL.revokeObjectURL(processedUrl);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      if (playheadAnimationRef.current) cancelAnimationFrame(playheadAnimationRef.current);
+      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
     };
   }, [objectUrl, processedUrl]);
 
@@ -168,20 +164,26 @@ const AudioMonoStereo = () => {
     if (objectUrl) URL.revokeObjectURL(objectUrl);
     if (processedUrl) URL.revokeObjectURL(processedUrl);
 
+    if (audioCtxRef.current) {
+      await audioCtxRef.current.close().catch(() => {});
+      audioCtxRef.current = null;
+    }
+
     setFile(f);
     setProcessedUrl(null);
     const url = URL.createObjectURL(f);
     setObjectUrl(url);
 
+    const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     try {
       const arrayBuffer = await f.arrayBuffer();
-      const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       const buffer = await tempCtx.decodeAudioData(arrayBuffer);
       setAudioBuffer(buffer);
-      await tempCtx.close();
       toast.success("Channel Artifact Staged");
     } catch (e) {
       toast.error("Failed to decode audio master.");
+    } finally {
+      await tempCtx.close().catch(() => {});
     }
 
     sourceCreatedRef.current = false;
@@ -194,8 +196,8 @@ const AudioMonoStereo = () => {
     setProcessing(true);
     toast.info("Remapping Channel Matrix...");
 
+    const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     try {
-      const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       let outBuffer: AudioBuffer;
 
       if (mode === "mono-to-stereo") {
@@ -218,11 +220,11 @@ const AudioMonoStereo = () => {
       const url = URL.createObjectURL(wavBlob);
       setProcessedUrl(url);
       toast.success("Channel Remapping Complete");
-      await tempCtx.close();
     } catch (e) {
       console.error(e);
       toast.error("Channel processing failed.");
     } finally {
+      await tempCtx.close().catch(() => {});
       setProcessing(false);
     }
   };
@@ -339,7 +341,7 @@ const AudioMonoStereo = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="lg:col-span-8 space-y-8">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-x-clip min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
@@ -359,7 +361,7 @@ const AudioMonoStereo = () => {
                   </Card>
                 ) : (
                   <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-x-clip">
+                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Layers className="h-4 w-4 text-primary" />
@@ -445,7 +447,7 @@ const AudioMonoStereo = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Channel Strategy</h3>

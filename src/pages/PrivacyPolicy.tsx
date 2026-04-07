@@ -111,7 +111,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <footer className="pt-12 text-[10px] uppercase font-black tracking-[0.3em] text-muted-foreground/50 border-t border-white/5">
-             © 2026 PrivateUtils Studio — Absolute Privacy Architecture
+             © 2026 PrivateUtils — Absolute Privacy Architecture
           </footer>
         </motion.div>
       </main>

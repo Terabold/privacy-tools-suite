@@ -581,7 +581,7 @@ const SpriteStudio = () => {
 
               <aside className="lg:sticky lg:top-24 h-[70vh] min-h-[550px]">
                 {/* Card 1: Master Studio Controls */}
-                <Card className="glass-morphism border-primary/20 rounded-2xl shadow-2xl overflow-x-clip bg-card backdrop-blur-3xl h-full flex flex-col">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl bg-card border-x border-t border-white/5 h-full flex flex-col">
                   {/* Drafting Section (Top - Scrollable) */}
                   <div className="flex flex-col grow min-h-0">
                     <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between shrink-0">
@@ -664,7 +664,7 @@ const SpriteStudio = () => {
 
               {/* Column 3: Partition Stack Section */}
               <aside className="lg:sticky lg:top-24 h-[70vh] min-h-[500px] flex flex-col">
-                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl overflow-x-clip flex flex-col h-full bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl relative bg-card h-full flex flex-col">
                   <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-2">
                       <Layers className="h-3 w-3 text-primary" />

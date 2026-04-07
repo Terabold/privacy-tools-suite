@@ -137,7 +137,7 @@ const Base64Image = () => {
                 {base64 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in zoom-in-95 duration-500">
                     {/* Preview */}
-                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-x-clip">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <ImageIcon className="h-4 w-4 text-primary" />
@@ -153,7 +153,7 @@ const Base64Image = () => {
                     </Card>
 
                     {/* Code */}
-                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-x-clip">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <FileCode className="h-4 w-4 text-primary" />
@@ -180,7 +180,7 @@ const Base64Image = () => {
               </div>
 
               <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl border-2 border-primary/5 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/10 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Artifact Metrics</h3>

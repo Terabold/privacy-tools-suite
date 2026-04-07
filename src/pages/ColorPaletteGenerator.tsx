@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Copy, Check, RefreshCw, Palette, Zap, Database, Code, FileJson } from "lucide-react";
+import { ArrowLeft, Copy, Check, RefreshCw, Palette, Zap, Database, Code, FileJson, Layers, Square, Repeat, Triangle, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
@@ -125,13 +125,13 @@ const ColorPaletteGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500 ">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500 overflow-x-clip">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
-      
-      <div className="flex justify-center items-start w-full relative">
+
+      <div className="flex justify-center items-start w-full relative px-4 overflow-x-clip">
         <SponsorSidebars position="left" />
 
-        <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
+        <main className="container mx-auto max-w-[1100px] px-6 py-12 grow overflow-visible min-w-0">
           <div className="flex flex-col gap-10">
             <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
@@ -154,20 +154,20 @@ const ColorPaletteGenerator = () => {
               <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
               {/* Left: Palette Preview */}
-              <div className="space-y-8 animate-in fade-in slide-in-from-left-6 duration-700 lg:sticky lg:top-24">
-                <div className="flex flex-col h-[600px] rounded-2xl overflow-x-clip shadow-2xl border border-white/10 group bg-card backdrop-blur-3xl">
+              <div className="space-y-8 animate-in fade-in slide-in-from-left-6 duration-700 lg:sticky lg:top-24 min-w-0">
+                <div className="flex flex-col h-[600px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group bg-card backdrop-blur-3xl">
                   {palette.map((hex, i) => (
-                    <div 
-                      key={i} 
-                      className="relative flex-1 flex items-center justify-between px-8 transition-all duration-500 hover:flex-[1.5] group/color cursor-pointer border-b border-white/5 last:border-0"
+                    <div
+                      key={i}
+                      className="relative flex-1 flex items-center justify-between px-8 transition-all duration-500 hover:flex-[1.5] group/color cursor-pointer border-b border-white/5 last:border-0 first:rounded-t-2xl last:rounded-b-2xl"
                       style={{ backgroundColor: hex }}
                       onClick={() => copyColor(hex)}
                     >
                       <span className="font-mono font-black text-white text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] select-none uppercase tracking-tighter">{hex}</span>
                       <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover/color:opacity-100 transition-all">
-                         {copiedColor === hex ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                        {copiedColor === hex ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                       </Button>
                     </div>
                   ))}
@@ -175,8 +175,8 @@ const ColorPaletteGenerator = () => {
               </div>
 
               {/* Right: Controls & Export */}
-              <div className="space-y-8 animate-in fade-in slide-in-from-right-6 duration-700 overflow-visible">
-                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-10 overflow-x-clip relative">
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-6 duration-700 overflow-visible min-w-0">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-6 md:p-8 overflow-x-clip relative">
                   <CardContent className="p-0 space-y-12 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                       <div className="space-y-6">
@@ -203,18 +203,23 @@ const ColorPaletteGenerator = () => {
                     </div>
 
                     <div className="pt-10 border-t border-white/5 flex flex-col xl:flex-row items-center justify-between gap-10">
-                      <div className="flex bg-background/20 p-1.5 rounded-xl border border-white/5 w-full xl:w-auto">
-                        {['monochromatic', 'analogous', 'complementary', 'triadic'].map((m) => (
+                      <div className="grid grid-cols-2 gap-3 bg-background/20 p-1.5 rounded-xl border border-white/5 w-full xl:w-[450px]">
+                        {[
+                          { id: 'monochromatic', icon: Sun },
+                          { id: 'analogous', icon: Zap },
+                          { id: 'complementary', icon: Repeat },
+                          { id: 'triadic', icon: Triangle }
+                        ].map((m) => (
                           <button
-                            key={m}
-                            onClick={() => setMode(m)}
-                            className={`flex-1 xl:flex-none px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                              mode === m 
-                                ? 'bg-primary text-primary-foreground shadow-lg scale-105 z-10' 
-                                : 'text-muted-foreground hover:bg-background/40'
-                            }`}
+                            key={m.id}
+                            onClick={() => setMode(m.id)}
+                            className={`px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 group/btn ${mode === m.id
+                              ? 'bg-primary text-white shadow-glow shadow-primary/20 bg-primary border-b-2 border-primary-foreground/20'
+                              : 'text-muted-foreground hover:bg-background/40 hover:text-foreground hover:scale-[1.02]'
+                              }`}
                           >
-                            {m}
+                            <m.icon className={`h-3 w-3 ${mode === m.id ? 'text-white' : 'text-primary/40 group-hover/btn:text-primary transition-colors'}`} />
+                            {m.id}
                           </button>
                         ))}
                       </div>
@@ -235,7 +240,7 @@ const ColorPaletteGenerator = () => {
                           </div>
                           <p className="mt-4 text-[9px] font-black uppercase tracking-widest opacity-40">Copy Hex List</p>
                         </button>
-                        <button onClick={() => { navigator.clipboard.writeText(palette.map((h, i) => `--color-${i+1}: ${h};`).join('\n')); toast.success("CSS Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
+                        <button onClick={() => { navigator.clipboard.writeText(palette.map((h, i) => `--color-${i + 1}: ${h};`).join('\n')); toast.success("CSS Copied"); }} className="group flex flex-col p-6 bg-background/40 border border-white/10 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all text-left">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-black text-primary uppercase tracking-widest">CSS</span>
                             <Code className="h-4 w-4 opacity-20" />
@@ -255,7 +260,7 @@ const ColorPaletteGenerator = () => {
                 </Card>
               </div>
             </div>
-            
+
             {/* SEO & Tool Guide Section */}
             <ToolExpertSection
               title="Studio Palette Generator"
@@ -270,7 +275,7 @@ const ColorPaletteGenerator = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
-    
+
       {/* Mobile Sticky Anchor Ad */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-black/80 backdrop-blur-sm border-t border-white/10 py-2 h-[66px] overflow-x-clip">
         <AdBox adFormat="horizontal" height={50} label="320x50 ANCHOR AD" className="w-full" />

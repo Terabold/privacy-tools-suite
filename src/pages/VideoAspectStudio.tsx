@@ -324,7 +324,7 @@ const VideoAspectStudio = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl border-border/20 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-border/20 bg-card">
                   <div className="bg-primary/5 p-6 border-b border-primary/10 flex items-center justify-between">
                     <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Mapping System</h2>
                   </div>

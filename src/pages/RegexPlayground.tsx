@@ -147,7 +147,7 @@ const RegexPlayground = () => {
                            <CardContent className="p-0 space-y-4">
                               <div className="space-y-2">
                                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-muted-foreground/60">Pattern</p>
-                                 <div className="flex items-center gap-0 shadow-sm rounded-xl overflow-x-clip">
+                                 <div className="flex items-center gap-0 shadow-sm rounded-xl overflow-hidden">
                                     <span className="text-muted-foreground font-mono text-lg px-4 h-12 flex items-center bg-white dark:bg-[#111111] border border-r-0 border-border dark:border-white/10">/</span>
                                     <input
                                        type="text"
@@ -229,7 +229,7 @@ const RegexPlayground = () => {
 
                         {/* Highlighted Result */}
                         {highlighted && (
-                           <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl shadow-lg dark:shadow-xl bg-zinc-100 dark:bg-[#0a0a0a] overflow-x-clip">
+                           <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl shadow-lg dark:shadow-xl bg-zinc-100 dark:bg-[#0a0a0a] overflow-hidden">
                               <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between">
                                  <div className="flex items-center gap-3">
                                     <Play className="h-4 w-4 text-primary" />
@@ -285,7 +285,7 @@ const RegexPlayground = () => {
                      </div>
 
                      <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                        <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-x-clip shadow-lg dark:shadow-xl bg-card">
+                        <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card">
                            <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10">
                               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Match Stats</h3>
                            </div>

@@ -96,7 +96,7 @@ const TextDiffChecker = () => {
     }
     setShowResult(true);
     setTimeout(() => {
-      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, 100);
   };
 
@@ -142,7 +142,7 @@ const TextDiffChecker = () => {
 
             <div className="flex flex-col gap-12 w-full">
               <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[550px]">
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[550px]">
                   {/* Header */}
                   <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
                     <div className="flex items-center gap-3">

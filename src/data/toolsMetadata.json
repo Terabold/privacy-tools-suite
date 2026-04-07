@@ -166,17 +166,17 @@
   },
   {
     "to": "/svg-to-image",
-    "seoTitle": "Free SVG to PNG/JPG Converter - In-Browser, No Uploads | PrivateUtils",
+    "seoTitle": "Free SVG to PNG/JPG Converter - In-Browser, No Uploads | Client-Sided Coding & Media Tools",
     "seoDescription": "Convert SVG vectors to high-quality PNG or JPG images entirely client-side. Zero server uploads, 100% private, utilizing native browser canvas rendering."
   },
   {
     "to": "/text-diff-checker",
-    "seoTitle": "Private Text Diff Checker - Compare Content Side-by-Side | PrivateUtils",
+    "seoTitle": "Private Text Diff Checker - Compare Content Side-by-Side | Client-Sided Coding & Media Tools",
     "seoDescription": "Compare two text versions entirely client-side. Visualize additions and deletions with high-precision line and word diffing. 100% private with zero data uploads."
   },
   {
     "to": "/image-to-pdf",
-    "seoTitle": "In-Browser Image to PDF Converter - Private & Multi-Page | PrivateUtils",
+    "seoTitle": "In-Browser Image to PDF Converter - Private & Multi-Page | Client-Sided Coding & Media Tools",
     "seoDescription": "Compile JPG, PNG, and WebP images into a single multi-page PDF document entirely client-side. Reorder images and generate PDFs with zero server uploads."
   }
 ]

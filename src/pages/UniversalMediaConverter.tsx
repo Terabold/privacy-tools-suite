@@ -426,7 +426,7 @@ const UniversalMediaConverter = () => {
 
             <div className="flex flex-col lg:flex-row gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className={`w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-8 ${file ? 'lg:w-[58.333%]' : 'lg:w-[66.666%]'}`}>
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-2xl relative group bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl relative bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Activity className="h-4 w-4 text-primary" />
@@ -562,7 +562,7 @@ const UniversalMediaConverter = () => {
               </div>
 
               <aside className={`w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 lg:sticky lg:top-24 h-fit ${file ? 'lg:w-[41.666%]' : 'lg:w-[33.333%]'}`}>
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl border-b-2 border-r-2 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-b-2 border-r-2 bg-card">
                   {resultUrl && (
                     <div className="bg-primary/10 border-b border-primary/10 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-3xl">
                       <div className="p-4 flex items-center justify-between border-b border-primary/5">

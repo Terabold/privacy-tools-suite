@@ -152,7 +152,7 @@ const QrForge = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
                   <div className="bg-primary/5 h-[56px] px-6 border-b border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Styling Matrix</h3>
                     {input && (

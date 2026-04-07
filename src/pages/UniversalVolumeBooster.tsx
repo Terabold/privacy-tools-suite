@@ -364,7 +364,7 @@ const UniversalVolumeBooster = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="lg:col-span-8 space-y-8">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-x-clip min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
@@ -385,7 +385,7 @@ const UniversalVolumeBooster = () => {
                   </Card>
                 ) : (
                   <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-x-clip">
+                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Volume2 className="h-4 w-4 text-primary" />
@@ -494,7 +494,7 @@ const UniversalVolumeBooster = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Power Profile</h3>

@@ -325,9 +325,8 @@ const SvgToImage = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-4 items-start">
               <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[550px]">
-                  {/* Header */}
-                  <div className="px-4 pt-2 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
+                  <div className="bg-white/50 dark:bg-[#111] border-b border-border dark:border-white/10 px-6 py-2 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-1.5 items-center bg-white dark:bg-[#111111] px-4 py-1.5 rounded-t-lg border-x border-t border-border dark:border-white/5 relative z-10 -mb-[1px] transition-all hover:bg-zinc-50 dark:hover:bg-[#151515]">
                         <FileCode className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
@@ -397,8 +396,8 @@ const SvgToImage = () => {
 
               {/* Sidebar Controls */}
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-x-clip shadow-lg dark:shadow-xl bg-card">
-                  <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between rounded-t-2xl overflow-hidden">
+                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card">
+                  <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
                       <Sliders className="h-3 w-3" /> Rendering Engine
                     </h3>

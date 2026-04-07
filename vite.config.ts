@@ -9,8 +9,15 @@ export default defineConfig({
     strictPort: true,
   },
   optimizeDeps: {
-    include: ["jszip", "react", "react-dom"],
-    needsInterop: ["jszip"],
+    include: [
+      "react",
+      "react-dom",
+      "framer-motion",
+      "lucide-react",
+      "jspdf",
+      "jszip",
+      "html-to-image",
+    ],
   },
   cacheDir: ".vite-cache",
   plugins: [react()],

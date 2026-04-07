@@ -209,7 +209,7 @@ const LoremGenerator = () => {
               </div>
 
               <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card border-2 border-primary/5">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5">
                   <div className="bg-primary/5 p-5 border-b border-primary/10">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Acoustic Metrics</h3>
                   </div>

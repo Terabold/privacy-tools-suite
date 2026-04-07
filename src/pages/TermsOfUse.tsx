@@ -81,7 +81,7 @@ const TermsOfUse = () => {
             </div>
             <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
               <p>
-                All "PrivateUtils" branding, logos, custom animations, and UI designs are the intellectual property of PrivateUtils Studio. 
+                All "PrivateUtils" branding, logos, custom animations, and UI designs are the intellectual property of the project. 
                 You are encouraged to share links to the suite and create content (videos, articles) showcasing the tools, 
                 but you may not claim the software as your own.
               </p>
@@ -103,7 +103,7 @@ const TermsOfUse = () => {
           </section>
 
           <footer className="pt-12 text-[10px] uppercase font-black tracking-[0.3em] text-muted-foreground/50 border-t border-white/5">
-             © 2026 PrivateUtils Studio — Professional Standard Licenses
+             © 2026 PrivateUtils — Professional Standard Licenses
           </footer>
         </motion.div>
       </main>

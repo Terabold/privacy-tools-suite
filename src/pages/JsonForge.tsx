@@ -21,9 +21,11 @@ const JsonForge = () => {
   const [lastValid, setLastValid] = useState<string | null>(null);
   const [autoPrettify, setAutoPrettify] = useState(false);
 
-  // 10-step Undo Stack
-  const [history, setHistory] = useState<string[]>([""]);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  // 10-step Undo Stack (Unified State to prevent desync)
+  const [undoStack, setUndoStack] = useState<{ stack: string[], index: number }>({
+    stack: [""],
+    index: 0
+  });
 
   const toggleDark = useCallback(() => {
     const next = !darkMode;
@@ -76,30 +78,32 @@ const JsonForge = () => {
 
   const handleInput = (val: string, skipHistory = false) => {
     if (!skipHistory && val !== input) {
-      setHistory(prev => {
-        const next = prev.slice(0, historyIndex + 1);
-        next.push(val);
-        if (next.length > 10) next.shift();
-        return next;
+      setUndoStack(prev => {
+        const nextStack = prev.stack.slice(0, prev.index + 1);
+        nextStack.push(val);
+        if (nextStack.length > 10) {
+          nextStack.shift();
+          return { stack: nextStack, index: 9 };
+        }
+        return { stack: nextStack, index: nextStack.length - 1 };
       });
-      setHistoryIndex(prev => Math.min(prev + 1, 9));
     }
     setInput(val);
   };
 
   const undo = () => {
-    if (historyIndex > 0) {
-      const newIdx = historyIndex - 1;
-      setHistoryIndex(newIdx);
-      setInput(history[newIdx]);
+    if (undoStack.index > 0) {
+      const newIdx = undoStack.index - 1;
+      setUndoStack(prev => ({ ...prev, index: newIdx }));
+      setInput(undoStack.stack[newIdx]);
     }
   };
 
   const redo = () => {
-    if (historyIndex < history.length - 1) {
-      const newIdx = historyIndex + 1;
-      setHistoryIndex(newIdx);
-      setInput(history[newIdx]);
+    if (undoStack.index < undoStack.stack.length - 1) {
+      const newIdx = undoStack.index + 1;
+      setUndoStack(prev => ({ ...prev, index: newIdx }));
+      setInput(undoStack.stack[newIdx]);
     }
   };
 
@@ -172,7 +176,7 @@ const JsonForge = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-12 items-start overflow-visible">
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
 
                   {/* VS Code Style Header */}
                   <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
@@ -184,10 +188,10 @@ const JsonForge = () => {
                     </div>
 
                     <div className="flex items-center gap-1 mb-2">
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={undo} disabled={historyIndex <= 0}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={undo} disabled={undoStack.index <= 0}>
                         <Undo className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={redo} disabled={historyIndex >= history.length - 1}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={redo} disabled={undoStack.index >= undoStack.stack.length - 1}>
                         <Redo className="h-3.5 w-3.5" />
                       </Button>
                       <div className="w-[1px] h-4 bg-border dark:bg-white/10 mx-1" />
@@ -240,8 +244,8 @@ const JsonForge = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-x-clip shadow-lg dark:shadow-xl bg-card border-2 dark:border-primary/5">
-                  <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between">
+                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card border-2 dark:border-primary/5">
+                  <div className="bg-white/50 dark:bg-[#111] border-b border-border dark:border-white/10 px-6 py-2 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">Status Console</h3>
                     {!error && input.length > 0 && <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest animate-pulse"><Check className="h-3 w-3" /> Valid Architecture</span>}
                   </div>

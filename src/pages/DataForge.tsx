@@ -23,9 +23,34 @@ import { usePasteFile } from "@/hooks/usePasteFile";
 function csvToJson(csv: string) {
   const lines = csv.split(/\r?\n/).filter(line => line.trim() !== "");
   if (lines.length < 2) return "[]";
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+
+  const parseLine = (line: string) => {
+    const values = [];
+    let curValue = "";
+    let insideQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        if (insideQuotes && line[i + 1] === '"') {
+          curValue += '"';
+          i++;
+        } else {
+          insideQuotes = !insideQuotes;
+        }
+      } else if (char === ',' && !insideQuotes) {
+        values.push(curValue.trim());
+        curValue = "";
+      } else {
+        curValue += char;
+      }
+    }
+    values.push(curValue.trim());
+    return values;
+  };
+
+  const headers = parseLine(lines[0]);
   const result = lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const values = parseLine(line);
     const obj: any = {};
     headers.forEach((header, i) => {
       obj[header] = values[i] || "";
@@ -62,8 +87,10 @@ const DataForge = () => {
   const [isValid, setIsValid] = useState(false);
   const [lastValid, setLastValid] = useState<string | null>(null);
   const [autoPrettify, setAutoPrettify] = useState(false);
-  const [history, setHistory] = useState<string[]>([""]);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  const [undoStack, setUndoStack] = useState<{ stack: string[], index: number }>({
+    stack: [""],
+    index: 0
+  });
 
   // Translation State
   const [transMode, setTransMode] = useState<'csv2json' | 'json2csv'>('csv2json');
@@ -121,30 +148,32 @@ const DataForge = () => {
 
   const handleInput = (val: string, skipHistory = false) => {
     if (!skipHistory && val !== input) {
-       setHistory(prev => {
-          const next = prev.slice(0, historyIndex + 1);
-          next.push(val);
-          if (next.length > 10) next.shift();
-          return next;
-       });
-       setHistoryIndex(prev => Math.min(prev + 1, 9));
+      setUndoStack(prev => {
+        const nextStack = prev.stack.slice(0, prev.index + 1);
+        nextStack.push(val);
+        if (nextStack.length > 10) {
+          nextStack.shift();
+          return { stack: nextStack, index: 9 };
+        }
+        return { stack: nextStack, index: nextStack.length - 1 };
+      });
     }
     setInput(val);
   };
 
   const undo = () => {
-    if (historyIndex > 0) {
-      const newIdx = historyIndex - 1;
-      setHistoryIndex(newIdx);
-      setInput(history[newIdx]);
+    if (undoStack.index > 0) {
+      const newIdx = undoStack.index - 1;
+      setUndoStack(prev => ({ ...prev, index: newIdx }));
+      setInput(undoStack.stack[newIdx]);
     }
   };
 
   const redo = () => {
-    if (historyIndex < history.length - 1) {
-      const newIdx = historyIndex + 1;
-      setHistoryIndex(newIdx);
-      setInput(history[newIdx]);
+    if (undoStack.index < undoStack.stack.length - 1) {
+      const newIdx = undoStack.index + 1;
+      setUndoStack(prev => ({ ...prev, index: newIdx }));
+      setInput(undoStack.stack[newIdx]);
     }
   };
 
@@ -230,15 +259,19 @@ const DataForge = () => {
                 {activeTab === 'architecture' ? (
                   // ARCHITECTURE TAB
                   <div className="space-y-8">
-                    <Card className="glass-morphism border-primary/10 overflow-x-clip relative bg-card shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
-                      <div className="bg-background/40 px-4 py-2 border-b border-white/5 flex items-center justify-between">
+                    <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[600px]">
+                      <div className="bg-white/50 dark:bg-[#111] border-b border-border dark:border-white/10 px-6 py-2 flex items-center justify-between">
                         <div className="flex items-center gap-2 bg-background px-4 py-2 rounded-t-lg border-x border-t border-white/5 -mb-[9px] relative z-10 shadow-xl">
                           <FileJson className="h-3.5 w-3.5 text-primary" />
                           <span className="text-[10px] font-black uppercase tracking-widest text-foreground/80">workspace.json</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Button size="icon" variant="ghost" onClick={undo} disabled={historyIndex <= 0} className="h-8 w-8 text-foreground/40 hover:text-foreground"><Undo className="h-3.5 w-3.5" /></Button>
-                          <Button size="icon" variant="ghost" onClick={redo} disabled={historyIndex >= history.length - 1} className="h-8 w-8 text-foreground/40 hover:text-foreground"><Redo className="h-3.5 w-3.5" /></Button>
+                          <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={undo} disabled={undoStack.index <= 0}>
+                            <Undo className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white hover:bg-primary/10 dark:hover:bg-white/10 rounded-2xl transition-colors" onClick={redo} disabled={undoStack.index >= undoStack.stack.length - 1}>
+                            <Redo className="h-3.5 w-3.5" />
+                          </Button>
                           <div className="w-[1px] h-4 bg-white/10 mx-1" />
                           <Button size="icon" variant="ghost" onClick={() => { navigator.clipboard.writeText(input); toast.success("Copied!"); }} className="h-8 w-8 text-foreground/40 hover:text-foreground"><Copy className="h-3.5 w-3.5" /></Button>
                           <Button size="icon" variant="ghost" onClick={() => handleInput("")} className="h-8 w-8 text-destructive/50 hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>
@@ -328,7 +361,7 @@ const DataForge = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Forge Console</h3>
                     {activeTab === 'architecture' && !error && input.length > 0 && <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-500 uppercase tracking-widest"><Check className="h-3 w-3" /> Valid</span>}

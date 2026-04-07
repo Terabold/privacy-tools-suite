@@ -114,7 +114,7 @@ const PasswordGenerator = () => {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
                 {/* Output Display */}
-                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-8 relative overflow-x-clip">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-muted/5 p-8 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                     <ShieldCheck className="h-40 w-40" />
                   </div>
@@ -227,7 +227,7 @@ const PasswordGenerator = () => {
 
               {/* Sidebar Stats */}
               <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
                   <div className="bg-primary/5 p-5 border-b border-primary/10">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Security Audit</h3>
                   </div>

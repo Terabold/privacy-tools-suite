@@ -58,6 +58,14 @@ const JwtDecoder = () => {
   const [result, setResult] = useState<ReturnType<typeof parseJwt> | null>(null);
   const [error, setError] = useState("");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [now, setNow] = useState(Math.floor(Date.now() / 1000));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Math.floor(Date.now() / 1000));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const toggleDark = useCallback(() => {
     const next = !darkMode;
@@ -96,7 +104,6 @@ const JwtDecoder = () => {
   const iat = result?.payload?.iat as number | undefined;
   const isExpired = exp ? Date.now() / 1000 > exp : false;
 
-  const now = Math.floor(Date.now() / 1000);
   const secsLeft = exp ? exp - now : null;
   const timeLeft =
     secsLeft !== null && secsLeft > 0
@@ -137,7 +144,7 @@ const JwtDecoder = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start overflow-visible">
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-8">
+                <Card className="glass-morphism border-primary/10 rounded-2xl shadow-2xl bg-card p-8 overflow-hidden">
                   <CardContent className="p-0 space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col gap-1">
@@ -181,8 +188,8 @@ const JwtDecoder = () => {
                     )}
 
                     {/* Header */}
-                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
-                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="h-7 w-7 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <Key className="h-3.5 w-3.5 text-primary" />
@@ -199,8 +206,8 @@ const JwtDecoder = () => {
                     </Card>
 
                     {/* Payload */}
-                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
-                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="h-7 w-7 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <ShieldCheck className="h-3.5 w-3.5 text-primary" />
@@ -217,8 +224,8 @@ const JwtDecoder = () => {
                     </Card>
 
                     {/* Signature */}
-                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card">
-                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between rounded-t-2xl">
+                    <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card overflow-hidden">
+                      <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="h-7 w-7 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <Key className="h-3.5 w-3.5 text-primary" />
@@ -238,7 +245,7 @@ const JwtDecoder = () => {
               </div>
 
               <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card border-2 border-primary/5">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">Token Stats</h3>
                     {token && (

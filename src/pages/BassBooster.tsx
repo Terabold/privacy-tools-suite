@@ -28,6 +28,7 @@ const BassBooster = () => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const offlineCtxRef = useRef<OfflineAudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const bassFilterRef = useRef<BiquadFilterNode | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const staticCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -70,6 +71,7 @@ const BassBooster = () => {
 
     audioCtxRef.current = ctx;
     gainNodeRef.current = gainNode;
+    bassFilterRef.current = bassFilter;
     analyserRef.current = analyser;
     sourceCreatedRef.current = true;
   }, [gain]);
@@ -161,6 +163,9 @@ const BassBooster = () => {
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       if (processedUrl) URL.revokeObjectURL(processedUrl);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      if (playheadAnimationRef.current) cancelAnimationFrame(playheadAnimationRef.current);
+      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
     };
   }, [objectUrl, processedUrl]);
 
@@ -173,20 +178,26 @@ const BassBooster = () => {
     if (objectUrl) URL.revokeObjectURL(objectUrl);
     if (processedUrl) URL.revokeObjectURL(processedUrl);
 
+    if (audioCtxRef.current) {
+      await audioCtxRef.current.close().catch(() => {});
+      audioCtxRef.current = null;
+    }
+
     setFile(f);
     setProcessedUrl(null);
     const url = URL.createObjectURL(f);
     setObjectUrl(url);
 
+    const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     try {
       const arrayBuffer = await f.arrayBuffer();
-      const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       const buffer = await tempCtx.decodeAudioData(arrayBuffer);
       setAudioBuffer(buffer);
-      await tempCtx.close();
       toast.success("Acoustic Artifact Staged");
     } catch (e) {
       toast.error("Failed to decode audio master.");
+    } finally {
+      await tempCtx.close().catch(() => {});
     }
 
     sourceCreatedRef.current = false;
@@ -343,7 +354,7 @@ const BassBooster = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="lg:col-span-8 space-y-8">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-x-clip min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/20 rounded-2xl bg-black/40 shadow-2xl relative overflow-hidden group/card min-h-[500px] flex flex-col">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
@@ -363,7 +374,7 @@ const BassBooster = () => {
                   </Card>
                 ) : (
                   <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-x-clip">
+                    <Card className="glass-morphism border-primary/10 p-0 rounded-2xl shadow-2xl bg-card group relative overflow-hidden">
                       <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Speaker className="h-4 w-4 text-primary" />
@@ -391,7 +402,13 @@ const BassBooster = () => {
                           <Slider
                             min={0} max={30} step={1}
                             value={[gain]}
-                            onValueChange={([v]) => { setGain(v); setProcessedUrl(null); }}
+                             onValueChange={([v]) => { 
+                               setGain(v); 
+                               setProcessedUrl(null); 
+                               if (bassFilterRef.current) {
+                                 bassFilterRef.current.gain.value = v;
+                               }
+                             }}
                             className="py-6"
                           />
 
@@ -462,7 +479,7 @@ const BassBooster = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Power Profile</h3>

@@ -1,6 +1,6 @@
 import { i as __toESM } from "./chunk-YKewjYmz.js";
 import { t as require_react } from "./react.js";
-import { n as useLayoutEffect2 } from "./dist-g6LdLVbb.js";
+import { n as useLayoutEffect2 } from "./dist-C-rmKsk2.js";
 //#region node_modules/@radix-ui/react-use-size/dist/index.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 function useSize(element) {
@@ -40,4 +40,4 @@ function useSize(element) {
 //#endregion
 export { useSize as t };
 
-//# sourceMappingURL=dist-DQYoeAv2.js.map
+//# sourceMappingURL=dist-CD5X3XuL.js.map

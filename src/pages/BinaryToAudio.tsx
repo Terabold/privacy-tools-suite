@@ -147,9 +147,11 @@ const BinaryToAudio = () => {
   useEffect(() => {
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
-      if (processedUrl) URL.revokeObjectURL(processedUrl);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      if (playheadAnimationRef.current) cancelAnimationFrame(playheadAnimationRef.current);
+      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
     };
-  }, [objectUrl, processedUrl]);
+  }, [objectUrl]);
 
   useEffect(() => {
     if (audioBuffer) drawStaticWaveform();
@@ -170,8 +172,8 @@ const BinaryToAudio = () => {
     setProcessing(true);
     toast.info("Interpreting Bit-Stream Logic...");
 
+    const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     try {
-      const tempCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       const arrayBuffer = await file.arrayBuffer();
       const bytes = new Float32Array(arrayBuffer.byteLength / 2);
       const dataView = new DataView(arrayBuffer);
@@ -189,14 +191,13 @@ const BinaryToAudio = () => {
 
       const wavBlob = bufferToWave(buffer, buffer.length);
       const url = URL.createObjectURL(wavBlob);
-      setProcessedUrl(url);
-      setObjectUrl(url); // For preview
+      setObjectUrl(url); // For preview and tracking
       toast.success("Bitstream Encoded to PCM");
-      await tempCtx.close();
     } catch (e) {
       console.error(e);
       toast.error("Data interpretation failed.");
     } finally {
+      await tempCtx.close().catch(() => {});
       setProcessing(false);
     }
   };
@@ -313,7 +314,7 @@ const BinaryToAudio = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
               <div className="lg:col-span-8 space-y-8">
                 {!file ? (
-                  <Card className="glass-morphism border-primary/10 overflow-x-clip min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[400px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
@@ -335,7 +336,7 @@ const BinaryToAudio = () => {
                   </Card>
                 ) : (
                   <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <Card className="glass-morphism border-primary/10 p-10 rounded-2xl shadow-2xl bg-card group relative">
+                    <Card className="glass-morphism border-primary/10 p-10 rounded-2xl shadow-2xl bg-card overflow-hidden group relative">
                       <div className="space-y-10">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -420,7 +421,7 @@ const BinaryToAudio = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Zap className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">PCM Configuration</h3>
@@ -439,9 +440,9 @@ const BinaryToAudio = () => {
                       <p className="text-[8px] opacity-40 leading-relaxed uppercase font-black tracking-tighter italic">Low rates yields industrial textures. High rates reveal structural noise.</p>
                     </div>
 
-                    {processedUrl ? (
+                    {objectUrl ? (
                       <Button asChild className="w-full gap-3 h-20 text-lg font-black rounded-2xl shadow-xl hover:scale-[1.01] transition-all uppercase italic">
-                        <a href={processedUrl} download={`glitch_${file?.name}.wav`}>
+                        <a href={objectUrl} download={`glitch_${file?.name}.wav`}>
                           <Download className="h-6 w-6" /> Export Glitch-Track
                         </a>
                       </Button>

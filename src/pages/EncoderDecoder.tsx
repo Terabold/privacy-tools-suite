@@ -22,6 +22,16 @@ const MODES: { key: Mode; label: string; group: string }[] = [
    { key: "hex-decode", label: "Decode ← Hex", group: "Hex" },
 ];
 
+function base64Encode(s: string) {
+   const bytes = new TextEncoder().encode(s);
+   const binString = String.fromCodePoint(...bytes);
+   return btoa(binString);
+}
+function base64Decode(s: string) {
+   const binString = atob(s.trim());
+   const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0)!);
+   return new TextDecoder().decode(bytes);
+}
 function htmlEncode(s: string) {
    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
@@ -34,15 +44,22 @@ function hexEncode(s: string) {
    return Array.from(new TextEncoder().encode(s)).map(b => b.toString(16).padStart(2, "0")).join(" ");
 }
 function hexDecode(s: string) {
-   const bytes = s.trim().replace(/\s+/g, " ").split(" ").map(h => parseInt(h, 16));
+   const cleanHex = s.trim().replace(/\s+/g, "");
+   if (!/^[0-9a-fA-F]*$/.test(cleanHex)) throw new Error("Invalid hex characters detected. Use 0-9 and A-F.");
+   if (cleanHex.length % 2 !== 0) throw new Error("Hex string must have an even length (2 chars per byte).");
+   
+   const bytes = [];
+   for (let i = 0; i < cleanHex.length; i += 2) {
+      bytes.push(parseInt(cleanHex.substring(i, 2), 16));
+   }
    return new TextDecoder().decode(new Uint8Array(bytes));
 }
 
 function runMode(mode: Mode, input: string): { output: string; error?: string } {
    try {
       switch (mode) {
-         case "base64-encode": return { output: btoa(unescape(encodeURIComponent(input))) };
-         case "base64-decode": return { output: decodeURIComponent(escape(atob(input.trim()))) };
+         case "base64-encode": return { output: base64Encode(input) };
+         case "base64-decode": return { output: base64Decode(input) };
          case "url-encode": return { output: encodeURIComponent(input) };
          case "url-decode": return { output: decodeURIComponent(input) };
          case "html-encode": return { output: htmlEncode(input) };
@@ -132,8 +149,8 @@ const EncoderDecoder = () => {
                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
                         {/* Mode selector */}
-                        <Card className="glass-morphism border-primary/10 rounded-2xl shadow-xl bg-card p-6">
-                           <CardContent className="p-0 space-y-4">
+                        <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card">
+                           <CardContent className="p-6 space-y-4">
                               {groups.map(group => (
                                  <div key={group} className="flex flex-wrap gap-2">
                                     {MODES.filter(m => m.group === group).map(m => (
@@ -208,7 +225,7 @@ const EncoderDecoder = () => {
                      </div>
 
                      <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-                        <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                        <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
                            <div className="bg-primary/5 p-5 border-b border-primary/10">
                               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Conversion Stats</h3>
                            </div>

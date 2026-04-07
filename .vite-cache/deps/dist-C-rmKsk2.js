@@ -68,4 +68,4 @@ function isFunction(value) {
 //#endregion
 export { useLayoutEffect2 as n, composeEventHandlers as r, useControllableState as t };
 
-//# sourceMappingURL=dist-g6LdLVbb.js.map
+//# sourceMappingURL=dist-C-rmKsk2.js.map

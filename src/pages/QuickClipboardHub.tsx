@@ -82,7 +82,7 @@ const QuickClipboardHub = () => {
              {/* Master Paste Zone */}
              <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
                 <Card 
-                  className="glass-morphism border-primary/20 overflow-x-clip relative bg-black shadow-[0_0_50px_-12px_rgba(139,92,246,0.3)] rounded-2xl group border-2 cursor-pointer"
+                  className="glass-morphism border-primary/20 overflow-hidden relative bg-black shadow-[0_0_50px_-12px_rgba(139,92,246,0.3)] rounded-2xl group border-2 cursor-pointer"
                   onClick={async () => {
                     try {
                       const items = await navigator.clipboard.read();
@@ -145,7 +145,7 @@ const QuickClipboardHub = () => {
              <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-1000">
                  <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30 italic px-4">Local memory only • Auto MIME detection • PNG, JPEG, PDF, Binary</p>
 
-                <Card className="glass-morphism border-primary/10 rounded-2xl bg-zinc-950/50 shadow-xl overflow-x-clip">
+                <Card className="glass-morphism border-primary/10 rounded-2xl bg-zinc-950/50 shadow-xl overflow-hidden">
                    <div className="bg-[#0a0a0a] px-6 py-4 border-b border-white/5 flex items-center justify-between">
                       <h3 className="text-[10px] font-black uppercase tracking-widest opacity-40 flex items-center gap-2">
                          <History className="h-3.5 w-3.5" /> Extraction Log

@@ -11,6 +11,7 @@ import AdBox from "@/components/AdBox";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
+import exifr from "exifr";
 
 const MetadataScrubber = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -32,15 +33,42 @@ const MetadataScrubber = () => {
     localStorage.setItem("theme", next ? "dark" : "light");
   }, [darkMode]);
 
-  const handleFile = (f: File | undefined) => {
+  const handleFile = async (f: File | undefined) => {
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       setImage(e.target?.result as string);
       setScrubbed(false);
-      // Simulate finding metadata
-      setReport({ gps: true, camera: true, software: true });
-      toast.success("Identity Artifact Loaded");
+      
+      // Real Forensic Scan with exifr
+      try {
+        const data = await exifr.parse(f, {
+          gps: true,
+          tiff: true,
+          exif: true,
+          xmp: true,
+          iptc: true
+        });
+        
+        const hasGPS = !!(data?.latitude || data?.longitude || data?.GPSLatitude || data?.GPSDestLatitude);
+        const hasCamera = !!(data?.Make || data?.Model || data?.SerialNumber || data?.LensModel);
+        const hasSoftware = !!(data?.Software || data?.CreatorTool || data?.ProcessingSoftware);
+        
+        setReport({ 
+          gps: hasGPS, 
+          camera: hasCamera, 
+          software: hasSoftware 
+        });
+        
+        if (hasGPS || hasCamera || hasSoftware) {
+          toast.warning("Identity Leaks Detected in Bitstream");
+        } else {
+          toast.success("Identity Artifact Loaded (Clean Scan)");
+        }
+      } catch (err) {
+        setReport({ gps: false, camera: false, software: false });
+        toast.success("Identity Artifact Loaded");
+      }
     };
     reader.readAsDataURL(f);
   };
@@ -113,7 +141,7 @@ const MetadataScrubber = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700 overflow-visible">
               <div className="space-y-8">
                 {!image ? (
-                  <Card className="glass-morphism border-primary/10 overflow-x-clip min-h-[500px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
+                  <Card className="glass-morphism border-primary/10 overflow-hidden min-h-[500px] flex flex-col items-center justify-center relative bg-card rounded-2xl shadow-inner p-10 select-none">
                     <div
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
@@ -201,7 +229,7 @@ const MetadataScrubber = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl border-2 border-primary/5 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Smartphone className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Scrub Logic Pipeline</h3>

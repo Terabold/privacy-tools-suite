@@ -1,17 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Download, RefreshCw, Layers, Zap, Activity, ShieldCheck, Settings2, ImageIcon, CloudUpload, Sparkles, ChevronDown } from "lucide-react";
+import { ArrowLeft, Download, RefreshCw, Zap, Activity, ShieldCheck, CloudUpload, ChevronDown, AlertTriangle, Trash2, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
-
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import { usePasteFile } from "@/hooks/usePasteFile";
@@ -26,11 +22,9 @@ const ImageCompressor = () => {
   const [quality, setQuality] = useState<number>(0.8);
   const [targetFormat, setTargetFormat] = useState<string>("webp");
   const [processing, setProcessing] = useState(false);
-
   const [originalSize, setOriginalSize] = useState<number>(0);
   const [compressedSize, setCompressedSize] = useState<number>(0);
   const [compressedUrl, setCompressedUrl] = useState<string | null>(null);
-  const [highEfficiency, setHighEfficiency] = useState(false);
   const [isBaking, setIsBaking] = useState(false);
   const ffmpegRef = useRef(new FFmpeg());
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,6 +32,8 @@ const ImageCompressor = () => {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [startPan, setStartPan] = useState({ x: 0, y: 0 });
+  const stageRef = useRef<HTMLDivElement>(null);
+  const compressedUrlRef = useRef<string | null>(null);
 
   const toggleDark = useCallback(() => {
     const next = !darkMode;
@@ -56,6 +52,8 @@ const ImageCompressor = () => {
     setOriginalSize(f.size);
     setCompressedUrl(null);
     setCompressedSize(0);
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -63,17 +61,10 @@ const ImageCompressor = () => {
       img.src = e.target?.result as string;
       img.onload = () => {
         setOriginalImage(img);
-
-        const extension = f.name.split('.').pop()?.toLowerCase();
-        if (extension === 'png') {
-          setTargetFormat('png');
-          setHighEfficiency(false);
-        } else if (extension === 'jpg' || extension === 'jpeg') {
-          setTargetFormat('jpg');
-        } else {
-          setTargetFormat('webp');
-        }
-
+        const ext = f.name.split('.').pop()?.toLowerCase();
+        if (ext === 'png') setTargetFormat('png');
+        else if (ext === 'jpg' || ext === 'jpeg') setTargetFormat('jpg');
+        else setTargetFormat('webp');
         toast.success("Image staged for compression.");
       };
     };
@@ -93,14 +84,12 @@ const ImageCompressor = () => {
         wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
       });
       return true;
-    } catch (error) {
-      console.error("FFmpeg Load Error:", error);
+    } catch (err) {
+      console.error("FFmpeg Load Error:", err);
       toast.error("WASM Engine failed to initialize.");
       return false;
     }
   };
-
-  const compressedUrlRef = useRef<string | null>(null);
 
   const compressImage = useCallback(async () => {
     if (!originalImage || !file) return;
@@ -110,30 +99,19 @@ const ImageCompressor = () => {
     canvas.width = originalImage.width;
     canvas.height = originalImage.height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      setProcessing(false);
-      return;
-    }
+    if (!ctx) { setProcessing(false); return; }
     ctx.drawImage(originalImage, 0, 0);
 
-    const mimeMap: Record<string, string> = {
-      'webp': 'image/webp',
-      'jpg': 'image/jpeg',
-      'png': 'image/png'
-    };
-
-    let actualFormat = targetFormat;
-    const requestedMime = mimeMap[actualFormat] || 'image/webp';
+    const mimeMap: Record<string, string> = { webp: 'image/webp', jpg: 'image/jpeg', png: 'image/png' };
     let finalBlob: Blob | null = null;
 
-    if (actualFormat === 'png' && quality < 0.98) {
+    if (targetFormat === 'png' && quality < 0.98) {
       setIsBaking(true);
       const loaded = await loadFFmpeg();
       if (loaded) {
         const ffmpeg = ffmpegRef.current;
         const inputData = await fetchFile(file);
         await ffmpeg.writeFile('input.png', inputData);
-        // Map quality 0.0-1.0 to color count 2-256
         const colors = Math.max(2, Math.round(quality * 256));
         await ffmpeg.exec(['-i', 'input.png', '-vf', `format=rgba,palettegen=max_colors=${colors}`, 'palette.png']);
         await ffmpeg.exec(['-i', 'input.png', '-i', 'palette.png', '-filter_complex', 'paletteuse', 'output.png']);
@@ -142,10 +120,10 @@ const ImageCompressor = () => {
       }
       setIsBaking(false);
     } else {
-      const getBlob = (m: string, q: number): Promise<Blob | null> =>
-        new Promise(resolve => canvas.toBlob(blob => resolve(blob), m, actualFormat === 'png' ? undefined : q));
-
-      finalBlob = await getBlob(requestedMime, quality);
+      const mime = mimeMap[targetFormat] || 'image/webp';
+      finalBlob = await new Promise(resolve =>
+        canvas.toBlob(blob => resolve(blob), mime, targetFormat === 'png' ? undefined : quality)
+      );
     }
 
     if (finalBlob) {
@@ -155,29 +133,41 @@ const ImageCompressor = () => {
       setCompressedUrl(url);
       setCompressedSize(finalBlob.size);
     }
-
     setProcessing(false);
   }, [originalImage, quality, targetFormat, file]);
 
   useEffect(() => {
     if (originalImage) {
-      const timer = setTimeout(() => {
-        compressImage();
-      }, 50);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => compressImage(), 50);
+      return () => clearTimeout(t);
     }
   }, [quality, targetFormat, originalImage, compressImage]);
 
-  // Resource Cleanup Engine (Prevent Memory Leaks)
-  useEffect(() => {
-    return () => {
-      if (compressedUrlRef.current) {
-        URL.revokeObjectURL(compressedUrlRef.current);
-      }
-    };
-  }, []);
+  useEffect(() => () => { if (compressedUrlRef.current) URL.revokeObjectURL(compressedUrlRef.current); }, []);
 
   const savings = originalSize > 0 ? Math.max(0, Math.round(((originalSize - compressedSize) / originalSize) * 100)) : 0;
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const handleWheel = (e: WheelEvent) => {
+      if (compressedUrl) {
+        e.preventDefault();
+        setZoom(prev => Math.min(10, Math.max(1, prev + (e.deltaY > 0 ? -0.1 : 0.1))));
+      }
+    };
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, [compressedUrl]);
+
+  const resetStage = () => {
+    setFile(null);
+    setOriginalImage(null);
+    setCompressedUrl(null);
+    setCompressedSize(0);
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-all duration-300 theme-image flex flex-col font-sans">
@@ -187,7 +177,9 @@ const ImageCompressor = () => {
         <SponsorSidebars position="left" />
 
         <main className="container mx-auto max-w-[1240px] px-6 py-12 grow overflow-visible">
-          <div className="w-full flex flex-col gap-10">
+          <div className="w-full flex flex-col gap-8">
+
+            {/* ── HEADER ── */}
             <header className="flex items-center gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <Link to="/">
                 <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border border-white/20 hover:bg-primary/20 transition-all group/back bg-black/60 shadow-2xl">
@@ -204,247 +196,268 @@ const ImageCompressor = () => {
               </div>
             </header>
 
-            {/* Mobile Inline Ad */}
-            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
+            {/* Mobile Ad */}
+            <div className="flex min-[1600px]:hidden justify-center w-full">
               <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 items-start relative animate-in fade-in slide-in-from-bottom-8 duration-700">
-              {/* STAGE AREA - CENTER COLUMN */}
-              <div className="relative flex flex-col min-h-0 w-full">
-                <Card className="glass-morphism border-primary/40 rounded-xl overflow-x-clip shadow-2xl relative group bg-card flex items-center justify-center p-1 border-b-[8px] border-primary/50 transition-all duration-700 min-h-[500px]">
-                  {!file ? (
-                    <div
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
-                      onClick={() => !processing && inputRef.current?.click()}
-                      className="absolute inset-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 text-center cursor-pointer bg-background/40 hover:border-primary hover:bg-primary/5 shadow-2xl transition-all duration-300 group/upload"
-                    >
-                      <div className="h-20 w-20 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-700 group-hover/upload:scale-110 shadow-inner ring-2 ring-primary/40">
-                        <CloudUpload className="h-10 w-10 text-primary" />
+            {/* ── SETTINGS CARD ── */}
+            <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <CardContent className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+
+                {/* Row 1 — Quality slider + Format selector */}
+                <div className="flex flex-col lg:flex-row items-center gap-4 w-full">
+                  <div className="flex items-center gap-2 md:gap-4 flex-wrap lg:flex-nowrap w-full lg:w-auto justify-center lg:justify-start">
+                    {/* Quality slider label */}
+                    <div className="flex items-center gap-3 shrink-0 lg:scale-110 lg:origin-left">
+                      <div className="h-8 w-8 lg:h-10 lg:w-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                        <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
                       </div>
-                      <div className="px-6 space-y-2">
-                        <p className="text-3xl font-black text-white uppercase tracking-tighter italic text-shadow-glow leading-none">Deploy Image Artifact</p>
-                        <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] italic leading-none">Native Hardware Quantization</p>
+                      <div className="shrink-0">
+                        <p className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none">Intensity</p>
+                        <p className="text-[8px] lg:text-[9px] font-black text-muted-foreground uppercase opacity-40 leading-none mt-1.5 lg:mt-2">Compression</p>
                       </div>
                     </div>
-                  ) : (
-                    <div className="relative w-full h-full min-h-[400px] flex items-center justify-center p-2 animate-in fade-in zoom-in-95 duration-1000">
-                      {compressedUrl ? (
-                        <div className="relative w-full h-full flex items-center justify-center group/result px-4 py-12">
-                          <div
-                            className="relative w-full h-full flex items-center justify-center overflow-x-clip cursor-crosshair active:cursor-grabbing select-none"
-                            onMouseDown={(e) => {
-                              if (e.button === 0 || e.button === 2) {
-                                setIsPanning(true);
-                                setStartPan({ x: e.clientX - offset.x, y: e.clientY - offset.y });
-                                e.preventDefault();
-                              }
-                            }}
-                            onMouseMove={(e) => {
-                              if (isPanning) {
-                                setOffset({ x: e.clientX - startPan.x, y: e.clientY - startPan.y });
-                              }
-                            }}
-                            onMouseUp={() => setIsPanning(false)}
-                            onMouseLeave={() => setIsPanning(false)}
-                            onWheel={(e) => {
-                              const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                              setZoom(prev => Math.min(10, Math.max(1, prev + delta)));
-                            }}
-                          >
-                            <img
-                              src={compressedUrl}
-                              alt="Compressed Artifact"
-                              className="max-w-full max-h-full object-contain rounded-2xl shadow-[0_50px_120px_rgba(0,0,0,1)] transition-transform duration-75 border border-white/5"
-                              style={{
-                                imageRendering: zoom > 1 ? 'pixelated' : 'auto',
-                                transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})`
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-8 text-center animate-in zoom-in-95 duration-500">
-                          <div className="h-20 w-20 bg-primary/20 rounded-2xl flex items-center justify-center relative border border-primary/40 shadow-2xl overflow-x-clip">
-                            <RefreshCw className="h-10 w-10 text-primary animate-spin" />
-                          </div>
-                          <div className="space-y-2">
-                            <p className="text-2xl font-black text-white uppercase tracking-tighter italic text-shadow-glow font-display leading-none">Crunching Bits</p>
-                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em] italic animate-pulse">WASM Processor</p>
-                          </div>
-                        </div>
-                      )}
 
-                      <div className="absolute top-6 left-6 opacity-0 group-hover:opacity-100 transition-all z-10 pointer-events-auto">
-                        <Button
-                          onClick={() => {
-                            setFile(null);
-                            setOriginalImage(null);
-                            setCompressedUrl(null);
-                            setCompressedSize(0);
-                          }}
-                          variant="destructive"
-                          size="sm"
-                          className="h-11 px-10 text-[11px] font-black uppercase tracking-widest rounded-2xl bg-red-600 text-white shadow-2xl hover:scale-105 hover:bg-red-500 transition-all border-b-4 border-red-900"
-                        >
-                          Reset Stage
-                        </Button>
-                      </div>
+                    {/* The slider itself */}
+                    <div className="w-24 sm:w-32 md:w-48 lg:w-64 shrink-0">
+                      <Slider
+                        defaultValue={[0.7]}
+                        max={1}
+                        min={0.01}
+                        step={0.01}
+                        value={[quality]}
+                        onValueChange={([val]) => setQuality(val)}
+                        className="py-4 lg:py-6 cursor-pointer"
+                      />
+                    </div>
+
+                    <span className="text-[10px] md:text-xs lg:text-2xl font-black text-primary italic tracking-widest font-mono shrink-0 min-w-[35px] lg:min-w-[60px] text-right">
+                      {Math.round(quality * 100)}%
+                    </span>
+
+                    <div className="h-8 w-px bg-white/10 shrink-0 mx-1 hidden lg:block" />
+
+                    {/* Format label + dropdown */}
+                    <div className="flex items-center gap-3 shrink-0 lg:ml-4">
+                      <p className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none shrink-0 lg:block hidden">Format</p>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-9 w-24 lg:h-11 lg:w-32 shrink-0 bg-card border-white/10 rounded-xl font-black uppercase tracking-tighter text-xs lg:text-sm shadow-inner px-3 flex items-center justify-between hover:bg-muted/10 transition-colors text-foreground"
+                          >
+                            <span>{targetFormat.toUpperCase()}</span>
+                            <ChevronDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 opacity-50" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="glass-morphism border-white/20 bg-background backdrop-blur-3xl font-sans min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                          {["webp", "jpg", "png"].map(fmt => (
+                            <DropdownMenuItem
+                              key={fmt}
+                              onClick={() => setTargetFormat(fmt)}
+                              className="font-black py-3 text-xs lg:text-sm uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
+                            >
+                              {fmt.toUpperCase()}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2 — Actions & Presets */}
+                <div className="flex items-center gap-4 lg:gap-8 flex-wrap sm:flex-nowrap w-full lg:w-auto justify-center lg:justify-end border-t lg:border-t-0 border-white/10 pt-2 lg:pt-0 shrink-0">
+
+                  {/* Quality presets */}
+                  <div className="flex items-center gap-1 lg:gap-2 flex-nowrap justify-center min-w-0">
+                    {([
+                      { label: "Eco", val: 0.3, Icon: Zap },
+                      { label: "Balanced", val: 0.7, Icon: Activity },
+                      { label: "Max", val: 0.95, Icon: ShieldCheck },
+                    ] as const).map(({ label, val, Icon }) => (
+                      <Button
+                        key={label}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setQuality(val)}
+                        className={`h-7 md:h-8 lg:h-10 flex items-center gap-1 px-1.5 md:px-3 lg:px-5 rounded-xl border-white/10 transition-all text-[7px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-widest shrink-0
+                            ${Math.abs(quality - val) < 0.05
+                            ? "bg-primary border-primary shadow-lg text-white"
+                            : "bg-card text-muted-foreground hover:bg-primary/20"}`}
+                      >
+                        <Icon className="h-3 w-3 lg:h-4 lg:w-4 text-primary shrink-0" />
+                        <span className="xs:inline hidden lg:inline">{label}</span>
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Delete Artifact */}
+                  {file && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={resetStage}
+                      className="h-7 md:h-8 lg:h-10 flex items-center gap-1 px-1.5 md:px-3 lg:px-5 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 hover:bg-red-500/15 hover:text-red-300 transition-all text-[7px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-widest shrink-0"
+                    >
+                      <Trash2 className="h-3 w-3 lg:h-4 lg:w-4" />
+                      <span className="xs:inline hidden lg:inline">Delete</span>
+                    </Button>
+                  )}
+
+                  {/* PNG + low quality warning */}
+                  {targetFormat === 'png' && quality < 0.98 && (
+                    <div className="flex items-center gap-1.5 h-7 md:h-8 px-2 md:px-3 text-[6px] md:text-[8px] text-amber-400 font-black uppercase tracking-widest border border-amber-500/20 bg-amber-500/10 rounded-xl shrink-0">
+                      <AlertTriangle className="h-2.5 w-2.5 shrink-0" />
+                      <span className="sm:inline hidden">WASM Required</span>
                     </div>
                   )}
-                </Card>
-              </div>
 
-              {/* SIDEBAR TOOLS - RIGHT COLUMN */}
-              <aside className="lg:sticky lg:top-24 h-fit animate-in slide-in-from-right-8 duration-700">
-                <Card className="glass-morphism border-primary/30 rounded-xl overflow-x-clip shadow-2xl bg-card flex flex-col border-b-4 border-l-4 border-white/5">
-                  <div className="bg-primary/20 p-5 border-b border-primary/30 flex items-center justify-between shrink-0 h-14">
-                    <div className="flex items-center gap-4">
-                      <Settings2 className="h-5 w-5 text-primary" />
-                      <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-white italic leading-none">Studio Controls</h3>
+                  {/* Push metrics + download to the right */}
+                  <div className="flex-grow lg:block hidden min-w-[10px]" />
+
+                  {compressedUrl && (
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Metrics chips */}
+                      <div className="flex items-center gap-1 lg:gap-3">
+                        {[
+                          { label: "Source", value: `${(originalSize / 1024).toFixed(0)}K`, color: "text-foreground", bg: "bg-black/40 border-white/5" },
+                          { label: "Output", value: `${(compressedSize / 1024).toFixed(0)}K`, color: "text-emerald-400", bg: "bg-black/40 border-white/5" },
+                        ].map(({ label, value, color, bg }) => (
+                          <div key={label} className={`flex flex-col items-center border rounded-lg lg:rounded-xl px-2 lg:px-4 py-0.5 lg:py-1.5 ${bg} shrink-0`}>
+                            <p className="text-[5px] lg:text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-0.5 lg:mb-1.5">{label}</p>
+                            <p className={`text-[8px] lg:text-sm font-black italic font-mono leading-none ${color}`}>{value}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Download */}
+                      <Button
+                        size="sm"
+                        className="h-9 px-3 md:px-4 lg:h-12 lg:px-10 gap-1.5 lg:gap-3 text-[8px] md:text-[10px] lg:text-xs font-black uppercase tracking-widest rounded-xl bg-primary text-white border-b-2 border-primary-foreground/20 shadow-glow shadow-primary/20 hover:scale-[1.03] active:scale-[0.98] transition-all italic shrink-0"
+                        onClick={() => {
+                          if (!compressedUrlRef.current) return;
+                          const a = document.createElement("a");
+                          a.href = compressedUrlRef.current;
+                          a.download = `${file?.name.replace(/\.[^.]+$/, "")}_optimized.${targetFormat}`;
+                          a.click();
+                        }}
+                      >
+                        <Download className="h-3.5 w-3.5 lg:h-5 lg:w-5 shrink-0" />
+                        <span className="xs:inline hidden lg:inline">Dispatch</span>
+                        <span className="hidden xl:inline">Artifact</span>
+                      </Button>
                     </div>
-                    <Activity className="h-5 w-5 text-primary animate-pulse" />
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* ── IMAGE CANVAS (16:9, max ~520px tall) ── */}
+            <Card className="glass-morphism border-primary/20 rounded-2xl bg-black/40 shadow-2xl overflow-hidden group/card animate-in fade-in slide-in-from-bottom-8 duration-700">
+              {/*
+                aspect-video = 16:9. We also cap with max-h-[520px] so it doesn't
+                get too tall on very wide screens. The inner content is absolutely
+                positioned so any image ratio sits fully contained (object-contain).
+              */}
+              <div className="relative w-full" style={{ aspectRatio: "16/9", maxHeight: "520px" }}>
+
+                {!file ? (
+                  /* ── Drop zone ── */
+                  <div
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+                    onClick={() => !processing && inputRef.current?.click()}
+                    className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer bg-background/40 hover:bg-primary/5 transition-all duration-300 group/upload"
+                  >
+                    <div className="h-20 w-20 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-700 group-hover/upload:scale-110 shadow-inner ring-2 ring-primary/40">
+                      <CloudUpload className="h-10 w-10 text-primary" />
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-3xl font-black text-white uppercase tracking-tighter italic text-shadow-glow leading-none">
+                        Deploy Image Artifact
+                      </p>
+                      <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] italic leading-none">
+                        Click · Drag & Drop · Ctrl+V
+                      </p>
+                    </div>
                   </div>
-                  <CardContent className="p-6 space-y-5 pt-6">
-                    <div className="space-y-5 animate-in fade-in duration-500">
-                      <div className="space-y-5">
-                        <div className="flex justify-between items-end px-1">
-                          <div className="space-y-1">
-                            <label className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Bit Quality</label>
-                            <p className="text-[9px] font-black text-white uppercase tracking-widest leading-none italic">
-                              {quality >= 0.8 ? "Studio Master" : quality >= 0.5 ? "Balanced" : "Compressed"}
-                            </p>
-                          </div>
-                          <span className="text-4xl font-black tracking-tighter text-primary italic leading-none font-mono text-shadow-glow">{Math.round(quality * 100)}%</span>
-                        </div>
 
-                        <div className="relative">
-                          <Slider
-                            value={[quality * 100]}
-                            max={100}
-                            min={1}
-                            step={1}
-                            onValueChange={(val) => setQuality(val[0] / 100)}
-                            className="py-4 cursor-pointer relative z-10"
-                          />
-                          <div className="flex justify-between mt-1 px-1 text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground italic">
-                            <span>Max Savings</span>
-                            <span>Max Detail</span>
-                          </div>
-                        </div>
+                ) : compressedUrl ? (
+                  /* ── Zoomable image stage ── */
+                  <div
+                    ref={stageRef}
+                    className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-crosshair active:cursor-grabbing select-none"
+                    onMouseDown={(e) => {
+                      if (e.button === 0 || e.button === 2) {
+                        setIsPanning(true);
+                        setStartPan({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+                        e.preventDefault();
+                      }
+                    }}
+                    onMouseMove={(e) => { if (isPanning) setOffset({ x: e.clientX - startPan.x, y: e.clientY - startPan.y }); }}
+                    onMouseUp={() => setIsPanning(false)}
+                    onMouseLeave={() => setIsPanning(false)}
+                    onContextMenu={(e) => e.preventDefault()}
+                  >
+                    <img
+                      src={compressedUrl}
+                      alt="Compressed"
+                      className="max-w-full max-h-full object-contain rounded-xl shadow-[0_30px_80px_rgba(0,0,0,0.9)] border border-white/5"
+                      style={{
+                        imageRendering: zoom > 1 ? "pixelated" : "auto",
+                        transform: `translate3d(${offset.x}px,${offset.y}px,0) scale(${zoom})`,
+                        transition: isPanning ? "none" : "transform 0.075s ease-out",
+                      }}
+                    />
+                  </div>
 
-                        <div className="grid grid-cols-3 gap-2.5 pt-1">
-                          {[
-                            { label: "Eco", val: 0.3, icon: Zap },
-                            { label: "Std", val: 0.7, icon: Activity },
-                            { label: "Max", val: 0.95, icon: ShieldCheck }
-                          ].map((tier) => (
-                            <Button
-                              key={tier.label}
-                              variant="outline"
-                              onClick={() => setQuality(tier.val)}
-                              className={`h-12 flex flex-col gap-1 rounded-xl border-white/10 bg-card hover:bg-primary/20 transition-all ${Math.abs(quality - tier.val) < 0.05 ? "bg-primary border-primary shadow-2xl scale-[1.05] text-white" : "text-muted-foreground"}`}
-                            >
-                              <tier.icon className="h-4 w-4 text-primary" />
-                              <span className="text-[9px] font-black uppercase tracking-widest leading-none">{tier.label}</span>
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
+                ) : (
+                  /* ── Processing spinner ── */
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 animate-in zoom-in-95 duration-500">
+                    <div className="h-20 w-20 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/40 shadow-2xl">
+                      <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                     </div>
-
-                    <div className="space-y-4 pt-4 border-t border-white/10">
-                      <div className="space-y-3">
-                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic leading-none px-1">Target Spec</label>
-                        <DropdownMenu modal={false}>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="w-full h-12 bg-card border-white/10 rounded-xl font-black uppercase tracking-tighter text-sm shadow-inner px-6 flex items-center justify-between hover:bg-muted/10 transition-colors text-foreground"
-                            >
-                              <span className="truncate">{targetFormat === "webp" ? "WEBP CORE" : targetFormat === "jpg" ? "JPG LEGACY" : "PNG QUANT"}</span>
-                              <ChevronDown className="h-4 w-4 opacity-50" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="glass-morphism border-white/20 bg-background backdrop-blur-3xl font-sans min-w-[var(--radix-dropdown-menu-trigger-width)]">
-                            <DropdownMenuItem 
-                              onClick={() => setTargetFormat("webp")}
-                              className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
-                            >
-                              WEBP CORE
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => setTargetFormat("jpg")}
-                              className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
-                            >
-                              JPG LEGACY
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => setTargetFormat("png")}
-                              className="font-black py-4 text-xs uppercase tracking-widest cursor-pointer text-foreground hover:bg-primary/20"
-                            >
-                              PNG QUANT
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-
-                      <div className="space-y-3 pb-1">
-                        <div className={`h-12 flex items-center justify-center bg-card border border-white/10 rounded-xl shadow-inner px-6 overflow-x-clip transition-all duration-700 ${targetFormat === 'png' ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(var(--primary),0.1)]' : ''}`}>
-                          <div className="flex items-center gap-3">
-                            <Zap className="h-4 w-4 text-primary" />
-                            <span className="text-[10px] font-black text-foreground/80 uppercase tracking-[0.2em] whitespace-nowrap italic leading-none">
-                              {targetFormat === 'png' ? 'QUANT CORE' : 'HARDWARE OPS'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-2xl font-black text-white uppercase tracking-tighter italic text-shadow-glow leading-none">Crunching Bits</p>
+                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em] italic animate-pulse">
+                        {isBaking ? "FFmpeg WASM Engine" : "Canvas Processor"}
+                      </p>
                     </div>
+                  </div>
+                )}
 
-                    {compressedUrl && (
-                      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-4 pt-1">
-                        {/* INTEGRATED METRICS - RECOVERED PER USER REQUEST */}
-                        <div className="grid grid-cols-3 gap-2.5 px-px">
-                          <div className="flex flex-col items-center justify-center bg-card/60 border border-white/5 rounded-xl py-4 shadow-2xl ring-1 ring-white/5">
-                            <p className="text-[8px] font-black text-primary uppercase tracking-widest mb-2 leading-none">Source</p>
-                            <p className="text-[16px] font-black text-foreground italic tracking-tighter font-mono leading-none">{(originalSize / 1024 / 1024).toFixed(2)}MB</p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center bg-card/60 border border-white/5 rounded-xl py-4 shadow-2xl ring-1 ring-white/5">
-                            <p className="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-2 leading-none">Target</p>
-                            <p className="text-[16px] font-black text-emerald-400 italic tracking-tighter font-mono leading-none">{(compressedSize / 1024 / 1024).toFixed(2)}MB</p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center bg-primary/10 border border-primary/20 rounded-xl py-4 shadow-2xl ring-1 ring-primary/20">
-                            <p className="text-[8px] font-black text-primary uppercase tracking-widest mb-2 leading-none">Savings</p>
-                            <p className="text-[16px] font-black text-primary italic tracking-tighter font-mono leading-none">-{savings}%</p>
-                          </div>
-                        </div>
+                {/* Reset View — top-left, visible on card hover when zoomed/panned */}
+                {file && compressedUrl && (zoom > 1 || offset.x !== 0 || offset.y !== 0) && (
+                  <div className="absolute top-3 left-3 opacity-0 group-hover/card:opacity-100 transition-all duration-300 z-20">
+                    <Button
+                      onClick={() => { setZoom(1); setOffset({ x: 0, y: 0 }); }}
+                      variant="outline"
+                      size="sm"
+                      className="h-8 px-3 text-[10px] font-black uppercase tracking-widest rounded-xl bg-black/70 border-white/20 text-white shadow-xl hover:scale-105 hover:bg-black/90 transition-all backdrop-blur-sm gap-1.5"
+                    >
+                      <ZoomIn className="h-3 w-3" />
+                      Reset View
+                    </Button>
+                  </div>
+                )}
 
-                        <Button
-                          className="w-full gap-4 h-16 text-xl font-black rounded-2xl shadow-[0_15px_40px_rgba(var(--primary),0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all uppercase italic border-b-4 border-primary-foreground/20 group/download bg-primary text-white relative overflow-x-clip"
-                          onClick={() => {
-                            if (!compressedUrlRef.current) return;
-                            const a = document.createElement("a");
-                            a.href = compressedUrlRef.current;
-                            a.download = `${file?.name.replace(/\.[^.]+$/, "")}_optimized.${targetFormat}`;
-                            a.click();
-                          }}
-                        >
-                          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/download:translate-y-0 transition-transform duration-400" />
-                          <Download className="h-7 w-7 group-hover/download:translate-y-1 transition-transform relative z-10" />
-                          <span className="relative z-10 font-display tracking-tight">Dispatch Artifact</span>
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </aside>
-            </div>
-            {/* SEO & Tool Guide Section */}
+                {/* Zoom indicator — bottom-right */}
+                {zoom > 1 && (
+                  <div className="absolute bottom-3 right-3 z-20 bg-black/70 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-1.5">
+                    <p className="text-[9px] font-black text-primary uppercase tracking-widest font-mono">{zoom.toFixed(1)}×</p>
+                  </div>
+                )}
+
+              </div>
+            </Card>
+
+            {/* SEO section */}
             <ToolExpertSection
               title="Studio Image Compressor"
               description="The Image Compressor is a professional-grade quantization engine designed to shrink image file sizes while maintaining maximum visual fidelity."
-              transparency="Our compression pipeline utilizes both the browser's native Canvas API and an optional WASM-powered FFmpeg backend for high-efficiency PNG quantization. Every byte is crunched locally on your machine, ensuring your private photos or proprietary assets are never uploaded to our servers."
+              transparency="Our compression pipeline utilizes both the browser's native Canvas API and an optional WASM-powered FFmpeg backend for high-efficiency PNG quantization. Note: Utilizing the FFmpeg backend requires fetching the engine artifacts from unpkg.com; however, every byte of your image is crunched locally on your machine, ensuring your private photos or proprietary assets are never uploaded to our servers."
               limitations="While the tool is hardware-accelerated, compressing exceptionally large images (e.g., 50MB+ RAW files) can temporarily lock your browser's main thread. For massive batch processing of hundreds of high-res images, a dedicated desktop CLI or server-side farm is recommended."
               accent="blue"
             />
@@ -454,16 +467,6 @@ const ImageCompressor = () => {
         <SponsorSidebars position="right" />
       </div>
       <Footer />
-
-      <div className="h-10 bg-black border-t border-white/10 shrink-0 flex items-center justify-between px-8">
-        <div className="flex items-center gap-6">
-          <p className="text-[9px] font-black text-white uppercase tracking-[0.4em] italic leading-none opacity-40">Secure Local Forge • Precision Pipeline</p>
-        </div>
-        <div className="flex items-center gap-6">
-          <span className="text-[8px] font-black text-primary uppercase tracking-widest italic leading-none">WASM Engine Ready</span>
-          <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
-        </div>
-      </div>
 
       <input ref={inputRef} type="file" className="hidden" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />
 

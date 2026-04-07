@@ -324,7 +324,7 @@ const VideoToGif = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl border-border/20 bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-border/20 bg-card">
                   <div className="bg-primary/5 p-8 border-b border-primary/10">
                     <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Configuration Master</h2>
                   </div>
@@ -355,7 +355,7 @@ const VideoToGif = () => {
                 </Card>
 
                 {processing && (
-                  <Card className="glass-morphism border-primary/20 bg-primary/5 rounded-2xl overflow-x-clip shadow-2xl animate-in fade-in zoom-in-95 duration-500">
+                  <Card className="glass-morphism border-primary/20 bg-primary/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-500">
                     <div className="p-6 space-y-6">
                       <div className="flex justify-between items-end mb-2">
                         <div className="flex items-center gap-3 text-primary/60">

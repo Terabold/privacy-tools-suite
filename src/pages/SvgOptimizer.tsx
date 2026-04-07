@@ -130,7 +130,7 @@ const SvgOptimizer = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-12 items-start">
               <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
+                <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl group flex flex-col min-h-[500px]">
 
                   {/* VS Code Style Header */}
                   <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between relative z-10">
@@ -171,7 +171,7 @@ const SvgOptimizer = () => {
                 </Card>
 
                 {optimized && (
-                  <Card className="glass-morphism border-border dark:border-primary/10 overflow-x-clip relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl animate-in zoom-in-95 duration-700 flex flex-col min-h-[400px]">
+                  <Card className="glass-morphism border-border dark:border-primary/10 overflow-hidden relative bg-zinc-100 dark:bg-[#0a0a0a] shadow-lg dark:shadow-2xl rounded-2xl animate-in zoom-in-95 duration-700 flex flex-col min-h-[400px]">
 
                     {/* VS Code Style Header */}
                     <div className="px-4 pt-3 border-b border-border dark:border-white/5 flex items-end justify-between font-sans relative z-10">
@@ -211,7 +211,7 @@ const SvgOptimizer = () => {
               </div>
 
               <aside className="space-y-8 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-x-clip shadow-lg dark:shadow-xl bg-card">
+                <Card className="glass-morphism border-border dark:border-primary/10 rounded-2xl overflow-hidden shadow-lg dark:shadow-xl bg-card">
                   <div className="bg-primary/5 dark:bg-primary/10 p-5 border-b border-border dark:border-primary/10 flex items-center justify-between">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Performance Metrics</h3>
                     {input && (

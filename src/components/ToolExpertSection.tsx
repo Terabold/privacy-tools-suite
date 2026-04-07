@@ -11,11 +11,11 @@ interface ToolExpertSectionProps {
   accent?: 'purple' | 'blue' | 'emerald' | 'orange' | 'rose' | 'amber' | 'cyan' | 'indigo' | 'violet' | 'fuchsia';
 }
 
-const ToolExpertSection = ({ 
-  title, 
-  description, 
-  transparency, 
-  limitations, 
+const ToolExpertSection = ({
+  title,
+  description,
+  transparency,
+  limitations,
   className,
   accent = 'purple'
 }: ToolExpertSectionProps) => {
@@ -55,7 +55,7 @@ const ToolExpertSection = ({
               </div>
               <ShieldCheck className="h-5 w-5 text-primary animate-pulse" />
             </div>
-            
+
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-foreground font-display leading-[0.9] italic text-shadow-glow">
               About {title}
             </h2>
@@ -66,16 +66,16 @@ const ToolExpertSection = ({
               <p className="text-xl md:text-2xl text-muted-foreground/90 font-medium leading-[1.4] tracking-tight">
                 {description}
               </p>
-              
+
               <div className={cn(
                 "bg-background/60 backdrop-blur-xl border-l-[6px] p-8 md:p-10 rounded-r-3xl shadow-2xl relative overflow-hidden group/card transition-all hover:translate-x-1",
                 accentColor
               )}>
                 <div className="absolute top-0 right-0 p-6 opacity-10 group-hover/card:opacity-25 transition-opacity">
-                   <Zap className="h-24 w-24" />
+                  <Zap className="h-24 w-24" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-widest text-foreground mb-4 font-display flex items-center gap-3">
-                   <Info className="h-6 w-6 text-primary" /> Transparency Report
+                  <Info className="h-6 w-6 text-primary" /> Transparency Report
                 </h3>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
                   {transparency}
@@ -94,16 +94,16 @@ const ToolExpertSection = ({
           </div>
 
           <footer className="pt-10 flex flex-wrap gap-6 items-center border-t border-foreground/5">
-             <div className="flex -space-x-4">
-                {[1, 2, 3].map((i) => (
-                   <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-zinc-800 flex items-center justify-center overflow-hidden shadow-lg">
-                      <div className="w-full h-full bg-gradient-to-br from-primary/40 to-primary/80" />
-                   </div>
-                ))}
-             </div>
-             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                Verified Secure · Client-Side Only · <span className="text-primary/70 italic underline decoration-wavy underline-offset-4">Encrypted Locally</span>
-             </p>
+            <div className="flex -space-x-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-zinc-800 flex items-center justify-center overflow-hidden shadow-lg">
+                  <div className="w-full h-full bg-gradient-to-br from-primary/40 to-primary/80" />
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+              Verified Secure · Client-Side Only · <span className="text-primary/70 italic underline decoration-wavy underline-offset-4">Encrypted Locally</span>
+            </p>
           </footer>
         </div>
       </div>

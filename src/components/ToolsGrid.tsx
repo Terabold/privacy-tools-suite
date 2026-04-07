@@ -298,7 +298,7 @@ export const tools = toolsData.map(tool => {
   const meta = toolsMetadata.find(m => m.to === tool.to);
   return {
     ...tool,
-    seoTitle: meta?.seoTitle || `${tool.title} | PrivateUtils`,
+    seoTitle: meta?.seoTitle || `${tool.title} | Client-Sided Coding & Media Tools`,
     seoDescription: meta?.seoDescription || tool.description
   };
 });

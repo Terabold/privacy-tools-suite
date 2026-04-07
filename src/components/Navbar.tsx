@@ -93,8 +93,8 @@ const Navbar = ({
 
   // Dynamic Browser Tab Title and Metadata Management
   useEffect(() => {
-    let title = "PrivateUtils — 100% Private, In-Browser Utility Suite (Zero Uploads)";
-    let description = "A professional collection of client-side privacy tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private.";
+    let title = "Client-Sided Coding & Media Tools — 100% Private, In-Browser Utility Suite (Zero Uploads)";
+    let description = "A professional collection of client-side developer and media tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private.";
     let ogImage = "/favicon.svg";
 
     if (isHomePage) {
@@ -157,8 +157,13 @@ const Navbar = ({
               className="h-9 w-9 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-white shadow-2xl transition-theme group-hover:scale-105 shrink-0 overflow-hidden"
               style={{ backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}
             >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-[55%] h-[55%] pointer-events-none">
-                <path d="M5 4h9a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-4v6H5V4zm5 7h4a2 2 0 0 0 0-4h-4v4z" />
+              <svg viewBox="0 0 512 512" fill="currentColor" className="w-[70%] h-[70%] pointer-events-none drop-shadow-lg">
+                <path d="M256,32 C172.96,62.33 93.36,65.88 48,64 C48,229.41 81.33,338.99 256,480 C430.67,338.99 464,229.41 464,64 C418.64,65.88 339.04,62.33 256,32 Z" />
+                <g stroke="white" strokeWidth="48" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                  <polyline points="170,186 90,256 170,326" />
+                  <polyline points="342,186 422,256 342,326" />
+                  <line x1="286" y1="160" x2="226" y2="352" />
+                </g>
               </svg>
             </div>
             <div className="flex h-9 md:h-10 items-center gap-2">

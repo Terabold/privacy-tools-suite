@@ -180,7 +180,7 @@ const PerspectiveTilter = () => {
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_450px] gap-8 items-start">
               {/* Main Stage */}
               <div className="flex flex-col gap-8">
-                <Card className={`glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-2xl transition-all duration-700 ${!image ? 'hover:border-primary/30 p-10' : ''}`}>
+                <Card className={`glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-2xl transition-all duration-700 ${!image ? 'hover:border-primary/30 p-10' : ''}`}>
                   {!image ? (
                     <div
                       onClick={() => inputRef.current?.click()}
@@ -289,7 +289,7 @@ const PerspectiveTilter = () => {
 
               {/* Settings Sidebar */}
               <aside className="space-y-8 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl">
                   <div className="bg-primary/5 p-4 border-b border-primary/10">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Capture Calibration</h3>
                   </div>

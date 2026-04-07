@@ -1,19 +1,22 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { 
-  ArrowLeft, 
-  Trash2, 
-  Download, 
-  Plus,
-  ChevronUp, 
-  ChevronDown, 
-  Settings2,
+import {
+  ArrowLeft,
+  ArrowRight,
   FileStack,
-  AlertCircle,
+  Trash2,
+  Plus,
+  Repeat,
+  ArrowRightCircle,
+  Download,
+  LayoutGrid,
+  FileUp,
   RefreshCw,
   Home,
-  Eye,
-  Repeat
+  ChevronLeft,
+  ChevronRight,
+  AlertCircle,
+  Maximize2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,9 +28,15 @@ import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 
 interface ImageFile {
   id: string;
@@ -46,6 +55,7 @@ const ImageToPdf = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pdfName, setPdfName] = useState("converted_images");
   const [pageSize, setPageSize] = useState<"a4" | "letter" | "fit">("a4");
+  const [showGallery, setShowGallery] = useState(false);
 
   const toggleDark = () => {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -57,7 +67,7 @@ const ImageToPdf = () => {
     if (!files) return;
 
     const newImages: ImageFile[] = Array.from(files).map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 11),
       file,
       preview: URL.createObjectURL(file),
       name: file.name,
@@ -66,6 +76,9 @@ const ImageToPdf = () => {
 
     setImages(prev => [...prev, ...newImages]);
     toast.success(`${newImages.length} artifacts staged`);
+
+    // Fix: Clear input value so the same file can be selected again
+    e.target.value = '';
   }, []);
 
   const removeImage = (id: string) => {
@@ -77,28 +90,23 @@ const ImageToPdf = () => {
     });
   };
 
-  const moveImage = (index: number, direction: "up" | "down") => {
-    if (direction === "up" && index === 0) return;
-    if (direction === "down" && index === images.length - 1) return;
+  const handleSwap = () => setImages(prev => [...prev].reverse());
 
+  const moveImage = (index: number, direction: 'up' | 'down') => {
     const newImages = [...images];
-    const swapWith = direction === "up" ? index - 1 : index + 1;
-    [newImages[index], newImages[swapWith]] = [newImages[swapWith], newImages[index]];
-    setImages(newImages);
-  };
-
-  const handleSwap = () => {
-    if (images.length < 2) return;
-    setImages(prev => [...prev].reverse());
-    toast.success("Artifact sequence inverted");
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex >= 0 && newIndex < newImages.length) {
+      [newImages[index], newImages[newIndex]] = [newImages[newIndex], newImages[index]];
+      setImages(newImages);
+    }
   };
 
   // Live Preview Engine
   useEffect(() => {
     if (!livePreview || images.length === 0) {
       if (previewUrl) {
-         URL.revokeObjectURL(previewUrl);
-         setPreviewUrl(null);
+        URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
       }
       return;
     }
@@ -126,7 +134,7 @@ const ImageToPdf = () => {
           const pageHeight = pdf.internal.pageSize.getHeight();
           const imgProps = pdf.getImageProperties(imgData);
           const ratio = imgProps.width / imgProps.height;
-          
+
           let width = pageWidth;
           let height = pageWidth / ratio;
 
@@ -142,7 +150,7 @@ const ImageToPdf = () => {
 
         const blob = pdf.output('blob');
         const url = URL.createObjectURL(blob);
-        
+
         setPreviewUrl(prev => {
           if (prev) URL.revokeObjectURL(prev);
           return url;
@@ -157,7 +165,7 @@ const ImageToPdf = () => {
 
   const generateAndDownload = async () => {
     if (images.length === 0) return;
-    
+
     setIsProcessing(true);
     const pdfToast = toast.loading("Synthesizing final high-fidelity artifact...");
 
@@ -181,7 +189,7 @@ const ImageToPdf = () => {
         const pageHeight = pdf.internal.pageSize.getHeight();
         const imgProps = pdf.getImageProperties(imgData);
         const ratio = imgProps.width / imgProps.height;
-        
+
         let width = pageWidth;
         let height = pageWidth / ratio;
 
@@ -228,14 +236,14 @@ const ImageToPdf = () => {
             The Image to PDF architect encountered a critical runtime error. This usually occurs during heavy client-side processing or browser context loss.
           </p>
           <div className="pt-10 flex flex-wrap justify-center gap-6">
-            <Button 
+            <Button
               onClick={reinitializeEngine}
               className="h-16 px-10 gap-3 text-sm font-black rounded-2xl uppercase italic shadow-2xl shadow-destructive/20 bg-destructive hover:bg-destructive/90 transition-all active:scale-95 text-white"
             >
               <RefreshCw className="h-5 w-5" /> Re-Initialize Engine
             </Button>
             <Link to="/">
-              <Button 
+              <Button
                 variant="outline"
                 className="h-16 px-10 gap-3 text-sm font-black rounded-2xl uppercase italic border-border hover:bg-white/5 transition-all active:scale-95"
               >
@@ -249,254 +257,358 @@ const ImageToPdf = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500">
+    <div className="min-h-screen bg-background text-foreground theme-image transition-all duration-500 overflow-x-clip">
       <Navbar darkMode={darkMode} onToggleDark={toggleDark} />
 
-      <div className="flex justify-center items-start w-full relative">
-        <SponsorSidebars position="left" />
+      <div className="flex justify-center items-start w-full relative px-4 overflow-x-clip">
+        <SponsorSidebars position="left" className="shrink-0" />
 
-        <main className="container mx-auto max-w-[1400px] px-4 py-8 grow">
-          <header className="flex items-center justify-between flex-wrap gap-8 mb-12">
-            <div className="flex items-center gap-6">
-              <Link to="/">
-                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border-border hover:bg-primary/10 transition-all group/back bg-background/80 shadow-xl">
-                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic text-shadow-glow">
-                  Image to <span className="text-primary italic">PDF</span>
-                </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-60 text-[10px]">
-                  Secure Multi-Page Artifact Compiler
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 bg-card/40 backdrop-blur-md px-5 h-14 rounded-2xl border border-border/50">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Live Preview</span>
-                <Switch checked={livePreview} onCheckedChange={setLivePreview} className="data-[state=checked]:bg-primary" />
-              </div>
-            </div>
-          </header>
-
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-8 items-start">
-            <div className="space-y-8">
-              {/* Workspace Container */}
-              <motion.div 
-                layout
-                className={`grid grid-cols-1 ${livePreview ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} gap-8 min-h-[600px]`}
-              >
-                {/* Upload & Management */}
-                <motion.div layout className="space-y-6 flex flex-col h-full">
-                  <Card className="glass-morphism border-dashed border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer relative group overflow-hidden h-[180px] flex-shrink-0 flex items-center justify-center">
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleUpload}
-                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="text-center space-y-3">
-                      <div className="h-14 w-14 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-glow text-primary">
-                        <Plus className="h-7 w-7" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-black uppercase tracking-widest text-primary">Stage Artifacts</p>
-                        <p className="text-[9px] text-muted-foreground uppercase mt-1 opacity-60">HEIF, JPG, PNG, WEBP</p>
-                      </div>
-                    </div>
-                  </Card>
-
-                  <div className="flex-1 flex flex-col space-y-3">
-                    <div className="flex items-center justify-between px-2">
-                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
-                         <FileStack className="h-3 w-3" /> Artifact Chain ({images.length})
-                       </h3>
-                       <div className="flex items-center gap-2">
-                         {images.length >= 2 && (
-                           <Button variant="ghost" size="sm" onClick={handleSwap} className="h-8 text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all">
-                             Invert
-                           </Button>
-                         )}
-                         <Button variant="ghost" size="sm" onClick={() => setImages([])} className="h-8 text-[9px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 transition-all">
-                           Purge
-                         </Button>
-                       </div>
-                    </div>
-
-                    <div className="flex-1 overflow-auto max-h-[450px] space-y-2 pr-2 custom-scrollbar">
-                      <AnimatePresence mode="popLayout">
-                        {images.length === 0 ? (
-                          <motion.div 
-                            key="empty"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="h-32 flex items-center justify-center border border-border/20 border-dashed rounded-2xl opacity-40 italic text-[11px] font-bold text-muted-foreground uppercase tracking-widest"
-                          >
-                            Worklist is empty
-                          </motion.div>
-                        ) : (
-                          images.map((img, index) => (
-                            <motion.div
-                              key={img.id}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                            >
-                              <Card className="glass-morphism border-border/30 bg-card/40 backdrop-blur-md group-hover:border-primary/30 transition-all shadow-sm">
-                                <CardContent className="p-3 flex items-center gap-3">
-                                  <div className="h-12 w-12 rounded-lg overflow-hidden flex-shrink-0 border border-border/50">
-                                    <img src={img.preview} className="h-full w-full object-cover" alt="Artifact" />
-                                  </div>
-                                  <div className="grow min-w-0">
-                                    <p className="text-[10px] font-black uppercase truncate">{img.name}</p>
-                                    <p className="text-[9px] text-muted-foreground uppercase opacity-60 font-mono tracking-tighter mt-0.5">{img.size}</p>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg group" onClick={() => moveImage(index, "up")} disabled={index === 0}>
-                                      <ChevronUp className="h-4 w-4 group-hover:text-primary" />
-                                    </Button>
-                                    <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg group" onClick={() => moveImage(index, "down")} disabled={index === images.length - 1}>
-                                      <ChevronDown className="h-4 w-4 group-hover:text-primary" />
-                                    </Button>
-                                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:bg-destructive/10 rounded-lg ml-1" onClick={() => removeImage(img.id)}>
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                    </Button>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </motion.div>
-                          ))
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Live Preview Console - Unmounts instantly for fluid layout expansion */}
-                {livePreview && (
-                  <motion.div 
-                    layout
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="h-full flex flex-col"
-                  >
-                    <div className="flex items-center justify-between px-2 mb-3">
-                      <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
-                         <Eye className="h-3 w-3 " /> Discovery View
-                      </h3>
-                    </div>
-                    <Card className="flex-1 glass-morphism border-border/50 bg-black/40 backdrop-blur-2xl rounded-2xl overflow-hidden relative shadow-2xl min-h-[500px]">
-                       {!previewUrl ? (
-                         <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-black/20">
-                           <div className="h-16 w-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group">
-                             <FileStack className="h-8 w-8 text-white/20 group-hover:text-primary/50 transition-colors" />
-                           </div>
-                           <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] leading-relaxed">
-                              Awaiting Artifact Serialization...
-                           </p>
-                         </div>
-                       ) : (
-                         <iframe src={previewUrl} className="w-full h-full border-none opacity-90 transition-opacity duration-700" title="PDF Preview" />
-                       )}
-                       
-                       <div className="absolute top-4 right-4 z-20">
-                          <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
-                            <div className={`h-1.5 w-1.5 rounded-full ${previewUrl ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-500'}`} />
-                            <span className="text-[8px] font-black uppercase tracking-widest text-white/70">
-                              {previewUrl ? 'Live Pass Active' : 'Engine Idle'}
-                            </span>
-                          </div>
-                       </div>
-                    </Card>
-                  </motion.div>
-                )}
-              </motion.div>
-            </div>
-
-            <aside className="space-y-6 lg:sticky lg:top-8">
-              <Card className="glass-morphism border-border/50 shadow-xl overflow-hidden bg-card/60">
-                <div className="bg-primary/5 p-5 border-b border-border/50 flex items-center justify-between">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-2">
-                    <Settings2 className="h-3 w-3" /> Build Parameters
-                  </h3>
+        <main className="container mx-auto max-w-[1300px] px-6 py-6 grow overflow-visible min-w-0">
+          <div className="w-full flex flex-col gap-6">
+            {/* ── HEADER ── */}
+            <header className="flex items-center justify-between flex-wrap gap-4 mb-1 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="flex items-center gap-6">
+                <Link to="/">
+                  <Button variant="outline" size="icon" className="h-14 w-14 rounded-2xl border-border hover:bg-primary/20 transition-all group/back bg-background/80 shadow-xl border-2">
+                    <ArrowLeft className="h-6 w-6 group-hover:-translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic text-shadow-glow leading-none">
+                    Image to <span className="text-primary italic">PDF</span>
+                  </h1>
+                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.35em] opacity-40 text-[9px] ml-1">
+                    Secure Multi-Page Artifact Compiler
+                  </p>
                 </div>
-                <CardContent className="p-6 space-y-8">
-                  <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Artifact Namespace</Label>
-                    <div className="relative">
-                      <Input
-                        value={pdfName}
-                        onChange={(e) => setPdfName(e.target.value)}
-                        className="bg-background/40 h-11 pr-12 font-black uppercase tracking-tighter"
-                      />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground opacity-40">.PDF</span>
-                    </div>
-                  </div>
+              </div>
+            </header>
 
-                  <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Spatial Manifest</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { id: "a4", label: "A4 Forensic" },
-                        { id: "letter", label: "US Letter" }
-                      ].map((page) => (
-                        <Button 
-                          key={page.id}
-                          variant={pageSize === page.id ? "default" : "outline"} 
-                          className={`h-11 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all ${pageSize === page.id ? 'shadow-glow scale-[1.02]' : 'opacity-60'}`}
-                          onClick={() => setPageSize(page.id as any)}
-                        >
-                          {page.label}
-                        </Button>
-                      ))}
-                    </div>
+            {/* ── SETTINGS BAR (Horizontal - High Density) ── */}
+            <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <CardContent className="p-4 flex items-center justify-between gap-6 lg:flex-nowrap flex-wrap">
+                {/* 1. PDF Filename (Namespace) */}
+                <div className="flex items-center gap-4 min-w-0 flex-grow max-w-[450px]">
+                  <div className="shrink-0 pl-2 lg:block hidden">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Namespace</p>
+                    <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40 leading-none mt-1.5 whitespace-nowrap">Output Identity</p>
                   </div>
+                  <div className="relative flex-1 min-w-[120px]">
+                    <Input
+                      value={pdfName}
+                      onChange={(e) => setPdfName(e.target.value)}
+                      className="bg-black/40 h-11 pr-14 font-black uppercase tracking-tighter border-primary/20 focus:border-primary/50 transition-all rounded-xl text-[clamp(9px,1vw,11px)]"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-primary opacity-30">.PDF</span>
+                  </div>
+                </div>
 
+                <div className="h-10 w-px bg-white/10 hidden lg:block" />
+
+                {/* 2. Page Size Selection */}
+                <div className="flex items-center gap-4 shrink-0 min-w-0">
+                  <div className="lg:block hidden shrink-0">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Format</p>
+                    <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40 leading-none mt-1.5">Spatial Layout</p>
+                  </div>
+                  <div className="flex gap-1.5 bg-black/40 p-1 rounded-xl border border-primary/10">
+                    {[
+                      { id: "a4", label: "A4" },
+                      { id: "letter", label: "LTR" }
+                    ].map((page) => (
+                      <Button
+                        key={page.id}
+                        variant={pageSize === page.id ? "default" : "outline"}
+                        className={`h-9 px-4 text-[clamp(8px,1vw,10px)] font-black uppercase tracking-widest rounded-lg transition-all border-0 shadow-none
+                          ${pageSize === page.id
+                            ? 'bg-primary text-white shadow-glow shadow-primary/20'
+                            : 'bg-transparent text-muted-foreground hover:bg-white/5 hover:text-white'}`}
+                        onClick={() => setPageSize(page.id as any)}
+                      >
+                        {page.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="h-10 w-px bg-white/10 hidden lg:block" />
+
+                {/* 3. Management Actions */}
+                <div className="flex items-center gap-4 shrink-0">
+                  <div className="shrink-0 text-right">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Actions</p>
+                    <p className="text-[9px] font-black text-muted-foreground uppercase opacity-60 leading-none mt-1.5">Registry</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon" onClick={() => setImages([])} disabled={images.length === 0} className="h-11 w-11 rounded-xl border-border/50 text-destructive hover:bg-destructive/10 transition-all shadow-sm">
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="h-10 w-px bg-white/10 hidden lg:block" />
+
+                {/* 4. Export Action */}
+                <div className="flex-grow max-w-[280px] min-w-[140px]">
                   <Button
                     onClick={generateAndDownload}
                     disabled={images.length === 0 || isProcessing}
-                    className="w-full h-14 rounded-2xl font-black uppercase italic tracking-widest shadow-glow text-[11px] group relative overflow-hidden active:scale-95 transition-all bg-primary text-white hover:opacity-90"
+                    className="h-12 w-full rounded-2xl font-black uppercase italic tracking-widest shadow-glow shadow-primary/20 text-[clamp(9px,1vw,11px)] group relative overflow-hidden active:scale-95 transition-all bg-primary text-white hover:opacity-90"
                   >
                     {isProcessing ? (
-                      <span className="flex items-center gap-2 animate-pulse">
+                      <span className="flex items-center justify-center gap-2 animate-pulse">
                         <RefreshCw className="h-4 w-4 animate-spin" /> Compiling...
                       </span>
                     ) : (
-                      <span className="flex items-center gap-2">
-                        <Download className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" /> Export Master PDF
+                      <span className="flex items-center justify-center gap-2">
+                        <Download className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" /> Export Master
                       </span>
                     )}
                   </Button>
-                  
-                  <p className="text-[9px] text-muted-foreground font-black text-center uppercase tracking-widest leading-relaxed opacity-40">
-                    Client-Side Buffer Processing: Your artifacts do not touch our networking layer.
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-              <div className="hidden xl:block">
-                <AdBox adFormat="vertical" height={600} label="SIDEBAR AD" />
+            {/* ── HYBRID WORKSPACE (Leveled & Calibrated) ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-[450px_1fr] gap-6 items-stretch animate-in fade-in slide-in-from-bottom-8 duration-700">
+              {/* Management Column (Strict 3-Row Limit) */}
+              <div className="flex flex-col gap-6 h-full">
+                <Card className="glass-morphism border-dashed border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer relative group overflow-hidden h-[90px] flex items-center justify-center rounded-2xl shrink-0">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="flex items-center gap-4 px-6">
+                    <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-glow shadow-primary/20 text-primary ring-1 ring-primary/20 shrink-0">
+                      <Plus className="h-6 w-6" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xl font-black uppercase tracking-tighter text-primary italic leading-none">Deploy Artifacts</p>
+                      <p className="text-[7px] text-muted-foreground uppercase mt-1.5 font-black tracking-[0.2em] opacity-40">DRAG MASTER OR CLICK</p>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Artifact Registry Thumbs (Strictly Enforced 3x2 Grid) */}
+                <div className="h-[500px] glass-morphism border-primary/20 rounded-2xl flex flex-col group transition-all shadow-2xl relative border-2 border-primary/10 overflow-hidden">
+                  <header
+                    onClick={() => setShowGallery(true)}
+                    className="h-[50px] px-5 flex items-center justify-between shrink-0 border-b border-primary/10 cursor-pointer hover:bg-primary/10 transition-all bg-muted/40"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic leading-none">
+                        Active Stack ({images.length})
+                      </h3>
+                    </div>
+                    <Maximize2 className="h-3.5 w-3.5 text-primary opacity-30 group-hover:opacity-100 transition-all" />
+                  </header>
+
+                  <div className="flex-1 min-h-0 relative p-5 bg-muted/10 overflow-y-auto custom-scrollbar">
+                    {images.length === 0 ? (
+                      <div
+                        onClick={() => setShowGallery(true)}
+                        className="h-full flex flex-col items-center justify-center opacity-20 text-center px-10 grayscale cursor-pointer"
+                      >
+                        <FileStack className="h-10 w-10 mb-4 stroke-1" />
+                        <p className="text-[9px] font-black uppercase tracking-widest italic opacity-60 leading-relaxed max-w-[140px]">Laboratory Sequence Engine Idle</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-4 h-auto content-start">
+                        <AnimatePresence mode="popLayout" initial={false}>
+                          {images.map((img, index) => (
+                            <motion.div
+                              key={img.id}
+                              layout
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              className="relative aspect-video rounded-xl overflow-hidden border border-primary/20 bg-card shadow-xl group/thumb hover:border-primary/60 transition-all shrink-0"
+                            >
+                              <img src={img.preview} className="h-full w-full object-cover" alt="Artifact" />
+
+                              {/* Centered Delete Action */}
+                              <div className="absolute inset-0 bg-black/70 opacity-0 group-hover/thumb:opacity-100 transition-all flex items-center justify-center">
+                                <div
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeImage(img.id);
+                                  }}
+                                  className="h-9 w-9 rounded-full bg-destructive flex items-center justify-center text-white scale-75 group-hover/thumb:scale-100 transition-all cursor-pointer hover:bg-destructive shadow-[0_0_20px_rgba(239,68,68,0.5)]"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </div>
+                              </div>
+
+                              <div className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-background/90 rounded text-[8px] font-black text-primary border border-primary/20 uppercase tracking-tighter shadow-2xl">
+                                #{index + 1}
+                              </div>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    )}
+                  </div>
+
+                  <footer
+                    onClick={() => setShowGallery(true)}
+                    className="h-[50px] border-t border-primary/10 cursor-pointer hover:bg-primary/10 transition-all text-center flex items-center justify-center gap-3 bg-muted/20"
+                  >
+                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/30 italic group-hover:text-primary transition-colors">Forensic Sequence Registry</p>
+                  </footer>
+                </div>
               </div>
-            </aside>
+
+              {/* Discovery Preview Lab (Leveled with Sidebar) */}
+              <div className="w-full flex flex-col h-[614px] overflow-hidden">
+                <Card className="flex-1 glass-morphism border-primary/20 rounded-2xl overflow-hidden relative shadow-2xl border-2 border-primary/10 group/preview">
+                  {!previewUrl ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-muted/5">
+                      <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 border border-primary/20 group-hover/preview:scale-110 transition-transform shadow-glow shadow-primary/20">
+                        <FileStack className="h-6 w-6 text-primary/40" />
+                      </div>
+                      <h2 className="text-xl font-black text-primary/10 uppercase tracking-[0.5em] italic mb-3">Serialization Engine Ready</h2>
+                      <p className="text-[9px] font-black text-primary/5 uppercase tracking-[0.4em] leading-relaxed max-w-sm italic">
+                        Awaiting artifact sequence for PDF compilation.
+                      </p>
+                    </div>
+                  ) : (
+                    <iframe src={previewUrl} className="w-full h-full border-none opacity-95 transition-opacity duration-1000" title="PDF Preview" />
+                  )}
+                </Card>
+              </div>
+            </div>
+
+            <ToolExpertSection
+              title="Forensic PDF Synthesis"
+              accent="orange"
+              description="Securely compile multiple image artifacts into a single, high-fidelity PDF document entirely within your browser."
+              transparency="Our engine utilizes direct client-side stream synthesis. Your private graphics never egress your local memory buffer, ensuring absolute zero-exposure document creation."
+              limitations="Registry saturation depends on available hardware acceleration and RAM. For massive datasets, we recommend system-level page-flipping."
+            />
           </div>
 
-          <ToolExpertSection 
-            title="PDF Forensic Serialization"
-            description="Securely compile multiple image artifacts into a single, high-fidelity PDF document entirely within your browser."
-            transparency="The Image to PDF studio utilizes direct browser-to-document synthesis. By processing your artifacts within your local V8 memory space, we ensure absolute data isolation."
-            limitations="The discovery view uses a real-time compression engine to provide live feedback without saturating system RAM. Final exports are rendered in high-fidelity 300DPI equivalent buffers."
-            accent="orange"
-          />
+          {/* ── ARTIFACT REGISTRY OVERLAY (Manual Drag-to-Swap Console) ── */}
+          <Dialog open={showGallery} onOpenChange={setShowGallery} modal={false}>
+            <DialogContent className="max-w-[1300px] h-[85vh] glass-morphism p-0 overflow-hidden rounded-2xl flex flex-col bg-card border-2 border-primary/10 z-[9999] [&>button]:hidden theme-image studio-gradient backdrop-blur-3xl shadow-2xl">
+              <div className="p-10 border-b border-white/5 flex items-center justify-between bg-background/40 shrink-0 backdrop-blur-3xl">
+                <div className="flex items-center gap-8">
+                  <div className="h-16 w-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary shadow-[0_0_40px_rgba(249,115,22,0.2)] ring-2 ring-primary/40">
+                    <FileStack className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <h2 className="text-4xl font-black uppercase tracking-tighter italic text-primary leading-none">Forensic Registry</h2>
+                    <p className="text-[11px] font-black uppercase tracking-[0.5em] text-primary/40 mt-3 italic">Drag Masters to Calibrate Sequence • {images.length} Masters Staged</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="flex bg-background/60 p-2 rounded-2xl border border-primary/20 shadow-inner">
+                    <Button variant="ghost" onClick={handleSwap} disabled={images.length < 2} className="rounded-xl h-14 px-10 text-[11px] font-black uppercase tracking-widest text-primary hover:bg-primary/20 transition-all italic">
+                      Invert Chain
+                    </Button>
+                    <Button variant="ghost" onClick={() => setImages([])} disabled={images.length === 0} className="rounded-xl h-14 px-10 text-[11px] font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 transition-all italic">
+                      Purge Registry
+                    </Button>
+                  </div>
+                  <Button variant="outline" size="icon" onClick={() => setShowGallery(false)} className="rounded-2xl h-16 w-16 border-primary/40 hover:bg-primary/20 text-primary transition-all bg-background/60 shadow-glow shadow-primary/10">
+                    <Plus className="h-8 w-8 rotate-45" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-transparent">
+                {images.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center opacity-10 py-40">
+                    <FileStack className="h-32 w-32 mb-10 stroke-1 text-primary animate-pulse" />
+                    <p className="text-3xl font-black uppercase tracking-[0.6em] italic text-primary">No artifacts detected</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 content-start pb-20">
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {images.map((img, index) => (
+                        <motion.div
+                          key={img.id}
+                          layout
+                          className="flex flex-col gap-4 relative"
+                        >
+                          <div className="group/item relative aspect-[4/3] rounded-2xl overflow-hidden border-2 border-primary/20 bg-muted/10 shadow-2xl hover:border-primary/50 transition-all duration-300">
+                            <img src={img.preview} className="h-full w-full object-cover select-none pointer-events-none" alt="Artifact" />
+
+                            {/* Centered Overlay Action */}
+                            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover/item:opacity-100 transition-all flex items-center justify-center pointer-events-none group-active/item:hidden">
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                className="h-16 w-16 rounded-full shadow-[0_0_40px_rgba(239,68,68,0.5)] transform scale-75 group-hover/item:scale-100 transition-all pointer-events-auto"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeImage(img.id);
+                                }}
+                              >
+                                <Trash2 className="h-8 w-8" />
+                              </Button>
+                            </div>
+
+                          </div>
+
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex items-center justify-between gap-2">
+                              {/* New Precision Move Buttons */}
+                              <div className="flex items-center bg-muted/40 border border-primary/10 rounded-lg p-0.5">
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => moveImage(index, 'up')}
+                                  disabled={index === 0}
+                                  className="h-6 w-6 rounded-md hover:bg-primary/20 text-primary/40 disabled:opacity-0 transition-opacity"
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] italic px-2">#{index + 1}</span>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => moveImage(index, 'down')}
+                                  disabled={index === images.length - 1}
+                                  className="h-6 w-6 rounded-md hover:bg-primary/20 text-primary/40 disabled:opacity-0 transition-opacity"
+                                >
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                              <span className="text-[9px] font-black text-primary/30 uppercase tracking-widest leading-none shrink-0 truncate max-w-[80px]">{img.size}</span>
+                            </div>
+                            <p className="text-[8px] font-black text-primary/10 uppercase tracking-[0.1em] truncate italic px-1">{img.name}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-8 bg-orange-100/50 dark:bg-zinc-950/80 backdrop-blur-xl border-t border-primary/20 flex items-center justify-between text-[11px] font-black uppercase tracking-widest text-primary/40 italic px-12 shrink-0">
+                <div className="flex items-center gap-10">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-primary tracking-[0.3em] opacity-80">FORENSIC REGISTRY CIPHER ACTIVE</span>
+                  </div>
+                  <div className="h-4 w-px bg-primary/10" />
+                  <p className="opacity-40">Chain Identifier: {pdfName}.pdf</p>
+                </div>
+                <p className="opacity-20 tracking-[0.3em]">Catalyst Laboratory Console • v4.0.0-Orange</p>
+              </div>
+            </DialogContent>
+          </Dialog>
         </main>
 
         <SponsorSidebars position="right" />
       </div>
 
       <Footer />
-      
+
       <div className="fixed bottom-0 left-0 right-0 z-50 flex min-[1600px]:hidden justify-center bg-background/80 dark:bg-black/80 backdrop-blur-sm border-t border-border/10 py-2 h-[66px]">
         <AdBox adFormat="horizontal" height={50} label="ANCHOR AD" className="w-full" />
       </div>

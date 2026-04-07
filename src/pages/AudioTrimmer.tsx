@@ -228,6 +228,7 @@ const AudioTrimmer = () => {
       link.href = url;
       link.download = `trimmed_${fileName.split('.')[0] || 'audio'}.wav`;
       link.click();
+      URL.revokeObjectURL(url);
       toast.success("Trimmed audio exported as WAV");
     } catch (e) {
       toast.error("Export failed");
@@ -325,7 +326,7 @@ const AudioTrimmer = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="lg:col-span-8 space-y-8">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl transition-all duration-700 hover:border-primary/30 group relative bg-card">
+                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-700 hover:border-primary/30 group relative bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Scissors className="h-4 w-4 text-primary" />
@@ -491,7 +492,11 @@ const AudioTrimmer = () => {
                     {/* Reset Button (Integrated into Workbench) */}
                     <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <Button
-                        onClick={() => { setAudioBuffer(null); setFileName(""); }}
+                        onClick={() => { 
+                          resetPlayback();
+                          setAudioBuffer(null); 
+                          setFileName(""); 
+                        }}
                         variant="destructive"
                         size="sm"
                         className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
@@ -506,7 +511,7 @@ const AudioTrimmer = () => {
               </div>
 
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 h-fit">
-                <Card className="glass-morphism border-primary/10 rounded-2xl overflow-x-clip shadow-xl bg-card">
+                <Card className="glass-morphism border-primary/20 rounded-2xl bg-black/40 shadow-2xl relative overflow-hidden group/card min-h-[440px] flex flex-col">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <RefreshCw className="h-4 w-4 text-primary" />
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Export Parameters</h3>
