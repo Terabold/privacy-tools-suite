@@ -1,202 +1,202 @@
 [
   {
     "to": "/universal-media-converter",
-    "seoTitle": "Universal Media Converter - Private Video & Audio Studio",
-    "seoDescription": "Multi-format video and audio translation engine using native browser processing. 100% private with zero server uploads."
+    "seoTitle": "Media Converter - Video & Audio",
+    "seoDescription": "Convert video and audio formats in your browser. 100% private with no server uploads."
   },
   {
     "to": "/youtube-thumbnail-hub",
-    "seoTitle": "YouTube Thumbnail Studio - Private Safe-Zone Simulation",
-    "seoDescription": "Simulate live YouTube page layouts with overlays and safe-zone validation. 100% client-side with zero tracking."
+    "seoTitle": "YouTube Thumbnail Preview - Private Checker",
+    "seoDescription": "Check how your thumbnails look on a simulated YouTube page. 100% private with zero tracking."
   },
   {
     "to": "/perspective-tilter",
-    "seoTitle": "Perspective Tilt Hub - Private Cinematic Mockups",
-    "seoDescription": "Create angled image transformations and cinematic perspective mockups locally. 100% private with zero data uploads."
+    "seoTitle": "3D Image Tilt - Visual Perspective",
+    "seoDescription": "Apply 3D perspective and angled tilts to any image locally. 100% private with no data uploads."
   },
   {
     "to": "/metadata-scrubber",
-    "seoTitle": "Metadata Scrubbing Studio - Private EXIF Deleter",
-    "seoDescription": "Absolute EXIF destruction: strip GPS, camera info, and device ID from photos entirely client-side. Zero server persistence."
+    "seoTitle": "Remove Photo Metadata - EXIF Deleter",
+    "seoDescription": "Strip EXIF data like GPS and camera info from your photos. 100% private with no server storage."
   },
   {
     "to": "/sprite-studio",
-    "seoTitle": "Sprite Studio & Slicer - Private Image Splitter",
-    "seoDescription": "Interactive multi-box image splitter and sprite sheet extractor. 100% client-side processing with zero server uploads."
+    "seoTitle": "Split Image (Sprites) - Slice Images",
+    "seoDescription": "Slice images into a grid and export them as a ZIP. 100% private with no server uploads."
   },
   {
     "to": "/audio-trimmer",
-    "seoTitle": "Precise Audio Studio - Private Waveform Editor",
-    "seoDescription": "Precision waveform clipping and sample slicing for local audio assets. 100% private with zero server persistence."
+    "seoTitle": "Trim Audio - Waveform Editor",
+    "seoDescription": "Cut and clip audio files to a specific timeframe. 100% private with no server storage."
   },
   {
     "to": "/universal-volume-booster",
-    "seoTitle": "Signal Volume Engine - Private Audio Gain Control",
-    "seoDescription": "Non-destructive gain adjustment for audio files and video sound streams. 100% private with zero server uploads."
+    "seoTitle": "Volume Booster - Audio Gain Control",
+    "seoDescription": "Increase or decrease the volume of audio and video files. 100% private with no server uploads."
   },
   {
     "to": "/image-color-extractor",
-    "seoTitle": "Color Palette Lab - Private Design Tool",
-    "seoDescription": "Extract professional color palettes and hex codes locally from any image. 100% client-side with zero data leakage."
+    "seoTitle": "Get Image Colors - Palette Tool",
+    "seoDescription": "Extract color palettes and hex codes from any image. 100% private with no data leaks."
   },
   {
     "to": "/video-to-gif",
-    "seoTitle": "High-Fidelity GIF Engine - Private High-Quality Rendering",
-    "seoDescription": "Render optimized high-quality GIFs from any video locally. 100% private with precise range control and zero uploads."
+    "seoTitle": "Video to GIF - Animated Converter",
+    "seoDescription": "Create optimized GIFs from any video clip locally. 100% private with no uploads."
   },
   {
     "to": "/frame-extractor",
-    "seoTitle": "High-Precision Frame Studio - Private PNG Extraction",
-    "seoDescription": "Capture lossless PNG frames and high-resolution instances from video streams locally. 100% client-side with zero server uploads."
+    "seoTitle": "Save Video Frames - PNG Extraction",
+    "seoDescription": "Save individual frames from a video as PNG images. 100% private with no server uploads."
   },
   {
     "to": "/video-aspect-studio",
-    "seoTitle": "Aspect Ratio Hub - Private Social Media Resizing",
-    "seoDescription": "Multi-platform aspect ratio remapping with Pad and Crop scaling modes locally. 100% private with zero data uploads."
+    "seoTitle": "Change Aspect Ratio - Social Media Resizing",
+    "seoDescription": "Resize videos with padding or cropping locally. 100% private with no data uploads."
   },
   {
     "to": "/json-studio",
-    "seoTitle": "JSON Studio - Private Architecture Tool",
-    "seoDescription": "Professional JSON architect: structural validation and schema-grade formatting locally. 100% private with zero server persistence."
+    "seoTitle": "JSON Formatter - Validator & Inspector",
+    "seoDescription": "Validate, format, and inspect JSON code. 100% private with no server storage."
   },
   {
     "to": "/data-transformer",
-    "seoTitle": "Data Transformer Hub - Private Data Converter",
-    "seoDescription": "Bi-directional text data translation with smart column-to-object parsing locally. 100% private with zero data uploads."
+    "seoTitle": "CSV / JSON Converter - Data Translation",
+    "seoDescription": "Convert between CSV and JSON formats instantly. 100% private with no data uploads."
   },
   {
     "to": "/qr-forge",
-    "seoTitle": "Privacy QR Studio - Private & Air-Gapped",
-    "seoDescription": "Air-gapped local QR encoding for links and sensitive data artifacts. 100% private with zero server persistence."
+    "seoTitle": "QR Code Generator - Private & Simple",
+    "seoDescription": "Create QR codes for text or URLs fully offline. 100% private with no server storage."
   },
   {
     "to": "/pii-masker",
-    "seoTitle": "PII Masking Studio - Private PII Redactor",
-    "seoDescription": "Physically blur and redact sensitive information from images locally. 100% private with zero server persistence."
+    "seoTitle": "Blur/Redact Image - Privacy Redactor",
+    "seoDescription": "Blur or black-out sensitive parts of an image locally. 100% private with no server uploads."
   },
   {
     "to": "/svg-optimizer",
-    "seoTitle": "SVG Optimizer - Private Vector Minifier",
-    "seoDescription": "High-efficiency vector minifier to purge metadata and reduce SVG size locally. 100% private with zero server uploads."
+    "seoTitle": "Minify SVG - Vector Optimizer",
+    "seoDescription": "Optimize SVG files by removing unnecessary markup. 100% private with no server storage."
   },
   {
     "to": "/text-case-formatter",
-    "seoTitle": "Text Case Formatter - Private Content Utility",
-    "seoDescription": "Professional case transformations for code or content lists locally. 100% private with zero data leakage."
+    "seoTitle": "Change Text Case - String Utility",
+    "seoDescription": "Convert text between camelCase, snake_case, and more. 100% private with no data leaks."
   },
   {
     "to": "/quick-clipboard",
-    "seoTitle": "Quick Clipboard Hub - Private File Extractor",
-    "seoDescription": "Instant clipboard-to-disk extraction: paste any artifact to download it immediately. 100% private local utility."
+    "seoTitle": "Clipboard to File - Download Paste",
+    "seoDescription": "Paste and download clipboard content as a file. 100% private local tool."
   },
   {
     "to": "/jwt-decoder",
-    "seoTitle": "JWT Decoder & Inspector - Private Local Token Tool",
-    "seoDescription": "Inspect header, payload, and claims for JWT tokens on the local thread. 100% private developer tool with zero tracking."
+    "seoTitle": "JWT Decoder - Token Inspector",
+    "seoDescription": "Inspect JWT headers and payloads on your device. 100% private with no tracking."
   },
   {
     "to": "/encoder-decoder",
-    "seoTitle": "Universal Encoder & Decoder - Private Base64 & Hex Tool",
-    "seoDescription": "Translate between Base64, URL encoding, HTML entities, and Hex bitstreams locally. 100% private with zero data uploads."
+    "seoTitle": "Encoder / Decoder - Base64 & Hex Tool",
+    "seoDescription": "Convert text to Base64, URL encoding, HTML, and Hex locally. 100% private with no server uploads."
   },
   {
     "to": "/timestamp-converter",
-    "seoTitle": "Epoch Timestamp Engine - Private Multi-Timezone Tool",
-    "seoDescription": "Transform Unix epoch, ISO 8601, and human dates across timezones locally. 100% private with zero server persistence."
+    "seoTitle": "Timestamp Converter - Unix Time Tool",
+    "seoDescription": "Change Unix timestamps to readable dates across timezones. 100% private with no server storage."
   },
   {
     "to": "/regex-playground",
-    "seoTitle": "Regular Expression Studio - Private Pattern Tool",
-    "seoDescription": "Live regex testing with match highlighting and pattern debug libraries locally. 100% private developer tool."
+    "seoTitle": "Test Regex - Pattern Tester",
+    "seoDescription": "Test regular expressions with live highlighting. 100% private developer tool."
   },
   {
     "to": "/lorem-generator",
-    "seoTitle": "Lorem Ipsum Generator - Private Placeholder Tool",
-    "seoDescription": "Generate professional placeholder text in various styles locally. 100% client-side with zero server persistence."
+    "seoTitle": "Lorem Ipsum Generator - Placeholder Text",
+    "seoDescription": "Generate placeholder text in various styles locally. 100% private with no server storage."
   },
   {
     "to": "/password-generator",
-    "seoTitle": "Privacy Password Studio - Private RNG Forge",
-    "seoDescription": "High-entropy random string generation using browser-native cryptography. 100% private and secure local logic."
+    "seoTitle": "Password Generator - Secure RNG Tool",
+    "seoDescription": "Create secure random passwords in your browser. 100% private and secure local tool."
   },
   {
     "to": "/palette-studio",
-    "seoTitle": "Color Palette Studio - Private Harmony Generator",
-    "seoDescription": "Professional color harmony engine: generate Monochromatic and Triadic palettes locally. 100% private design studio."
+    "seoTitle": "Generate Color Palettes - Design Tool",
+    "seoDescription": "Create color schemes like Monochromatic and Triadic locally. 100% private design tool."
   },
   {
     "to": "/hash-lab",
-    "seoTitle": "Privacy Hash Lab - Private Checksum Forge",
-    "seoDescription": "Local multi-algorithm hashing: SHA-256, SHA-512, and MD5 fingerprinting. 100% private file integrity verification."
+    "seoTitle": "Hash Generator - Checksum Tool",
+    "seoDescription": "Create SHA-256, SHA-512, or MD5 hashes locally. 100% private file verification."
   },
   {
     "to": "/unit-converter",
-    "seoTitle": "Universal Unit Hub - Private Measurement Tool",
-    "seoDescription": "Fast high-precision measurement conversion for global engineering standards locally. 100% private local utility."
+    "seoTitle": "Unit Converter - Measurement Tool",
+    "seoDescription": "Convert between measurements like weight, length, and area. 100% private local tool."
   },
   {
     "to": "/base64-image",
-    "seoTitle": "Image to Base64 Hub - Private Developer Tool",
-    "seoDescription": "Direct image-to-memory-string conversion for developers locally. 100% private with zero server uploads."
+    "seoTitle": "Image to Base64 - Developer Utility",
+    "seoDescription": "Convert images to Base64 strings for code or CSS. 100% private with no server uploads."
   },
   {
     "to": "/reverse-audio",
-    "seoTitle": "Audio Reverser - Private Temporal Phase Flip",
-    "seoDescription": "Temporal phase inversion: flip audio buffers backward with zero local latency. 100% client-side local processing."
+    "seoTitle": "Reverse Audio - Backward Player",
+    "seoDescription": "Play any audio file backwards. 100% private with no server uploads."
   },
   {
     "to": "/binary-to-audio",
-    "seoTitle": "Binary Bitstream to Audio - Private Glitch Art Tool",
-    "seoDescription": "Experimental data-bending: interpret raw file bitstreams as audio PCM buffers locally. 100% private creative studio."
+    "seoTitle": "Convert Data to Audio - Experimental Tool",
+    "seoDescription": "Interpret raw file bytes as audio PCM buffers locally. 100% private creative tool."
   },
   {
     "to": "/audio-mono-stereo",
-    "seoTitle": "Audio Channel Mapper - Private Stereo Mixing",
-    "seoDescription": "Channel remapping: convert Mono to pseudo-Stereo or mix Stereo to Mono locally. 100% private with zero uploads."
+    "seoTitle": "Channel Converter - Audio Mixer",
+    "seoDescription": "Change audio between Mono and Stereo layouts. 100% private with no server uploads."
   },
   {
     "to": "/audio-bass-booster",
-    "seoTitle": "Audio Bass Booster - Private EQ Gain Control",
-    "seoDescription": "Frequency enhancement: surgical low-end amplification using low-shelf filters locally. 100% private audio gain control."
+    "seoTitle": "Boost Bass - Audio EQ Tool",
+    "seoDescription": "Increase low-end frequencies in any audio file. 100% private audio control."
   },
   {
     "to": "/image-compressor",
-    "seoTitle": "Image Compressor - Private Size Reduction Tool",
-    "seoDescription": "Reduce image file sizes locally by up to 90% without quality loss. 100% private with zero data uploads."
+    "seoTitle": "Image Compressor - Size Reduction",
+    "seoDescription": "Reduce image file sizes locally without uploading anything. 100% private."
   },
   {
     "to": "/svg-to-image",
-    "seoTitle": "SVG to Image Converter - Private Vector Rasterizer",
-    "seoDescription": "High-precision vector-to-raster rendering for PNG and JPG formats locally. 100% private with zero server uploads."
+    "seoTitle": "SVG to Image - Vector Rasterizer",
+    "seoDescription": "Convert SVG files to PNG and JPG formats locally. 100% private with no server uploads."
   },
   {
     "to": "/text-diff-checker",
-    "seoTitle": "Text Diff Checker - Private Side-by-Side Comparison",
-    "seoDescription": "Professional-grade content comparison: visualize additions and deletions side-by-side locally. 100% private tool."
+    "seoTitle": "Compare Text - Side-by-Side Diff",
+    "seoDescription": "Check the differences between two blocks of text. 100% private tool."
   },
   {
     "to": "/image-to-pdf",
-    "seoTitle": "Image to PDF Compiler - Private Multi-page Architect",
-    "seoDescription": "Merge multiple JPG, PNG, or WebP images into a single multi-page PDF locally. 100% private with zero uploads."
+    "seoTitle": "Image to PDF - Multi-page Merger",
+    "seoDescription": "Merge multiple images into a single PDF locally. 100% private with no server uploads."
   },
   {
     "to": "/morse-code-master",
-    "seoTitle": "Morse Code Studio - Private Audio Interpreter",
-    "seoDescription": "Translate text to Morse code and back with real-time web audio beeps locally. 100% private local utility."
+    "seoTitle": "Morse Code Translator - Audio Tool",
+    "seoDescription": "Translate text to Morse code and play it back. 100% private local tool."
   },
   {
     "to": "/slug-forge",
-    "seoTitle": "URL Slug Studio - Private SEO Utility",
-    "seoDescription": "URL-friendly slug generation from titles with high-fidelity sanitization locally. 100% private SEO tool."
+    "seoTitle": "URL Slug Generator - SEO Utility",
+    "seoDescription": "Create clean, URL-friendly slugs from any text. 100% private SEO tool."
   },
   {
     "to": "/whitespace-scrubber",
-    "seoTitle": "Clean Code Hub - Private Content Sanitizer",
-    "seoDescription": "Fast ghost-character removal and text sanitization for messy artifacts locally. 100% private text cleaner."
+    "seoTitle": "Clean Text - Content Sanitizer",
+    "seoDescription": "Remove hidden characters and extra whitespace from text. 100% private text cleaner."
   },
   {
     "to": "/dice-lab",
-    "seoTitle": "Dice Lab & Entropy Generator - Private RNG Lab",
-    "seoDescription": "Secure high-entropy random generation for dice, coins, and range-based RNG locally. 100% private and secure."
+    "seoTitle": "Dice Roller - Random Number Generator",
+    "seoDescription": "Roll dice, flip coins, and generate random numbers locally. 100% private and secure."
   }
 ]

@@ -456,10 +456,10 @@ const SpriteStudio = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl md:text-4xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white leading-tight">
-                  Sprite Sheet <span className="text-primary italic">Studio</span>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white leading-none">
+                  Split Image (Sprites)
                 </h1>
-                <p className="text-muted-foreground mt-1 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Professional Pixel Partitioning Engine • Batch Asset Slicing</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Slice images into a grid and export ZIP</p>
               </div>
             </header>
 

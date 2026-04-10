@@ -86,10 +86,10 @@ const QuickClipboardHub = () => {
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
-                    Quick <span className="text-primary italic">Clipboard Hub</span>
-                  </h1>
-                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Instant Clipboard-to-Disk Extraction engine</p>
+                  <h1 className="text-3xl md:text-4xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white leading-tight">
+                  Clipboard to File
+                </h1>
+                <p className="text-muted-foreground mt-1 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Paste and save clipboard content</p>
                 </div>
               </div>
             </header>

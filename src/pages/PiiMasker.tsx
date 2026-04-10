@@ -60,7 +60,7 @@ const PiiMasker = () => {
     if (!f) return;
 
     if (f.type === "image/gif") {
-      toast.error("GIF artifacts are not natively supported by the masking engine. Please use static masters.");
+      toast.error("GIFs are not supported for redaction. Please use static images.");
       return;
     }
 
@@ -77,7 +77,7 @@ const PiiMasker = () => {
         img.onload = () => {
           setImage(img);
           setTextContent(null);
-          toast.success("Identity Scrubber Initialized");
+          toast.success("Image loaded");
         };
         img.src = e.target?.result as string;
       };
@@ -272,7 +272,7 @@ const PiiMasker = () => {
         strength: adjustedStrength,
         style: redactionStyle
       }]);
-      toast.success("Partition Redacted");
+      toast.success("Area blurred/blacked out");
     }
   };
 
@@ -284,14 +284,14 @@ const PiiMasker = () => {
     a.href = url;
     a.download = `redacted_${file?.name || "image"}.png`;
     a.click();
-    toast.success("Artifact Dispatched");
+    toast.success("File Saved");
   };
 
   const redactSelectedText = () => {
     const sel = window.getSelection()?.toString();
     if (sel && textContent) {
       setTextContent(textContent.replace(sel, "█".repeat(sel.length)));
-      toast.success("Identity String Redacted");
+      toast.success("Text redacted");
     } else {
       toast.error("Highlight text to redact");
     }
@@ -315,9 +315,9 @@ const PiiMasker = () => {
                 </Link>
                 <div>
                   <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
-                    PII <span className="text-primary italic">Masking Studio</span>
+                    Blur/Redact Image
                   </h1>
-                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Neural-Grade Privacy Redaction</p>
+                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Secure Privacy Redaction</p>
                 </div>
               </div>
             </header>
@@ -363,7 +363,7 @@ const PiiMasker = () => {
                           {textContent && (
                             <div className="flex items-center gap-3 shrink-0">
                               <Shield className="h-4 w-4 lg:h-8 lg:w-8 text-primary animate-pulse" />
-                              <span className="text-[10px] lg:text-2xl font-black uppercase tracking-widest text-primary italic whitespace-nowrap">Cipher Active</span>
+                              <span className="text-[10px] lg:text-2xl font-black uppercase tracking-widest text-primary italic whitespace-nowrap">Secure Mode Active</span>
                             </div>
                           )}
                         </div>
@@ -439,7 +439,7 @@ const PiiMasker = () => {
                             className="h-7 md:h-8 lg:h-10 flex items-center gap-1 px-1.5 md:px-3 lg:px-5 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 hover:bg-red-500/15 hover:text-red-300 transition-all text-[7px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-widest shrink-0 group/reset"
                           >
                             <Trash2 className="h-3 w-3 lg:h-4 lg:w-4 group-hover:rotate-12 transition-transform" />
-                            <span className="sm:inline hidden">Reset Stage</span>
+                            <span className="sm:inline hidden">Clear All</span>
                             <span className="sm:hidden inline">Reset</span>
                           </Button>
                           <Button
@@ -458,7 +458,7 @@ const PiiMasker = () => {
                             className="h-9 px-3 md:px-4 lg:h-12 lg:px-10 gap-1.5 lg:gap-3 text-[8px] md:text-[10px] lg:text-xs font-black rounded-xl border-b-2 border-primary-foreground/20 shadow-glow shadow-primary/20 italic uppercase tracking-tighter bg-primary text-white hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0"
                           >
                             <Download className="h-4 w-4 lg:h-5 lg:w-5" />
-                            <span className="sm:inline hidden">Export Artifact</span>
+                            <span className="sm:inline hidden">Download File</span>
                             <span className="sm:hidden inline">Export</span>
                           </Button>
                         </div>
@@ -481,7 +481,7 @@ const PiiMasker = () => {
                         <CloudUpload className="h-12 w-12 text-primary" />
                       </div>
                       <div className="px-6 space-y-2">
-                        <p className="text-4xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
+                        <p className="text-4xl font-black text-shadow-glow leading-none uppercase tracking-tighter italic">Upload File</p>
                         <p className="text-[11px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-40">Drag or click to browse</p>
                         <KbdShortcut />
                       </div>
@@ -495,7 +495,7 @@ const PiiMasker = () => {
                     <div className="bg-primary/5 p-5 px-10 border-b border-primary/10 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <FileText className="h-4 w-4 text-primary" />
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Document Stream</h3>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Text Document</h3>
                       </div>
                       <p className="text-[9px] font-black opacity-30 uppercase tracking-widest italic">Select text to redact from forensic stream</p>
                     </div>
@@ -514,7 +514,7 @@ const PiiMasker = () => {
                       >
                         Redact Active Selection
                       </Button>
-                      <p className="text-[11px] font-black opacity-20 uppercase tracking-[0.4em] italic">Manual Block-Cipher Active</p>
+                      <p className="text-[11px] font-black opacity-20 uppercase tracking-[0.4em] italic">Manual Redaction Active</p>
                     </div>
                   </Card>
                 </motion.div>

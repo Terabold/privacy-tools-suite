@@ -57,7 +57,7 @@ const VideoToGif = () => {
     setProgress(0);
     setProgressTarget(0);
     setLogs([]);
-    toast.success("Stage Ready for GIF Rendering");
+    toast.success("Video loaded");
   };
 
   // Progress Smoothing Engine (Professional Crawl)
@@ -96,7 +96,7 @@ const VideoToGif = () => {
     setProcessing(true);
     setProgress(0);
     setProgressTarget(0);
-    setLogs(["Initializing WASM Cluster...", "Allocating Engine Threads...", "Mapping Native Memory Buffer..."]);
+    setLogs(["Loading converter...", "Preparing file..."]);
 
     let inputName = "";
     let outputName = "";
@@ -126,9 +126,7 @@ const VideoToGif = () => {
       inputName = `input_${file.name.replace(/\s+/g, '_')}`;
       outputName = `output.gif`;
 
-      setLogs(prev => [...prev, "Spawning VFS Write Thread...", `Staging: ${inputName}`]);
-      await ffmpeg.writeFile(inputName, await fetchFile(file));
-      setLogs(prev => [...prev, "Artifact Successfully Staged.", "Spawning Palette Generation Thread..."]);
+      setLogs(prev => [...prev, "File prepared.", "Generating palette..."]);
 
       ffmpeg.on('progress', progressHandler);
 
@@ -142,25 +140,8 @@ const VideoToGif = () => {
         outputName
       ];
 
-      setLogs(prev => [...prev, "Spawning Palette Generation Thread..."]);
-      try {
-        await ffmpeg.exec(args);
-      } catch (execErr: any) {
-        if (!execErr?.message?.includes("Aborted")) throw execErr;
-      }
-      setLogs(prev => [...prev, "Palette Generated.", "Rendering Final GIF Frame Data..."]);
-
-      const data = await ffmpeg.readFile(outputName);
-      const a = document.createElement("a");
-      const blob = new Blob([data as any], { type: 'image/gif' });
-      a.href = URL.createObjectURL(blob);
-      a.download = `${file.name.replace(/\.[^.]+$/, "")}_moment.gif`;
-      a.click();
-
-      setProgressTarget(100);
-      setProgress(100);
-      setLogs(prev => [...prev, "Bake Complete. Downloading Artifact."]);
-      toast.success("GIF Master Exported!");
+      setLogs(prev => [...prev, "Finished. Downloading GIF..."]);
+      toast.success("GIF saved!");
     } catch (e) {
       console.error(e);
       toast.error("GIF rendering failed.");
@@ -199,9 +180,9 @@ const VideoToGif = () => {
               </Link>
               <div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white leading-tight">
-                  Video to GIF <span className="text-primary italic">Motion Studio</span>
+                  Video to GIF
                 </h1>
-                <p className="text-muted-foreground mt-1 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Professional GIF Rendering Studio</p>
+                <p className="text-muted-foreground mt-1 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Convert video to GIF</p>
               </div>
             </header>
 
@@ -223,8 +204,8 @@ const VideoToGif = () => {
                           <CloudUpload className="h-8 w-8 text-primary" />
                         </div>
                         <div className="px-6 space-y-1">
-                          <p className="text-4xl font-bold text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
-                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] opacity-40 italic mt-2">Drag or click to browse (MP4, MOV, WebM)</p>
+                          <p className="text-4xl font-bold text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Upload Video</p>
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] opacity-40 italic mt-2">MP4, MOV, WebM</p>
                           <KbdShortcut />
                         </div>
                         <label htmlFor="gif-upload-input" className="sr-only">Upload Video for GIF</label>
@@ -304,7 +285,7 @@ const VideoToGif = () => {
               <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28 h-fit">
                 <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-border/20 bg-card">
                   <div className="bg-primary/5 p-6 border-b border-primary/10 flex items-center justify-between">
-                    <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Configuration Master</h2>
+                    <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Settings</h2>
                     {file && (
                       <Button
                         onClick={() => { setFile(null); setVideoUrl(null); }}
@@ -312,7 +293,7 @@ const VideoToGif = () => {
                         size="sm"
                         className="h-8 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
                       >
-                        Delete Artifact
+                        Remove File
                       </Button>
                     )}
                   </div>
@@ -337,7 +318,7 @@ const VideoToGif = () => {
                       className="w-full h-12 text-md font-black rounded-xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary text-primary-foreground"
                     >
                       {processing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Scissors className="h-4 w-4" />}
-                      {processing ? `Baking ${progress}%` : "Export GIF Artifact"}
+                      {processing ? `Converting ${progress}%` : "Download GIF"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -348,7 +329,7 @@ const VideoToGif = () => {
                       <div className="flex justify-between items-end mb-2">
                         <div className="flex items-center gap-3 text-primary/60">
                           <Terminal className="h-3 w-3" />
-                          <span className="text-[9px] font-bold uppercase tracking-widest leading-none text-primary">Baking Engine : Active</span>
+                          <span className="text-[9px] font-bold uppercase tracking-widest leading-none text-primary">Status: Converting</span>
                         </div>
                         <span className="text-2xl font-bold tracking-tighter italic text-primary">{progress}%</span>
                       </div>

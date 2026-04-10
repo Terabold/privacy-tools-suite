@@ -119,7 +119,7 @@ const Index = () => {
               Private<span className="text-primary italic">Utils</span> <br className="hidden sm:block" /> <span className="text-2xl md:text-4xl opacity-40 uppercase tracking-widest font-sans not-italic">Coding & Media Tools</span>
             </h1>
             <p className="mx-auto max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed font-medium">
-              Experience the <span className="font-bold text-foreground">PrivateUtils Engine</span>: {tools.length} Desktop-grade utility tools running 100% in your browser. 
+              <span className="font-bold text-foreground">PrivateUtils</span>: {tools.length} private tools running 100% in your browser. 
               No accounts, no tracking, and zero data leakage—your data never reaches a server.
             </p>
           </section>
@@ -151,16 +151,16 @@ const Index = () => {
               
               <div className="relative z-10 max-w-4xl">
                  <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/30 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-10">
-                    <Lock className="h-4 w-4" /> The PrivateUtils 100% Browser Engine
+                    <Lock className="h-4 w-4" /> 100% Browser Based
                  </div>
                  <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-none">
                     Engineered for your <span className="text-primary italic">eyes only.</span>
                  </h2>
                  <p className="text-xl text-muted-foreground font-medium mb-16 leading-relaxed max-w-3xl">
                     Most online tools are secretly data collection engines. We changed the paradigm. 
-                    Your binary strictly stays on your hardware, processed by our **Zero-Trust Compute Core**. 
+                    Your files strictly stay on your hardware, processed locally on your device. 
                     <br /><br />
-                    Using hardware-accelerated WebAssembly, we process sensitive data at wire-speed with <span className="text-foreground font-bold underline decoration-primary/50 underline-offset-8">Zero Logs. Zero Tracking. Zero Data Leaks.</span>
+                    Using hardware-accelerated WebAssembly, we process sensitive data instantly with <span className="text-foreground font-bold underline decoration-primary/50 underline-offset-8">Zero Logs. Zero Tracking. Zero Data Leaks.</span>
                  </p>
                  
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
@@ -169,7 +169,7 @@ const Index = () => {
                        <p className="text-sm text-muted-foreground font-medium leading-relaxed">Parallel rendering and complex logic happen entirely in your local RAM sandbox. Our site could be disconnected from the internet and still function.</p>
                     </div>
                     <div className="space-y-4 border-l-2 border-primary/30 pl-8 transition-colors hover:border-primary">
-                       <h3 className="text-base font-black uppercase tracking-widest text-primary">Universal Compliance</h3>
+                       <h3 className="text-base font-black uppercase tracking-widest text-primary">Secure Compliance</h3>
                        <p className="text-sm text-muted-foreground font-medium leading-relaxed">Stay compliant with enterprise security standards. Since no data is transmitted, you are inherently protected from standard man-in-the-middle liabilities.</p>
                     </div>
                  </div>

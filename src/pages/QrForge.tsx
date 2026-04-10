@@ -85,10 +85,10 @@ const QrForge = () => {
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow">
-                    Privacy <span className="text-primary italic">QR Studio</span>
-                  </h1>
-                  <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Neural Data Encoding Engine</p>
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow leading-none">
+                  QR Code Generator
+                </h1>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Create QR codes locally</p>
                 </div>
               </div>
             </header>

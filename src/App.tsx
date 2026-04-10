@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Loader2 } from "lucide-react";
 import ScrollToTop from "./components/ScrollToTop";
+import SEOHead from "./components/SEOHead";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
@@ -112,6 +113,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <SEOHead />
           <ErrorBoundary>
             <ThemeOrchestrator>
               <Suspense fallback={<LoadingArtifact />}>

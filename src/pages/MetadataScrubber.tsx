@@ -62,9 +62,9 @@ const MetadataScrubber = () => {
         });
 
         if (hasGPS || hasCamera || hasSoftware) {
-          toast.warning("Identity Leaks Detected in Bitstream");
+          toast.warning("Metadata Detected");
         } else {
-          toast.success("Identity Artifact Loaded (Clean Scan)");
+          toast.success("File Loaded (Clean Scan)");
           setIsCleanAnimating(true);
           setTimeout(() => {
             setHistory(prev => [{ name: f.name, time: new Date().toLocaleTimeString(), clean: true }, ...prev].slice(0, 5));
@@ -75,7 +75,7 @@ const MetadataScrubber = () => {
         }
       } catch (err) {
         setReport({ gps: false, camera: false, software: false });
-        toast.success("Identity Artifact Loaded");
+        toast.success("File Loaded");
       }
     };
     reader.readAsDataURL(f);
@@ -101,7 +101,7 @@ const MetadataScrubber = () => {
         setProcessing(false);
         setScrubbed(true);
         setReport(null);
-        toast.success("Bitstream Sanitized");
+        toast.success("Metadata Removed");
       }, 1200);
     };
     img.src = image;
@@ -115,7 +115,7 @@ const MetadataScrubber = () => {
     a.href = url;
     a.download = `scrubbed_${Date.now()}.jpg`;
     a.click();
-    toast.success("Sanitized Artifact Dispatched");
+    toast.success("File Saved");
   };
 
   return (
@@ -135,9 +135,9 @@ const MetadataScrubber = () => {
               </Link>
               <div>
                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white leading-none">
-                  EXIF Metadata <span className="text-primary italic">Studio</span>
+                  Remove Photo Metadata
                 </h1>
-                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Absolute Metadata Destruction Studio</p>
+                <p className="text-muted-foreground mt-2 font-black uppercase tracking-[0.2em] opacity-40 text-[10px]">Strip EXIF data from photos locally</p>
               </div>
             </header>
 
@@ -171,7 +171,7 @@ const MetadataScrubber = () => {
                               <CloudUpload className="h-10 w-10 text-primary" />
                             </div>
                             <div className="px-6 space-y-1">
-                              <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
+                              <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Upload Photo</p>
                               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag or click to browse</p>
                               <KbdShortcut />
                               <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">JPEG, PNG, TIFF & WebP SUPPORTED</p>
@@ -195,7 +195,7 @@ const MetadataScrubber = () => {
                         <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center justify-between overflow-visible shrink-0">
                           <div className="flex items-center gap-3">
                             <Activity className="h-4 w-4 text-primary" />
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Studio Workbench</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Workbench</h3>
                           </div>
                           <Button
                             onClick={(e) => {
@@ -210,12 +210,12 @@ const MetadataScrubber = () => {
                             className="h-7 px-4 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                            <span>Delete Asset</span>
+                            <span>Remove File</span>
                           </Button>
                         </div>
                         <div className="flex-1 relative cursor-crosshair overflow-hidden p-4 flex items-center justify-center bg-black">
                           <div className={`relative w-full h-full flex items-center justify-center transition-all duration-700 ${!scrubbed ? 'grayscale blur-[2px] group-hover:grayscale-0 group-hover:blur-none' : ''}`}>
-                            <img src={image} className="max-w-full max-h-full object-contain rounded-xl" alt="Source Artifact" />
+                            <img src={image} className="max-w-full max-h-full object-contain rounded-xl" alt="Source Image" />
                           </div>
 
                           {!scrubbed && (
@@ -223,8 +223,8 @@ const MetadataScrubber = () => {
                               <div className="p-8 bg-background/80 backdrop-blur-2xl rounded-2xl border border-primary/20 shadow-2xl scale-100 group-hover:scale-110 transition-all duration-500 flex flex-col items-center gap-4">
                                 <ShieldX className="h-12 w-12 text-primary animate-pulse" />
                                 <div className="text-center">
-                                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Identity Obscured</p>
-                                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mt-1 opacity-40">Hover to reveal artifact</p>
+                                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Privacy Blur</p>
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mt-1 opacity-40">Hover to reveal image</p>
                                 </div>
                               </div>
                             </div>
@@ -236,7 +236,7 @@ const MetadataScrubber = () => {
                                 <FileCheck className="h-12 w-12 text-primary" />
                                 <p className="text-xl font-black uppercase italic tracking-tighter text-primary">Sanitized</p>
                                 <Button onClick={downloadCleared} size="lg" className="h-14 px-8 rounded-2xl gap-3 font-black uppercase italic tracking-widest shadow-xl">
-                                  <Download className="h-5 w-5" /> Dispatch Artifact
+                                  <Download className="h-5 w-5" /> Download Image
                                 </Button>
                               </div>
                             </div>
@@ -250,17 +250,17 @@ const MetadataScrubber = () => {
                             {scrubbed || (report && !report.gps && !report.camera && !report.software) ? <FileCheck className="h-8 w-8 text-primary" /> : <ShieldX className="h-8 w-8 text-primary" />}
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary opacity-60 italic">Status Dashboard</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary opacity-60 italic">Status</p>
                             <p className="text-xl font-black uppercase italic tracking-tighter text-foreground">
-                              {scrubbed ? "Bitstream Sanitized" : (report && !report.gps && !report.camera && !report.software) ? "Bitstream Clean" : "Leak Detection Active"}
+                              {scrubbed ? "Metadata Removed" : (report && !report.gps && !report.camera && !report.software) ? "File Clean" : "Checking for leaks"}
                             </p>
                           </div>
                         </div>
                         {!scrubbed && report && (
                           <div className="flex gap-2">
-                            {report.gps ? <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">GPS LEAK</span> : <span className="px-3 py-1 bg-muted/10 text-muted-foreground text-[9px] font-black rounded-2xl border border-muted/20 uppercase tracking-widest opacity-20">GPS CLEAN</span>}
-                            {report.camera ? <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">CAMERA ID</span> : <span className="px-3 py-1 bg-muted/10 text-muted-foreground text-[9px] font-black rounded-2xl border border-muted/20 uppercase tracking-widest opacity-20">CAMERA CLEAN</span>}
-                            {report.software ? <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">SOFTWARE ID</span> : <span className="px-3 py-1 bg-muted/10 text-muted-foreground text-[9px] font-black rounded-2xl border border-muted/20 uppercase tracking-widest opacity-20">SOFTWARE CLEAN</span>}
+                            {report.gps ? <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">GPS FOUND</span> : <span className="px-3 py-1 bg-muted/10 text-muted-foreground text-[9px] font-black rounded-2xl border border-muted/20 uppercase tracking-widest opacity-20">GPS CLEAN</span>}
+                            {report.camera ? <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">CAMERA DATA</span> : <span className="px-3 py-1 bg-muted/10 text-muted-foreground text-[9px] font-black rounded-2xl border border-muted/20 uppercase tracking-widest opacity-20">CAMERA CLEAN</span>}
+                            {report.software ? <span className="px-3 py-1 bg-destructive/10 text-destructive text-[9px] font-black rounded-2xl border border-destructive/20 animate-pulse uppercase tracking-widest">SOFTWARE DATA</span> : <span className="px-3 py-1 bg-muted/10 text-muted-foreground text-[9px] font-black rounded-2xl border border-muted/20 uppercase tracking-widest opacity-20">SOFTWARE CLEAN</span>}
                           </div>
                         )}
                       </div>
@@ -273,7 +273,7 @@ const MetadataScrubber = () => {
                 <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Smartphone className="h-4 w-4 text-primary" />
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Scrub Logic Pipeline</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Cleaning process</h3>
                   </div>
                   <CardContent className="p-8 space-y-8">
                     {image ? (
@@ -317,7 +317,7 @@ const MetadataScrubber = () => {
                             className="w-full gap-3 h-16 text-xs font-black rounded-2xl shadow-xl shadow-primary/10 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase italic"
                           >
                             {scrubbed ? <FileCheck className="h-4 w-4" /> : <ShieldX className="h-4 w-4" />}
-                            {processing ? "Sanitizing..." : scrubbed ? "Verified Clean" : "Scrub Bitstream"}
+                            {processing ? "Cleaning..." : scrubbed ? "Verified Clean" : "Remove Metadata"}
                           </Button>
                           <p className="text-[9px] text-center mt-4 text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic leading-relaxed px-4">
                             Drawing to canvas destroys 100% of underlying non-pixel data streams.
@@ -327,7 +327,7 @@ const MetadataScrubber = () => {
                     ) : (
                       <div className="flex flex-col items-center justify-center py-20 text-center bg-background/20 rounded-2xl border border-dashed border-primary/10 shadow-inner">
                         <Smartphone className="h-10 w-10 text-primary mb-6 opacity-20" />
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 px-6">Load Asset</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 px-6">Load Photo</p>
                         <p className="text-[9px] mt-4 max-w-[200px] leading-relaxed opacity-30 uppercase font-black tracking-tighter italic px-6">Bit-draw bypasses EXIF/XMP/IPTC headers entirely.</p>
                       </div>
                     )}
@@ -338,7 +338,7 @@ const MetadataScrubber = () => {
                 <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/5 bg-card">
                   <div className="bg-primary/5 p-5 border-b border-primary/10 flex items-center gap-3">
                     <Activity className="h-4 w-4 text-primary" />
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Session Logs</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic leading-none">Session Activity</h3>
                   </div>
                   <CardContent className="p-6 space-y-4">
                     {history.length === 0 ? (
@@ -391,8 +391,8 @@ const MetadataScrubber = () => {
                 <FileCheck className="h-16 w-16 text-emerald-500" />
               </div>
               <div className="text-center">
-                <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic leading-none text-shadow-glow text-white">Artifact Secure</h2>
-                <p className="text-emerald-500 text-xs font-black uppercase tracking-[0.4em] mt-2 animate-pulse font-black">No Identity Leaks Detected</p>
+                <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic leading-none text-shadow-glow text-white">Privacy Check Complete</h2>
+                <p className="text-emerald-500 text-xs font-black uppercase tracking-[0.4em] mt-2 animate-pulse font-black">No Metadata Detected</p>
               </div>
             </motion.div>
           </motion.div>

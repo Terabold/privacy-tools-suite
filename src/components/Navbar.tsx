@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Moon, Sun, Search, X, Video, ImageIcon, Music, ShieldCheck, Wrench, Sparkles, Command, ChevronRight, Terminal, Type, Zap } from "lucide-react";
+import { Moon, Sun, Search, X, Video, ImageIcon, Music, ShieldCheck, Wrench, Sparkles, Command, ChevronRight, Terminal, Type, Zap, Coffee } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,69 +96,7 @@ const Navbar = ({
   }, []);
 
   // Dynamic Browser Tab Title and Metadata Management
-  useEffect(() => {
-    let title = "Client-Sided Coding & Media Tools — 100% Private, In-Browser Utility Suite (Zero Uploads)";
-    let description = "A professional collection of client-side developer and media tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private.";
-    let ogImage = "/og-image.png";
-
-    if (isHomePage) {
-      if (selectedCategory) {
-        title = `${selectedCategory} | PrivateUtils`;
-      } else if (searchQuery) {
-        title = `Search: ${searchQuery} | PrivateUtils`;
-      }
-    } else {
-      // @ts-ignore - Indexing tools via current path
-      const tool = tools.find(t => t.to === location.pathname);
-      if (tool) {
-        // @ts-ignore
-        title = tool.seoTitle || `${tool.title} | PrivateUtils`;
-        // @ts-ignore
-        description = tool.seoDescription || tool.description;
-      }
-    }
-
-    // Apply Title
-    document.title = title;
-
-    // Update Canonical URL
-    const canonicalUrl = `https://privateutils.com${location.pathname === '/' ? '' : location.pathname}`;
-    let canonicalLink = document.querySelector('link[rel="canonical"]');
-    if (canonicalLink) {
-      canonicalLink.setAttribute("href", canonicalUrl);
-    } else {
-      canonicalLink = document.createElement('link');
-      canonicalLink.setAttribute("rel", "canonical");
-      canonicalLink.setAttribute("href", canonicalUrl);
-      document.head.appendChild(canonicalLink);
-    }
-
-    // Update Meta Tags (Standard)
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) metaDescription.setAttribute("content", description);
-
-    // Update OpenGraph Tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute("content", title);
-
-    // Update OpenGraph Image
-    const ogImg = document.querySelector('meta[property="og:image"]');
-    if (ogImg) ogImg.setAttribute("content", ogImage);
-
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute("content", description);
-
-    // Update Twitter Tags
-    const twTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twTitle) twTitle.setAttribute("content", title);
-
-    const twDesc = document.querySelector('meta[name="twitter:description"]');
-    if (twDesc) twDesc.setAttribute("content", description);
-
-    const twImg = document.querySelector('meta[name="twitter:image"]');
-    if (twImg) twImg.setAttribute("content", ogImage);
-
-  }, [location.pathname, isHomePage, selectedCategory, searchQuery]);
+  // Removed redundant SEO logic - now handled by SEOHead.tsx component
 
   return (
     <header className="sticky top-0 z-[100] border-b border-white/5 bg-background/80 backdrop-blur-xl py-1 w-full transition-theme shadow-lg shadow-black/20 overflow-visible">
@@ -198,6 +136,15 @@ const Navbar = ({
 
           {/* Persistent Theme Toggle (Locked next to logo on mobile/tablet, shifted on desktop manually via flex) */}
           <div className="lg:hidden flex items-center gap-2">
+            <a
+              href="https://ko-fi.com/privateutils"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 h-[clamp(36px,10vw,44px)] w-[clamp(36px,10vw,44px)] shadow-inner transition-all hover:bg-primary/20 text-primary active:scale-95"
+              title="Buy Me a Coffee"
+            >
+              <Coffee className="h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)] shadow-glow" />
+            </a>
             <Button
               variant="ghost"
               size="icon"
@@ -221,7 +168,7 @@ const Navbar = ({
               id="navbar-search"
               name="navbar-search"
               aria-label="Search tools"
-              placeholder="Instant Magic Search... (Alt + S)"
+              placeholder="Search for a tool... (Alt + S)"
               value={isHomePage ? searchQuery : toolSearchQuery}
               onFocus={() => setShowSearchOverlay(true)}
               onChange={(e) => {
@@ -339,6 +286,16 @@ const Navbar = ({
 
         {/* 4. Actions (Desktop only Row 1 Right) */}
         <div className="hidden lg:flex items-center gap-3 shrink-0 justify-end">
+          <a
+            href="https://ko-fi.com/privateutils"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 xl:px-6 h-14 w-14 xl:w-auto rounded-2xl bg-primary text-primary-foreground font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all outline-none"
+            title="Support the Project"
+          >
+            <Coffee className="h-5 w-5" />
+            <span className="hidden xl:inline">Support</span>
+          </a>
           <Button
             variant="ghost"
             size="icon"

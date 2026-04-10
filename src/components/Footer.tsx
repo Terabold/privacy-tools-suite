@@ -1,5 +1,6 @@
 import AdBox from "./AdBox";
 import { Link } from "react-router-dom";
+import { Heart, Coffee, ExternalLink } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -20,7 +21,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Premium, 100% private browser-based utilities. 
+              Premium, 100% private browser-based utilities.
               The most secure way to process media and data—completely offline on your device.
             </p>
             <div className="mt-4 flex items-center gap-3">
@@ -47,6 +48,50 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground leading-relaxed">
               All processing happens in your browser using WebAssembly. No cookies, no tracking, no uploads.
             </p>
+          </div>
+        </div>
+
+        {/* ── Support the Project (Tip Jar) ─────────────────────────────────── */}
+        <div className="mt-16 rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-transparent to-accent/10 p-8 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+          {/* Icon badge */}
+          <div className="shrink-0 h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/10">
+            <Heart className="h-6 w-6 text-primary" strokeWidth={2.5} />
+          </div>
+
+          {/* Copy */}
+          <div className="flex flex-col gap-1 text-center md:text-left grow">
+            <p className="text-base font-black tracking-tight uppercase text-foreground">
+              Support the Project
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
+              PrivateUtils is free, ad-light, and tracking-free — kept alive by people who value privacy.
+              If it saved you time, a coffee goes a long way.
+            </p>
+          </div>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+            <a
+              id="footer-kofi-btn"
+              href="https://ko-fi.com/privateutils"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest px-5 py-3 rounded-xl hover:opacity-90 active:scale-95 transition-all duration-200 shadow-md shadow-primary/25 whitespace-nowrap"
+            >
+              <Coffee className="h-4 w-4" />
+              Buy Me a Coffee
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
+            <a
+              id="footer-github-btn"
+              href="https://github.com/Terabold/privateutils-suite"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-primary/20 bg-primary/5 hover:bg-primary/10 text-foreground font-black text-xs uppercase tracking-widest px-5 py-3 rounded-xl active:scale-95 transition-all duration-200 whitespace-nowrap"
+            >
+              Star on GitHub
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
           </div>
         </div>
 

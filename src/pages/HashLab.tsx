@@ -223,12 +223,10 @@ const HashLab = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl md:text-4xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white">
-                  Cryptographic <span className="text-primary italic">Hash Lab</span>
+                <h1 className="text-3xl md:text-4xl font-black tracking-tighter font-display uppercase italic text-shadow-glow text-white leading-tight">
+                  Hash Generator
                 </h1>
-                <p className="text-muted-foreground mt-1 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">
-                  Worker-Threaded • Extreme Density Streams • Forensic Checksums
-                </p>
+                <p className="text-muted-foreground mt-1 font-black uppercase tracking-[0.2em] opacity-40 text-[9px]">Calculate file hashes</p>
               </div>
             </header>
 

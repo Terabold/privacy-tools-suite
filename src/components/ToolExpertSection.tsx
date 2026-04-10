@@ -52,13 +52,13 @@ const ToolExpertSection = ({
           <header className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="px-4 py-1.5 rounded-full bg-primary/20 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary italic shadow-lg shadow-primary/10">
-                The Privacy Expert&apos;s Insight
+                How it works
               </div>
               <ShieldCheck className="h-5 w-5 text-primary animate-pulse" />
             </div>
 
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-foreground font-display leading-[0.9] italic text-shadow-glow">
-              About {title}
+              {title}
             </h2>
           </header>
 
@@ -76,7 +76,7 @@ const ToolExpertSection = ({
                   <Zap className="h-24 w-24" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-widest text-foreground mb-4 font-display flex items-center gap-3">
-                  <Info className="h-6 w-6 text-primary" /> Transparency Report
+                  <Info className="h-6 w-6 text-primary" /> Privacy Details
                 </h3>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
                   {transparency}
@@ -85,7 +85,7 @@ const ToolExpertSection = ({
 
               <div className="space-y-6 border-t border-foreground/5 pt-10">
                 <h3 className="text-xl font-black uppercase tracking-widest text-primary font-display flex items-center gap-3">
-                  <AlertTriangle className="h-6 w-6" /> Performance Boundaries
+                  <AlertTriangle className="h-6 w-6" /> Limitations
                 </h3>
                 <p className="text-lg text-muted-foreground/80 font-medium leading-relaxed italic">
                   {limitations}
@@ -103,7 +103,7 @@ const ToolExpertSection = ({
               ))}
             </div>
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-              Verified Secure · Client-Side Only · <span className="text-primary/70 italic underline decoration-wavy underline-offset-4">Encrypted Locally</span>
+              Verified Secure · Client-Side Only
             </p>
           </footer>
         </div>
