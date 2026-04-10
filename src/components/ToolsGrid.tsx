@@ -141,6 +141,14 @@ const toolsData = [
     tags: ["RASTER", "PNG"]
   },
   {
+    "title": "SVG to ICO Icon",
+    "description": "Convert SVG files into .ico icons for website favicons",
+    "icon": <Sparkles className="h-5 w-5" />,
+    "to": "/svg-to-ico",
+    "category": "Image Studio",
+    "tags": ["FAVICON", "ICO"]
+  },
+  {
     title: "Image to PDF",
     description: "Merge multiple images into a single PDF file",
     icon: <FileStack className="h-5 w-5" />,

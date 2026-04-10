@@ -166,8 +166,13 @@
   },
   {
     "to": "/svg-to-image",
-    "seoTitle": "SVG to Image - Vector Rasterizer",
-    "seoDescription": "Convert SVG files to PNG and JPG formats locally. 100% private with no server uploads."
+    "seoTitle": "SVG to JPG/PNG Converter - Vector Rasterizer",
+    "seoDescription": "Convert SVG files to PNG or JPG images at any size. 100% private conversion in your browser with no uploads."
+  },
+  {
+    "to": "/svg-to-ico",
+    "seoTitle": "SVG to ICO Favicon Generator - Vector to Icon Converter",
+    "seoDescription": "Convert SVG files into .ico icons for website favicons. Generate icons locally in your browser with no tracking or data uploads."
   },
   {
     "to": "/text-diff-checker",

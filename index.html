@@ -5,15 +5,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Client-Sided Coding & Media Tools — 100% Private, In-Browser Utility Suite (Zero Uploads)</title>
-  <meta name="description" content="A professional collection of client-side developer and media tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private." />
-
+  <meta name="description"
+    content="A professional collection of client-side developer and media tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private." />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="512x512" href="/apple-touch-icon.png" />
   <link rel="shortcut icon" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.json" />
-  <!-- CANONICAL_PLACEHOLDER -->
+
   <link rel="canonical" href="https://privateutils.com/" />
 
   <meta name="theme-color" content="#7c3aed">
@@ -25,42 +26,50 @@
   <link rel="preload" href="/fonts/outfit-900.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/outfit-700.woff2" as="font" type="font/woff2" crossorigin>
 
-  <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8938339685834274"
-    crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-8938339685834274">
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Client-Sided Coding & Media Tools — 100% Private, In-Browser Utility Suite (Zero Uploads)" />
+  <meta property="og:title"
+    content="Client-Sided Coding & Media Tools — 100% Private, In-Browser Utility Suite (Zero Uploads)" />
   <meta property="og:description"
     content="Experience the PrivateUtils Engine: Professional, hardware-accelerated utility tools running 100% in your browser. Zero data leakage, zero tracking, total privacy." />
   <meta property="og:image" content="/og-image.png" />
 
-  <!-- JSON_LD_PLACEHOLDER -->
-
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@PrivateUtils" />
   <meta name="twitter:title" content="Client-Sided Coding & Media Tools — 100% Private, In-Browser Utility Suite" />
-  <meta name="twitter:description" content="Professional, hardware-accelerated utility tools running 100% in your browser. Zero data leakage, zero tracking." />
+  <meta name="twitter:description"
+    content="Professional, hardware-accelerated utility tools running 100% in your browser. Zero data leakage, zero tracking." />
   <meta name="twitter:image" content="/og-image.png" />
 
-  <!-- Google tag (gtag.js) -->
-  <script defer src="https://www.googletagmanager.com/gtag/js?id=G-QSZPWLTQC2"></script>
   <script>
     window.addEventListener('load', () => {
+      const runDeferredScripts = () => {
+        // 1. Google Analytics
+        const gtmScript = document.createElement('script');
+        gtmScript.src = "https://www.googletagmanager.com/gtag/js?id=G-QSZPWLTQC2";
+        gtmScript.async = true;
+        document.head.appendChild(gtmScript);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-QSZPWLTQC2');
+
+        // 2. Google AdSense (Lazy loaded to speed up the site)
+        const adsenseScript = document.createElement('script');
+        adsenseScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8938339685834274";
+        adsenseScript.crossOrigin = "anonymous";
+        adsenseScript.async = true;
+        document.head.appendChild(adsenseScript);
+      };
+
       if ('requestIdleCallback' in window) {
         requestIdleCallback(() => {
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          gtag('js', new Date());
-          gtag('config', 'G-QSZPWLTQC2');
+          setTimeout(runDeferredScripts, 1000);
         });
       } else {
-        setTimeout(() => {
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          gtag('js', new Date());
-          gtag('config', 'G-QSZPWLTQC2');
-        }, 1000);
+        setTimeout(runDeferredScripts, 2000);
       }
     });
   </script>
@@ -79,7 +88,6 @@
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 
-  <!-- RECOVERY SCRIPT: Forcing Hard Refresh on Module Load Failure -->
   <script>
     window.addEventListener('error', function (e) {
       if (e.target && e.target.tagName === 'SCRIPT' && e.target.type === 'module') {

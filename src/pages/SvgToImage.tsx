@@ -429,7 +429,7 @@ const SvgToImage = () => {
                       <Button
                         asChild
                         variant="ghost"
-                        className={`h-11 px-3 sm:px-4 text-[10px] font-black rounded-xl gap-2 italic uppercase tracking-widest transition-all duration-700 border border-emerald-500/20 shadow-none hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] ${!input ? 'bg-emerald-600 text-white shadow-[0_0_25px_rgba(5,150,105,0.4)] hover:bg-emerald-700 hover:shadow-[0_0_35px_rgba(5,150,105,0.6)] animate-pulse duration-[time:4000ms] border-emerald-500' : 'text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/40'}`}
+                        className={`h-11 px-3 sm:px-4 text-[10px] font-black rounded-xl gap-2 italic uppercase tracking-widest transition-all duration-700 border border-primary/20 shadow-none hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] ${!input ? 'bg-primary text-white shadow-[0_0_25px_rgba(var(--primary),0.4)] hover:bg-primary/90 hover:shadow-[0_0_35px_rgba(var(--primary),0.6)] animate-pulse duration-[time:4000ms] border-primary' : 'text-primary hover:bg-primary/10 hover:text-primary hover:border-primary/40'}`}
                       >
                         <label className="cursor-pointer">
                           <ImageIcon className="h-3.5 w-3.5" /> Upload SVG
@@ -613,7 +613,7 @@ const SvgToImage = () => {
               description="Our SVG to Image studio provides high-precision vector-to-raster rendering. It is designed for developers and designers who need to convert scalable graphics into web-optimized PNG or JPG formats without sacrificing privacy."
               transparency="The rendering process occurs entirely within your browser's local sandbox. We utilize the HTML5 Canvas API to create a hardware-accelerated drawing surface. When you provide SVG code, we generate a local Blob URL, render it to the canvas at your specified scale, and extract the pixel data directly. No image data is ever transmitted through a server."
               limitations="While most SVG features (gradients, masks, paths) are supported by standard browser canvas implementations, certain complex internal CSS animations or non-standard SVG extensions may not render identically to a vector viewer. We recommend checking the live preview before initiating the export."
-              accent="emerald"
+              accent="orange"
             />
           </div>
         </main>

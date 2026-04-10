@@ -55,6 +55,7 @@ const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 const MorseCodeMaster = lazy(() => import("./pages/MorseCodeMaster.tsx"));
 const SlugForge = lazy(() => import("./pages/SlugForge.tsx"));
 const WhitespaceScrubber = lazy(() => import("./pages/WhitespaceScrubber.tsx"));
+const SvgToIco = lazy(() => import("./pages/SvgToIco.tsx"));
 const DiceLab = lazy(() => import("./pages/DiceLab.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -161,6 +162,7 @@ const App = () => {
                 <Route path="/morse-code-master" element={<MorseCodeMaster />} />
                 <Route path="/slug-forge" element={<SlugForge />} />
                 <Route path="/whitespace-scrubber" element={<WhitespaceScrubber />} />
+                <Route path="/svg-to-ico" element={<SvgToIco />} />
                 <Route path="/dice-lab" element={<DiceLab />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
