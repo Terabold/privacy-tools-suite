@@ -10,7 +10,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
-import AdBox from "@/components/AdBox";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { toast } from "sonner";

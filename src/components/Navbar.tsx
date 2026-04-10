@@ -189,6 +189,7 @@ const Navbar = ({
               variant="ghost"
               size="icon"
               onClick={onToggleDark}
+              aria-label="Toggle dark mode"
               className="rounded-2xl hover:bg-primary/10 transition-all h-[clamp(36px,10vw,44px)] w-[clamp(36px,10vw,44px)] border border-transparent bg-primary/5 shadow-inner"
             >
               {darkMode ? <Sun className="h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)] text-primary shadow-glow" /> : <Moon className="h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)]" />}
@@ -204,6 +205,9 @@ const Navbar = ({
             </div>
             <Input
               type="text"
+              id="navbar-search"
+              name="navbar-search"
+              aria-label="Search tools"
               placeholder="Instant Magic Search... (Alt + S)"
               value={isHomePage ? searchQuery : toolSearchQuery}
               onFocus={() => setShowSearchOverlay(true)}

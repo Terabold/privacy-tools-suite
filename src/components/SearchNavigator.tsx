@@ -36,6 +36,9 @@ const SearchNavigator = ({
             </div>
             <Input
               type="text"
+              id="category-search"
+              name="category-search"
+              aria-label="Search local tools"
               placeholder="Search 15+ local tools (e.g. 'PNG', 'Boost', 'QR')..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

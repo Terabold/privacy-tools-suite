@@ -2,7 +2,7 @@ import { i as __toESM } from "./chunk-YKewjYmz.js";
 import { t as require_react } from "./react.js";
 import { o as useComposedRefs, r as createSlot } from "./dist-C0nNKhsJ.js";
 import { t as require_jsx_runtime } from "./jsx-runtime-BZEYXbvP.js";
-import { n as createContextScope } from "./dist-Dx0EvjJ8.js";
+import { n as createContextScope } from "./dist-BrEgMtAC.js";
 //#region node_modules/@radix-ui/react-collection/dist/index.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
@@ -79,4 +79,4 @@ function createCollection(name) {
 //#endregion
 export { createCollection as t };
 
-//# sourceMappingURL=dist-DzvT9s40.js.map
+//# sourceMappingURL=dist-BGykdY_g.js.map

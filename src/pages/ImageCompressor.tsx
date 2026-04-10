@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { toast } from "sonner";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -240,9 +241,7 @@ const ImageCompressor = () => {
             </header>
 
             {/* Mobile Ad */}
-            <div className="flex min-[1600px]:hidden justify-center w-full">
-              <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
-            </div>
+            <ToolAdBanner />
 
             {/* ── SETTINGS CARD ── */}
             <Card className="glass-morphism border-primary/10 rounded-2xl overflow-hidden shadow-xl bg-card border-2 border-primary/5 animate-in fade-in slide-in-from-bottom-4 duration-500">

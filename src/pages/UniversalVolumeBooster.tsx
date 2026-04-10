@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -263,9 +264,7 @@ const UniversalVolumeBooster = () => {
             </header>
 
             {/* Mobile Inline Ad */}
-            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
-              <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
-            </div>
+            <ToolAdBanner />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="lg:col-span-8 space-y-8">

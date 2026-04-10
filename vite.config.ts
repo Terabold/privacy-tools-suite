@@ -36,16 +36,12 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('framer-motion')) {
-              return 'vendor-framer';
-            }
-            if (id.includes('@ffmpeg')) {
-              return 'vendor-ffmpeg';
-            }
-            return 'vendor';
+            if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
+            if (id.includes('framer-motion')) return 'vendor-framer';
+            if (id.includes('@ffmpeg')) return 'vendor-ffmpeg';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('html-to-image')) return 'vendor-document';
+            // Let Vite handle the default chunking for the rest of the node_modules
           }
         },
       },

@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { ShieldCheck, Zap, Lock, Play, Pause } from "lucide-react";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 
 
@@ -124,9 +125,7 @@ const Index = () => {
           </section>
 
           {/* Mobile Inline Ad */}
-          <div className="flex min-[1600px]:hidden justify-center mb-10 w-full min-h-[250px]">
-            <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
-          </div>
+          <ToolAdBanner />
 
           {/* Tools Section */}
           <div className="mb-32">

@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
-import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
@@ -294,9 +294,7 @@ const JsonForge = () => {
             </header>
 
             {/* Mobile Inline Ad */}
-            <div className="flex min-[1600px]:hidden justify-center mb-8 w-full">
-              <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
-            </div>
+            <ToolAdBanner />
 
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start overflow-visible">
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">

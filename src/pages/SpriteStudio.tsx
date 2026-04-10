@@ -13,7 +13,7 @@ import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 
 import SponsorSidebars from "@/components/SponsorSidebars";
-import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 
 import JSZip from "jszip";
@@ -464,9 +464,7 @@ const SpriteStudio = () => {
             </header>
 
             {/* Mobile Inline Ad */}
-            <div className="flex min-[1600px]:hidden justify-center mb-4 w-full">
-              <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
-            </div>
+            <ToolAdBanner />
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_340px_280px] gap-8 items-start">
               {/* Column 1: Main Stage */}
@@ -610,17 +608,17 @@ const SpriteStudio = () => {
                             const nh = Math.abs(slice.h);
                             return (
                               <g key={slice.id} className="drop-shadow-lg">
-                                  <rect
-                                    x={nx} y={ny} width={nw} height={nh}
-                                    fill={activeId === slice.id ? "hsl(var(--primary) / 0.4)" : "hsl(var(--primary) / 0.15)"}
-                                    stroke={activeId === slice.id ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.6)"}
-                                    strokeWidth={1.2 / (scale * zoom)}
-                                    strokeDasharray={activeId === slice.id ? "none" : `${4 / (scale * zoom)} ${3 / (scale * zoom)}`}
-                                  />
-                                  <text
-                                    x={nx + 2 / zoom} y={ny - 4 / zoom}
-                                    fontSize={Math.max(6, 10 / zoom)}
-                                    fill={activeId === slice.id ? "hsl(var(--primary))" : "white"}
+                                <rect
+                                  x={nx} y={ny} width={nw} height={nh}
+                                  fill={activeId === slice.id ? "hsl(var(--primary) / 0.4)" : "hsl(var(--primary) / 0.15)"}
+                                  stroke={activeId === slice.id ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.6)"}
+                                  strokeWidth={1.2 / (scale * zoom)}
+                                  strokeDasharray={activeId === slice.id ? "none" : `${4 / (scale * zoom)} ${3 / (scale * zoom)}`}
+                                />
+                                <text
+                                  x={nx + 2 / zoom} y={ny - 4 / zoom}
+                                  fontSize={Math.max(6, 10 / zoom)}
+                                  fill={activeId === slice.id ? "hsl(var(--primary))" : "white"}
                                   className="font-mono font-black tracking-tighter select-none drop-shadow-md"
                                 >
                                   {slice.name}

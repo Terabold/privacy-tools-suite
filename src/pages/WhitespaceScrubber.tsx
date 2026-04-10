@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
-import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 
 const WhitespaceScrubber = () => {
@@ -90,6 +90,7 @@ const WhitespaceScrubber = () => {
                 </p>
               </div>
             </header>
+            <ToolAdBanner />
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start overflow-visible">
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">

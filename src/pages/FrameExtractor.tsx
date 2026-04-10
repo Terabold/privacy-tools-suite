@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 
 import SponsorSidebars from "@/components/SponsorSidebars";
-import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 
 import { toast } from "sonner";
@@ -265,9 +265,7 @@ const FrameExtractor = () => {
             </header>
 
             {/* Mobile Inline Ad */}
-            <div className="flex min-[1600px]:hidden justify-center mb-4 w-full">
-              <AdBox adFormat="horizontal" height={250} label="300x250 AD" className="w-full max-w-[400px]" />
-            </div>
+            <ToolAdBanner />
 
             <motion.div layout className={`flex flex-col lg:flex-row items-start w-full gap-8 ${!file ? 'justify-center' : 'justify-start'}`}>
               <motion.div

@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
-import AdBox from "@/components/AdBox";
+import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 
 const SlugForge = () => {
@@ -89,6 +89,8 @@ const SlugForge = () => {
 
                     <div className="space-y-2">
                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 px-1 opacity-60 italic">Forge Output</p>
+                        {/* Mobile Inline Ad */}
+                        <ToolAdBanner />
                         <div className="relative group">
                             <div className="w-full min-h-[60px] bg-background/40 border border-primary/20 rounded-xl p-4 text-primary font-black tracking-tight flex items-center shadow-inner break-all">
                                 {output || <span className="opacity-20 italic font-medium">awaiting input...</span>}
