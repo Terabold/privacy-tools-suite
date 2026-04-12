@@ -7,14 +7,28 @@ let loadPromise: Promise<boolean> | null = null;
 export const preloadFFmpeg = () => {
   if (ffmpeg.loaded || loadPromise) return;
   loadPromise = (async () => {
-    try {
-      const base = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
-      await ffmpeg.load({
-        coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, "text/javascript"),
-        wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, "application/wasm"),
-      });
-      return true;
-    } catch { return false; }
+    // Array of CDNs. It will try them in order.
+    const cdns = [
+      "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm", // Primary (Fastest)
+      "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm"             // Fallback
+    ];
+
+    for (const base of cdns) {
+      try {
+        console.log(`[FFmpeg] Attempting to load from: ${base}`);
+        await ffmpeg.load({
+          coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, "text/javascript"),
+          wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, "application/wasm"),
+        });
+        console.log(`[FFmpeg] Successfully loaded from: ${base}`);
+        return true; // Stop trying if successful
+      } catch (error) {
+        console.warn(`[FFmpeg] Failed to load from ${base}. Trying fallback...`);
+      }
+    }
+
+    console.error("[FFmpeg] All CDNs failed to load.");
+    return false;
   })();
 };
 
