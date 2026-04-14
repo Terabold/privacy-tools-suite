@@ -3,7 +3,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import ToolsGrid, { tools } from "@/components/ToolsGrid";
 import Footer from "@/components/Footer";
-import { ShieldCheck, Zap, Lock, Play, Pause, HelpCircle, Coffee, ShieldAlert, Scale, ArrowRight, MessageSquare } from "lucide-react";
+import { ShieldCheck, Zap, Lock, Play, Pause, HelpCircle, Coffee, ShieldAlert, Scale, ArrowRight, MessageSquare, BookOpen } from "lucide-react";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
@@ -217,7 +217,19 @@ const Index = () => {
                </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+               <Link to="/insights" className="group">
+                  <div className="h-full p-8 rounded-[2rem] bg-primary/5 border border-primary/20 hover:border-primary/50 hover:bg-primary/10 transition-all duration-500 hover-glow relative overflow-hidden">
+                     <div className="absolute -right-4 -top-4 h-24 w-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors" />
+                     <BookOpen className="h-10 w-10 text-primary mb-6 group-hover:scale-110 transition-transform duration-500" />
+                     <h3 className="text-xl font-black uppercase tracking-tighter mb-2 italic">Engineering Insights</h3>
+                     <p className="text-xs text-muted-foreground leading-relaxed font-medium mb-6">Technical manifestos on the architecture of privacy.</p>
+                     <div className="flex items-center gap-2 text-primary text-[10px] font-black uppercase tracking-widest">
+                        Read Journal <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                     </div>
+                  </div>
+               </Link>
+
                <Link to="/faq" className="group">
                   <div className="h-full p-8 rounded-[2rem] bg-muted/30 border border-primary/10 hover:border-primary/40 hover:bg-muted/50 transition-all duration-500 hover-glow relative overflow-hidden">
                      <div className="absolute -right-4 -top-4 h-24 w-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />

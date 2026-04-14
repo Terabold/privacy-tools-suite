@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Moon, Sun, Search, X, Video, ImageIcon, Music, ShieldCheck, Wrench, Sparkles, Command, ChevronRight, Terminal, Type, Zap, Coffee } from "lucide-react";
+import { Moon, Sun, Search, X, Video, ImageIcon, Music, ShieldCheck, Wrench, Sparkles, Command, ChevronRight, Terminal, Type, Zap, Coffee, BookOpen, HelpCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -100,212 +100,254 @@ const Navbar = ({
   // Removed redundant SEO logic - now handled by SEOHead.tsx component
 
   return (
-    <header className="sticky top-0 z-[100] border-b border-white/5 bg-background/80 backdrop-blur-xl py-1 w-full transition-theme shadow-lg shadow-black/20 overflow-visible">
-      <div className="container mx-auto px-[clamp(8px,3vw,16px)] lg:px-8 flex flex-wrap lg:flex-nowrap h-auto lg:h-[90px] items-center justify-between gap-y-3 lg:gap-x-8 max-w-[1500px] w-full transition-theme lg:py-0">
-
-        {/* 1. Logo Row - Persistent Logic */}
-        <div className="flex w-full lg:w-auto items-center justify-between gap-[clamp(4px,2vw,16px)] shrink-0">
-          <Link
-            to="/"
-            className="group flex items-center justify-start gap-3 cursor-pointer select-none no-underline outline-none"
-          >
-          <div
-            className="h-[clamp(30px,8vw,36px)] w-[clamp(30px,8vw,36px)] md:h-10 md:w-10 rounded-lg flex items-center justify-center text-white shadow-2xl transition-theme group-hover:scale-105 shrink-0 overflow-hidden"
-            style={{ backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}
-          >
-              <svg viewBox="0 0 512 512" fill="currentColor" className="w-[70%] h-[70%] pointer-events-none drop-shadow-lg">
-                <path d="M256,32 C172.96,62.33 93.36,65.88 48,64 C48,229.41 81.33,338.99 256,480 C430.67,338.99 464,229.41 464,64 C418.64,65.88 339.04,62.33 256,32 Z" />
-                <g stroke="white" strokeWidth="48" strokeLinecap="round" strokeLinejoin="round" fill="none">
-                  <polyline points="170,186 90,256 170,326" />
-                  <polyline points="342,186 422,256 342,326" />
-                  <line x1="286" y1="160" x2="226" y2="352" />
-                </g>
-              </svg>
-            </div>
-            <div className="flex h-9 md:h-10 items-center gap-[clamp(4px,1vw,8px)]">
-              <span className="text-[clamp(14px,5vw,22px)] md:text-[24px] font-black tracking-tighter text-foreground font-display uppercase italic transition-theme group-hover:text-shadow-glow flex items-center leading-none">
-                Private<span className="not-italic logo-text-transition" style={{ color: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}>Utils</span>
-              </span>
-              <div className="hidden min-[380px]:flex px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 items-center justify-center shrink-0 group/wip relative">
-                <span className="text-[9px] font-black text-primary uppercase tracking-widest leading-none">WIP</span>
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 px-3 py-2 bg-popover text-popover-foreground text-[10px] font-black rounded-lg opacity-0 group-hover/wip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-2xl border border-white/10 z-[120] uppercase tracking-wider italic">
-                  Work In Progress • Deployment in progress
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Persistent Theme Toggle (Locked next to logo on mobile/tablet, shifted on desktop manually via flex) */}
-          <div className="lg:hidden flex items-center gap-2">
-            <a
-              href="https://ko-fi.com/privateutils"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 h-[clamp(36px,10vw,44px)] w-[clamp(36px,10vw,44px)] shadow-inner transition-all hover:bg-primary/20 text-primary active:scale-95"
-              title="Buy Me a Coffee"
-            >
-              <Coffee className="h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)] shadow-glow" />
-            </a>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleDark}
-              aria-label="Toggle dark mode"
-              className="rounded-2xl hover:bg-primary/10 transition-all h-[clamp(36px,10vw,44px)] w-[clamp(36px,10vw,44px)] border border-transparent bg-primary/5 shadow-inner"
-            >
-              {darkMode ? <Sun className="h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)] text-primary shadow-glow" /> : <Moon className="h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)]" />}
-            </Button>
+    <header className="sticky top-0 z-[100] w-full transition-theme shadow-lg shadow-black/20 overflow-visible">
+      {/* 0. Authority Ribbon - Professional SaaS Tier (Desktop Only) */}
+      <div className="hidden lg:flex w-full bg-zinc-950 border-b border-white/5 py-1.5 px-8">
+        <div className="container mx-auto max-w-[1500px] flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">The Mission</Link>
+            <Link to="/technical-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Engine Architecture</Link>
+            <Link to="/security-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Security Protocols</Link>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link to="/faq" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Technical FAQ</Link>
+            <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Contact Support</Link>
           </div>
         </div>
+      </div>
 
-        {/* 2. Unified Search + Categories Column (Fluid and Centered) */}
-        <div className="flex flex-col flex-1 w-full lg:max-w-4xl mx-auto gap-1.5 relative transition-theme items-center lg:items-center h-full justify-center">
-          <div ref={searchRef} className="relative group mx-auto w-full max-w-lg lg:max-w-xl">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            </div>
-            <Input
-              type="text"
-              id="navbar-search"
-              name="navbar-search"
-              aria-label="Search tools"
-              placeholder="Search for a tool... (Alt + S)"
-              value={isHomePage ? searchQuery : toolSearchQuery}
-              onFocus={() => setShowSearchOverlay(true)}
-              onChange={(e) => {
-                if (isHomePage && setSearchQuery) {
-                  setSearchQuery(e.target.value);
-                } else {
-                  setToolSearchQuery(e.target.value);
-                }
-                setShowSearchOverlay(true);
-              }}
-              className="h-9 md:h-10 pl-11 pr-10 text-sm font-semibold bg-zinc-100 dark:bg-white/5 border-zinc-200/50 dark:border-transparent text-muted-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-primary/20 transition-theme shadow-sm"
-            />
-            {showSearchOverlay && filteredSearchResults.length > 0 && (
-              <div className="absolute top-12 left-0 right-0 bg-card/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300 z-[110]">
-                <div className="p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
-                  {filteredSearchResults.map(tool => (
-                    <Link
-                      key={tool.to}
-                      to={tool.to}
-                      onClick={() => setShowSearchOverlay(false)}
-                      className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-theme text-left group/result border border-transparent hover:border-white/5 no-underline"
+      <div className="bg-background/80 backdrop-blur-xl border-b border-white/5 py-1.5 w-full">
+        <div className="container mx-auto px-4 lg:px-8 max-w-[1500px] flex flex-col gap-2">
+          
+          {/* Tier 1: Brand & Absolute Center Actions */}
+          <div className="flex items-center justify-between gap-4 lg:gap-12 w-full h-[50px] lg:h-[65px] relative">
+            
+            {/* Left: Branding & Mobile Resource Trigger */}
+            <div className="flex items-center gap-2 lg:gap-3 justify-start min-w-0">
+              <div className="lg:hidden flex items-center gap-1.5">
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-xl bg-primary/5 hover:bg-primary/10 border border-white/5 h-9 w-9 shadow-inner"
                     >
-                      <div
-                        className="h-9 w-9 rounded-full flex items-center justify-center group-hover/result:scale-110 transition-transform shadow-sm flex-shrink-0"
-                        style={{ backgroundColor: `hsl(${categoryConfig[tool.category]?.hsl} / 0.15)`, color: `hsl(${categoryConfig[tool.category]?.hsl})` }}
-                      >
-                        <div className="h-5 w-5 flex items-center justify-center">
-                          {tool.icon}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-foreground tracking-tight">{tool.title}</p>
-                        <p className="text-xs text-muted-foreground truncate font-medium italic">{tool.description}</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/result:text-foreground transition-theme" />
-                    </Link>
-                  ))}
-                </div>
+                      <BookOpen className="h-4 w-4 text-primary" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-56 bg-zinc-950/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 z-[110]"
+                  >
+                    <div className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-primary/60 italic">Engineering Hub</div>
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
+                      <Link to="/insights" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
+                        <Zap className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">Dev Journal</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
+                      <Link to="/technical-architecture" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
+                        <Terminal className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">Architecture</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-white/5" />
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
+                      <Link to="/about" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
+                        <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">The Mission</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
+                      <Link to="/contact" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
+                        <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">Contact Support</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-            )}
-          </div>
 
-          {/* 3. Category pills - DYNAMIC Scaling (Paddings and Font size shrink with viewport) */}
-          <div className="w-full overflow-x-auto no-scrollbar scroll-smooth mask-fade-right">
-            <div className="flex flex-nowrap items-center gap-[clamp(2px,0.8vw,8px)] mx-auto w-max px-[clamp(2px,2vw,32px)] py-1.5">
-              {Object.keys(categoryConfig).filter(k => k !== "All").map((category) => {
-                const theme = categoryConfig[category];
-                const Icon = theme.icon;
-                const isActive = (isHomePage && selectedCategory === category) || (!isHomePage && currentCategory === category);
-                const categoryTools = tools.filter(t => t.category === category);
+              <Link
+                to="/"
+                className="group flex items-center justify-start gap-2 cursor-pointer select-none no-underline outline-none shrink-0"
+              >
+                <div
+                  className="h-8 w-8 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-white shadow-2xl transition-theme group-hover:scale-105 shrink-0 overflow-hidden"
+                  style={{ backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}
+                >
+                    <svg viewBox="0 0 512 512" fill="currentColor" className="w-[70%] h-[70%] pointer-events-none drop-shadow-lg">
+                      <path d="M256,32 C172.96,62.33 93.36,65.88 48,64 C48,229.41 81.33,338.99 256,480 C430.67,338.99 464,229.41 464,64 C418.64,65.88 339.04,62.33 256,32 Z" />
+                      <g stroke="white" strokeWidth="48" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                        <polyline points="170,186 90,256 170,326" />
+                        <polyline points="342,186 422,256 342,326" />
+                        <line x1="286" y1="160" x2="226" y2="352" />
+                      </g>
+                    </svg>
+                  </div>
+                <div className="flex h-9 md:h-10 items-center gap-2">
+                  <span className="text-[14px] md:text-[22px] font-black tracking-tighter text-foreground font-display uppercase italic transition-theme flex items-center leading-none">
+                    Private<span className="not-italic logo-text-transition" style={{ color: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}>Utils</span>
+                  </span>
+                </div>
+              </Link>
+            </div>
 
-                return (
-                  <DropdownMenu key={category} modal={false}>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        style={{
-                          "--glow-color": `hsl(${theme.hsl} / 0.4)`,
-                          "--border-glow": `hsl(${theme.hsl} / 0.2)`,
-                          backgroundColor: isActive ? `hsl(${theme.hsl})` : undefined
-                        } as React.CSSProperties}
-                        className={`px-[clamp(6px,1.2vw,20px)] py-1 md:py-1.5 rounded-xl font-bold md:font-semibold text-[clamp(8px,0.9vw,13px)] transition-all flex items-center gap-[clamp(2px,0.8vw,8px)] border whitespace-nowrap shrink transition-theme ${isActive
-                          ? "text-white shadow-lg scale-105 border-white/20"
-                          : "text-muted-foreground hover:text-foreground bg-zinc-100 dark:bg-white/5 border-zinc-200/50 dark:border-transparent hover:border-[var(--border-glow)] hover:shadow-[0_0_20px_var(--glow-color)] shadow-sm"
-                          }`}
-                      >
-                        <Icon className="h-[clamp(12px,1.2vw,14px)] w-[clamp(12px,1.2vw,14px)] transition-colors" style={{ color: isActive ? 'white' : `hsl(${theme.hsl})` }} />
-                        {category.split(' ')[0]}
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="center"
-                      className="w-[280px] md:w-[320px] bg-card/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 z-[110]"
-                    >
-                      <div className="px-3 py-2 flex items-center gap-3">
-                        <theme.icon className="h-4 w-4" style={{ color: `hsl(${theme.hsl})` }} />
-                        <span className="text-base font-bold font-display tracking-tight" style={{ color: `hsl(${theme.hsl})` }}>
-                          {category}
-                        </span>
-                      </div>
-                      <DropdownMenuSeparator className="bg-white/5" />
-                      {categoryTools.map(tool => (
-                        <DropdownMenuItem
+            {/* Center: Search Overlay (Fluid 1200px Expansion) */}
+            <div className="hidden lg:flex flex-1 items-center justify-center max-w-[1200px] px-4">
+              <div ref={searchRef} className="relative group w-full">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                </div>
+                <Input
+                  type="text"
+                  id="navbar-search"
+                  name="navbar-search"
+                  aria-label="Search tools"
+                  placeholder="Universal technical command... (Alt + S)"
+                  value={isHomePage ? searchQuery : toolSearchQuery}
+                  onFocus={() => setShowSearchOverlay(true)}
+                  onChange={(e) => {
+                    if (isHomePage && setSearchQuery) {
+                      setSearchQuery(e.target.value);
+                    } else {
+                      setToolSearchQuery(e.target.value);
+                    }
+                    setShowSearchOverlay(true);
+                  }}
+                  className="h-11 w-full pl-11 pr-10 text-sm font-semibold bg-zinc-100 dark:bg-white/5 border-zinc-200/50 dark:border-white/5 text-muted-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-primary/20 transition-theme shadow-sm"
+                />
+                {showSearchOverlay && filteredSearchResults.length > 0 && (
+                  <div className="absolute top-12 left-0 right-0 bg-card/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300 z-[110]">
+                    <div className="p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+                      {filteredSearchResults.map(tool => (
+                        <Link
                           key={tool.to}
-                          asChild
-                          className="rounded-xl cursor-pointer p-2 focus:bg-muted/50 focus:text-foreground group/item"
+                          to={tool.to}
+                          onClick={() => setShowSearchOverlay(false)}
+                          className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-theme text-left group/result border border-transparent hover:border-white/5 no-underline"
                         >
-                          <Link
-                            to={tool.to}
-                            className="flex items-center gap-3 w-full no-underline"
-                            style={{ ["--hover-text" as any]: `hsl(${theme.hsl})` } as React.CSSProperties}
+                          <div
+                            className="h-9 w-9 rounded-full flex items-center justify-center group-hover/result:scale-110 transition-transform shadow-sm flex-shrink-0"
+                            style={{ backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})`, color: `hsl(${activeTheme?.hsl || 'var(--primary)'})` }}
                           >
-                            <div
-                              className="h-8 w-8 rounded-full flex items-center justify-center group-hover/item:scale-110 transition-theme shadow-sm"
-                              style={{ backgroundColor: `hsl(${theme.hsl} / 0.1)`, color: `hsl(${theme.hsl})` }}
-                            >
-                              <div className="h-4.5 w-4.5 flex items-center justify-center">
-                                {tool.icon}
-                              </div>
+                            <div className="h-5 w-5 flex items-center justify-center">
+                              {tool.icon}
                             </div>
-                            <span
-                              className="text-sm font-bold transition-colors text-foreground group-hover/item:text-[var(--hover-text)] truncate whitespace-nowrap"
-                            >
-                              {tool.title}
-                            </span>
-                          </Link>
-                        </DropdownMenuItem>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-foreground tracking-tight">{tool.title}</p>
+                            <p className="text-xs text-muted-foreground truncate font-medium italic">{tool.description}</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/result:text-foreground transition-theme" />
+                        </Link>
                       ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                );
-              })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Actions (Standard Technical Sizing) */}
+            <div className="flex items-center gap-2 lg:gap-3 justify-end shrink-0">
+              <a
+                href="https://ko-fi.com/privateutils"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-3 lg:px-4 h-9 lg:h-10 rounded-xl bg-primary text-primary-foreground font-black text-[9px] uppercase tracking-[0.15em] shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all outline-none"
+                title="Support the Project"
+              >
+                <Coffee className="h-4 w-4 lg:animate-pulse" />
+                <span className="hidden sm:inline">Support</span>
+              </a>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onToggleDark}
+                aria-label="Toggle dark mode"
+                className="rounded-xl hover:bg-primary/10 transition-theme h-9 w-9 lg:h-10 lg:w-10 border border-white/5 bg-primary/5 shadow-inner"
+              >
+                {darkMode ? <Sun className="h-4.5 w-4.5 lg:h-5 lg:w-5 text-primary shadow-glow" /> : <Moon className="h-4.5 w-4.5 lg:h-5 lg:w-5" />}
+              </Button>
             </div>
           </div>
-        </div>
 
-        {/* 4. Actions (Desktop only Row 1 Right) */}
-        <div className="hidden lg:flex items-center gap-3 shrink-0 justify-end">
-          <a
-            href="https://ko-fi.com/privateutils"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 xl:px-6 h-14 w-14 xl:w-auto rounded-2xl bg-primary text-primary-foreground font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all outline-none"
-            title="Support the Project"
-          >
-            <Coffee className="h-5 w-5" />
-            <span className="hidden xl:inline">Support</span>
-          </a>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleDark}
-            aria-label="Toggle dark mode"
-            className="rounded-2xl hover:bg-primary/10 transition-theme h-14 w-14 border border-transparent hover:border-primary/20 bg-primary/5 shadow-inner"
-          >
-            {darkMode ? <Sun className="h-7 w-7 text-primary shadow-glow" /> : <Moon className="h-7 w-7" />}
-          </Button>
+          {/* Tier 2: Utility Row (Correct Category Visibility) */}
+          <div className="flex flex-col gap-2 pb-1.5 transition-all overflow-visible">
+            {/* Mobile-Only Search Bar */}
+            <div className="lg:hidden relative group w-full max-w-sm mx-auto">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <Search className="h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Search tools..."
+                value={isHomePage ? searchQuery : toolSearchQuery}
+                onFocus={() => setShowSearchOverlay(true)}
+                onChange={(e) => {
+                  if (isHomePage && setSearchQuery) {
+                    setSearchQuery(e.target.value);
+                  } else {
+                    setToolSearchQuery(e.target.value);
+                  }
+                  setShowSearchOverlay(true);
+                }}
+                className="h-9 w-full pl-10 pr-10 text-xs font-semibold bg-zinc-100 dark:bg-white/5 border-zinc-200/50 dark:border-white/5 transition-theme rounded-xl"
+              />
+            </div>
+
+            {/* Category Central Hub (No Clipping on Mobile) */}
+            <div className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex justify-start md:justify-center">
+              <div className="flex flex-nowrap items-center gap-[clamp(1px,0.8vw,8px)] px-4 py-1.5 transition-all w-max md:w-auto">
+                  {Object.keys(categoryConfig).filter(k => k !== "All").map((category) => {
+                    const theme = categoryConfig[category];
+                    const Icon = theme.icon;
+                    const isActive = (isHomePage && selectedCategory === category) || (!isHomePage && currentCategory === category);
+                    const categoryTools = tools.filter(t => t.category === category);
+
+                    return (
+                      <DropdownMenu key={category} modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            style={{
+                              "--glow-color": `hsl(${theme.hsl} / 0.4)`,
+                              "--border-glow": `hsl(${theme.hsl} / 0.2)`,
+                              backgroundColor: isActive ? `hsl(${theme.hsl})` : undefined
+                            } as React.CSSProperties}
+                            className={`px-[clamp(4px,1.2vw,14px)] py-1.5 rounded-xl font-black text-[clamp(7px,2vw,11px)] uppercase tracking-tighter lg:tracking-[0.05em] transition-all flex items-center gap-[clamp(1px,0.8vw,8px)] border whitespace-nowrap shrink transition-theme h-7.5 lg:h-9 ${isActive
+                              ? "text-white shadow-lg scale-105 border-white/20"
+                              : "text-muted-foreground hover:text-foreground bg-zinc-100 dark:bg-white/5 border-white/5 hover:border-[var(--border-glow)] hover:shadow-[0_0_20px_var(--glow-color)] shadow-sm"
+                              }`}
+                          >
+                            <Icon className="h-[clamp(9px,1.5vw,14px)] w-[clamp(9px,1.5vw,14px)]" style={{ color: isActive ? 'white' : `hsl(${theme.hsl})` }} />
+                            <span className="leading-none">{category.split(' ')[0]}</span>
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="center" className="w-[280px] bg-card/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 z-[110]">
+                          <div className="px-3 py-2 flex items-center gap-3">
+                            <theme.icon className="h-4 w-4" style={{ color: `hsl(${theme.hsl})` }} />
+                            <span className="text-base font-bold font-display tracking-tight" style={{ color: `hsl(${theme.hsl})` }}>{category}</span>
+                          </div>
+                          <DropdownMenuSeparator className="bg-white/5" />
+                          {categoryTools.map(tool => (
+                            <DropdownMenuItem key={tool.to} asChild className="rounded-xl cursor-pointer p-2 focus:bg-muted/50 focus:text-foreground group/item">
+                              <Link to={tool.to} className="flex items-center gap-3 w-full no-underline">
+                                <div className="h-8 w-8 rounded-full flex items-center justify-center group-hover/item:scale-110 transition-theme shadow-sm" style={{ backgroundColor: `hsl(${theme.hsl} / 0.1)`, color: `hsl(${theme.hsl})` }}>
+                                  <div className="h-4 w-4 flex items-center justify-center">{tool.icon}</div>
+                                </div>
+                                <span className="text-[10px] font-black uppercase italic text-foreground truncate">{tool.title}</span>
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    );
+                  })}
+                </div>
+            </div>
+          </div>
         </div>
       </div>
     </header>

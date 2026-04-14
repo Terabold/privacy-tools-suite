@@ -28,6 +28,11 @@ async function run() {
       to: '/contact',
       seoTitle: "Contact Support — PrivateUtils Project",
       seoDescription: "Get in touch with the PrivateUtils team for support, feature requests, or collaboration opportunities."
+    },
+    {
+      to: '/insights',
+      seoTitle: "Technical Insights — Developer Journal & Privacy Manifesto",
+      seoDescription: "Explore our technical manifestos on No-Egress computing, browser sandbox architecture, and the future of local-first web utilities."
     }
   ];
 

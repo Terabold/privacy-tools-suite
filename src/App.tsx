@@ -77,6 +77,7 @@ const Faq = ssrLazy("Faq.tsx", () => import("./pages/Faq.tsx"));
 const AboutProject = ssrLazy("AboutProject.tsx", () => import("./pages/AboutProject.tsx"));
 const TechnicalArchitecture = ssrLazy("TechnicalArchitecture.tsx", () => import("./pages/TechnicalArchitecture.tsx"));
 const Contact = ssrLazy("Contact.tsx", () => import("./pages/Contact.tsx"));
+const Insights = ssrLazy("Insights.tsx", () => import("./pages/Insights.tsx"));
 const NotFound = ssrLazy("NotFound.tsx", () => import("./pages/NotFound.tsx"));
 
 
@@ -182,6 +183,7 @@ const App = () => {
                 <Route path="/technical-architecture" element={<TechnicalArchitecture />} />
                 <Route path="/about" element={<AboutProject />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/insights" element={<Insights />} />
                 <Route path="/faq" element={<Faq />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
