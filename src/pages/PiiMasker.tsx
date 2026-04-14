@@ -609,18 +609,18 @@ const PiiMasker = () => {
             </div>
             {/* SEO & Tool Guide Section */}
             <ToolExpertSection
-              title="Forensic PII Masking Studio"
+              title="Irreversible PII Masking Studio"
               accent="violet"
-              overview="The Masking Studio is a forensic-grade redaction suite designed to permanently obscure Personally Identifiable Information (PII) from sensitive images and text documents. I built this tool to provide a 'Zero-Trust' workflow for preparing legal, medical, or financial documents for sharing—without the catastrophic risk of cloud-based redaction services that might retain unmasked versions of your originals."
+              overview="I architected the PII Masking Studio to provide a foolproof 'Sanitization Lifecycle' for sensitive visual artifacts. The core problem with most redaction tools is that they merely place a layer over the data; I built this to ensure that Personally Identifiable Information is mathematically vaporized from the underlying pixel stream before it even leaves the browser's internal sandbox."
               steps={[
-                "Deploy your sensitive image master or text artifact to the secure mask workbench.",
-                "Select between the 'Gaussian Blur' or 'Blockout' redaction ciphers.",
-                "Draw precision masks over sensitive regions (passports, account numbers, or faces).",
-                "Optionally, use the 'Text Redactor' for documents to block-cipher specific strings.",
-                "Extract the sanitized artifact directly to your local file system, ensuring the original sensitive data is non-recoverable."
+                "Deploy your sensitive document or image master into the isolated client-side buffer.",
+                "Initialize the 'Coordinate-Based Mask' to establish the geometric boundaries of the target PII data.",
+                "Execute the 'High-Entropy Gaussian Cipher' or the 'Solid Block Destruction' to overwrite the bitstream.",
+                "Monitor the live rasterization pass to confirm that the sensitive coordinate planes are structurally destroyed.",
+                "Extract the irreversible artifact from volatile RAM, triggering an instant garbage collection of the unmasked origin data."
               ]}
-              technicalImplementation="I architected the masking engine using an immutable Canvas composite stack. When a redaction region is defined, the engine applies a hardware-accelerated Gaussian blur filter or a solid fill to the coordinate plane. The text redact module utilizes precise string replacement with the non-transparent block character. By forcing the final export through a fresh rasterization pass, we ensure that the redacted data is not just covered but mathematically destroyed in the final output stream."
-              privacyGuarantee="The Security & Privacy model for the PII Masker is centered on Local Sandbox Destruction. All redaction arithmetic and final artifact synthesis happen entirely within your browser's private application state. Your raw, unmasked data never leaves your device's volatile memory. Once you close the session, the forensic stream is permanently purged, leaving no trace of the original information on any network or local storage."
+              technicalImplementation="The technical implementation utilizes a non-reversible Canvas composite stack. Instead of simply drawing an overlay, the engine modifies the underlying ImageData buffer at the pixel level. For blurring, we apply a high-entropy Gaussian kernel directly to the target RGBA arrays. For blackouts, we perform a total value-overwrite within the specified coordinate matrix. This 'raster destruction' approach ensures that even with advanced forensic software, there is no 'underlying' data to recover—the memory management cycle ensures that the original, unmasked buffers are purged from system heap immediately after the export lifecycle."
+              privacyGuarantee="My Privacy Guarantee is rooted in 'Bitstream Isolation'. Unlike cloud-based redaction services that might retain 'originals' for their logs, our studio exists entirely within your browser's private application state. No network ingress or egress occurs during the masking phase. The lifecycle of your sensitive data is ephemeral—once the tab is vaporized, every remaining byte in the temporary client-side buffer is permanently lost."
             />
           </div>
         </main>

@@ -485,18 +485,18 @@ const AudioTrimmer = () => {
               </aside>
             </div>
             <ToolExpertSection
-              title="Precision Audio Trimmer"
+              title="Precision Sample-Accurate Trimmer"
               accent="blue"
-              overview="This tool provides a professional-grade interface for precise audio partitioning. I built this tool because I noticed a dangerous trend of developers uploading proprietary meeting recordings and sensitive voice memos to unverified SaaS platforms. My objective was to create a local-first workbench where your raw data stays strictly in volatile memory."
+              overview="I architected the Precision Audio Trimmer to facilitate 'Temporal Sample Control' without external dependencies. Most audio tools rely on server-side processing that exposes your proprietary recordings; I built this to ensure that your audio artifacts stay within a strictly managed 'Sandbox Lifecycle'. It handles complex sample-rate conversions and bitstream partitioning entirely on your local hardware."
               steps={[
-                "Upload your audio master (MP3, WAV, OGG) to the studio workbench via drag-and-drop or file picker.",
-                "Utilize the interactive waveform to drag the start and end handles to your desired timestamps.",
-                "Review your selection using the real-time playback engine with precision playhead tracking.",
-                "Select your preferred export format—choose Compact MP3 for web use or Lossless WAV for archival.",
-                "Initiate the export to slice and download the artifact directly from your local hardware threads."
+                "Deploy your high-fidelity audio master into the secure AudioBuffer registry.",
+                "The engine performs a 'Heuristic Decode' pass to generate the waveform without blocking the main thread.",
+                "Establish your 'Temporal Boundaries' with sample-accurate precision using the interactive seek-bar.",
+                "Initialize the WebAssembly-powered 'Sample Slice' to extract the target bitstream.",
+                "Download the sanitized audio artifact directly from the client-side buffers, vaporizing the remaining heap memory."
               ]}
-              technicalImplementation="I architected this trimmer using a hybrid of the Web Audio API and WebAssembly. The waveform visualization is powered by a heuristic sub-sampling algorithm that avoids main thread blocking during the initial decoding of the AudioBuffer. For the export phase, I integrated ffmpeg.wasm to handle libmp3lame encoding, allowing for high-fidelity transcoding at 192kbps. By leveraging SharedArrayBuffer, the engine can utilize multi-threading support for faster-than-real-time slicing."
-              privacyGuarantee="Privacy is the bedrock of this architecture. Your files are processed entirely within the Browser Sandbox Lifecycle. When you convert audio, the data moves from your disk to the browser's heap memory for manipulation and then back to your disk upon export. We do not use MIME type sniffing for the purpose of tracking; it is purely for security validation. No bytes ever cross the network."
+              technicalImplementation="The technical backbone of this trimmer is a combination of the Web Audio API and a localized ffmpeg.wasm instance. When an audio file is staged, we create an AudioBuffer in the browser's memory management heap. To ensure performance, the waveform summary is generated via a sub-sampling algorithm that avoids heavy DOM manipulation. The actual trimming occurs in a dedicated WebWorker thread where SharedArrayBuffer facilitates multi-threaded PCM data manipulation. This architecture allows for near-native partitioning speeds while keeping the entire bitstream air-gapped from the network."
+              privacyGuarantee="My Privacy Guarantee is based on 'Volatile PCM Isolation'. Your audio data exists only as a series of floating-point samples in the browser's temporary memory management zone. We do not use persistent cache or local storage for the raw decoding data. Once the 'Sandbox Lifecycle' is terminated by closing the tab, the garbage collection cycle permanently purges the internal buffer, ensuring that your recordings are non-recoverable from any system logs."
             />
           </div>
         </main>

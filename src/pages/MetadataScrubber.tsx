@@ -362,16 +362,16 @@ const MetadataScrubber = () => {
             <ToolExpertSection
               title="Forensic Metadata Scrubber"
               accent="emerald"
-              overview="This scrubber is a forensic-grade utility designed to target and eliminate EXIF, IPTC, and XMP metadata clusters. I developed this tool because I noticed how easily geographic coordinates, timestamps, and device serial numbers are leaked through 'sanitized' images shared on professional and social platforms. This tool ensures your photographic footprint is surgically wiped."
+              overview="I architected the Forensic Metadata Scrubber to address the critical 'Binary Leakage' problem inherent in digital photography. Most users don't realize that a single photo contains a hidden 'Sandbox Lifecycle' of its own, carrying GPS coordinates and device serials in non-pixel headers. This utility provides a surgical bypass of standard image processing to ensure total metadata annihilation."
               steps={[
-                "Upload your image master to the scrubbing engine via drag-and-drop or the file picker.",
-                "The engine performs a binary header scan to identify embedded EXIF and IPTC metadata blocks.",
-                "Initiate the 'Scrub' command to surgically strip all non-pixel data segments from the binary structure.",
-                "Review the resulting file size reduction—often saving bytes while maintaining bit-perfect visual quality.",
-                "Download the sterilized artifact directly from your device's volatile memory heap."
+                "Deploy your image master into the secure client-side buffer for immediate header inspection.",
+                "The engine initializes a binary traversal of the file structure, identifying APP1 and XMP markers without triggering DOM-based rendering.",
+                "Execute the 'Surgical Scrub' to strip non-pixel data while maintaining bit-perfect chromatic integrity.",
+                "Monitor the memory-mapped file system as the sanitized artifact is synthesized in a protected heap.",
+                "Download the sterilized asset directly from the internal sandbox, triggering an immediate garbage collection of the original data."
               ]}
-              technicalImplementation="I engineered this scrubber using a direct bitstream manipulation approach rather than standard canvas re-encoding. This ensures that your pixels remain untouched by compression algorithms while metadata tags are completely excised. We utilize the DataView API to traverse JPEG and WebP markers (like APP1), identifying and skipping binary segments that contain sensitive identifiers. This method is significantly faster than re-compression and guarantees zero generational loss."
-              privacyGuarantee="The Privacy & Security model for the Metadata Scrubber is built on the principle of Binary Isolation. No external libraries or third-party APIs are utilized for the scrubbing process. All manipulation occurs within the secure Browser Sandbox Lifecycle. Because we avoid server-side round-trips, the risk of data exfiltration is non-existent. Once you exit the tab, the volatile RAM used to store your image artifact is instantly purged."
+              technicalImplementation="Technically, we avoid the standard 'Canvas Draw' approach for high-fidelity work, instead utilizing the DataView API for direct bitstream manipulation. By traversing the JPEG/WebP markers manually, we can identify and skip binary segments specifically designated for metadata (like EXIF APP1 or IPTC APP13) without re-encoding the image. This prevents the generational loss common in cloud-based tools and ensures that the garbage collection cycle clears every lingering byte of the original sensitive header data from the browser's volatile memory."
+              privacyGuarantee="My Privacy Guarantee revolves around 'Zero-Persistence Heap' architecture. Your source image never interacts with a persistent storage layer or any external API. The entire lifecycle—from binary traversal to sanitized synthesis—occurs in temporary client-side buffers that are vaporized the moment the tab is terminated. We've eliminated the 'network round-trip' entirely, ensuring your photographic footprint is erased at the source."
             />
           </div>
         </main>

@@ -48,6 +48,7 @@ const Footer = () => {
             <ul className="text-sm text-muted-foreground space-y-2">
               <li><Link to="/security-architecture" className="hover:text-primary transition-colors font-medium">Security Deep-Dive</Link></li>
               <li><Link to="/faq" className="hover:text-primary transition-colors font-medium">Technical FAQ</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors font-medium">Contact Support</Link></li>
               <li><Link to="/privacy" className="hover:text-primary transition-colors font-medium">Privacy Policy</Link></li>
             </ul>
           </div>
@@ -101,6 +102,8 @@ const Footer = () => {
           <p className="text-muted-foreground">© 2026 PRIVATEUTILS</p>
           <div className="flex items-center gap-6 text-foreground/70">
             <Link to="/privacy" className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</Link>
+            <div className="h-1 w-1 rounded-full bg-border" />
+            <Link to="/contact" className="hover:text-primary cursor-pointer transition-colors">Contact</Link>
             <div className="h-1 w-1 rounded-full bg-border" />
             <Link to="/terms" className="hover:text-primary cursor-pointer transition-colors">Terms of Use</Link>
           </div>
