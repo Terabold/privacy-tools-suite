@@ -6,6 +6,9 @@ import { useState, useCallback, useEffect } from "react";
  */
 export const useDarkMode = () => {
   const [darkMode, setDarkMode] = useState(() => {
+    // SSR Check: Return false (light mode) by default on the server
+    if (typeof window === "undefined") return false;
+
     // Check localStorage first
     const saved = localStorage.getItem("theme");
     if (saved) return saved === "dark";
