@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { toast } from "sonner";
 import { fetchFile } from "@ffmpeg/util";
@@ -452,11 +453,12 @@ const UniversalMediaConverter = () => {
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                             onClick={() => !processing && inputRef.current?.click()}
-                            className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.02] shadow-inner transition-all duration-300 group/upload"
+                            className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.01] shadow-inner transition-all duration-300 group/upload"
                           >
-                            <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover/upload:scale-110 transition-all">
-                              <CloudUpload className="h-10 w-10 text-primary" />
-                            </div>
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
+                        <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
+                      </div>
                             <div className="px-6 space-y-2">
                               <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
                               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-50">Drag master or click</p>
@@ -487,7 +489,7 @@ const UniversalMediaConverter = () => {
                                     <span className="text-[9px] font-black text-primary uppercase tracking-widest italic">Temporal capture active</span>
                                     <span className="text-2xl font-black text-primary tracking-tighter italic leading-none">{progress}%</span>
                                   </div>
-                                  <Progress value={progress} className="h-2 bg-primary/10 shadow-inner" />
+                                  <Progress value={progress} className="h-2 bg-primary/10 shadow-inner group/dropzone overflow-hidden" />
                                 </div>
                               </div>
                             </div>
@@ -540,7 +542,19 @@ const UniversalMediaConverter = () => {
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none px-1">Target Spec</label>
+                        <div className="flex items-center gap-2 px-1">
+                          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 italic leading-none">Target Spec</label>
+                          <ControlHint
+                            label="Target format"
+                            title="Target Spec"
+                            description="Choose the file container or image format to export."
+                            rows={[
+                              { label: "MP4/WebM", description: "Video containers for playback and sharing." },
+                              { label: "MP3/WAV", description: "Audio-only output for sound extraction." },
+                              { label: "PNG/JPG", description: "Image output when the source can be rasterized." },
+                            ]}
+                          />
+                        </div>
                         <DropdownMenu modal={false}>
                           <DropdownMenuTrigger asChild>
                             <Button

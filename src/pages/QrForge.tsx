@@ -10,6 +10,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -189,7 +190,19 @@ const QrForge = () => {
                     </div>
 
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Artifact Size</label>
+                      <div className="flex items-center gap-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Artifact Size</label>
+                        <ControlHint
+                          label="QR artifact size"
+                          title="Artifact Size"
+                          description="Choose the pixel size of the downloaded QR image."
+                          rows={[
+                            { label: "128", description: "Small UI previews and compact embeds." },
+                            { label: "256", description: "Good default for web pages and documents." },
+                            { label: "512+", description: "Print, posters, or any place the code is scanned far away." },
+                          ]}
+                        />
+                      </div>
                       <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -214,7 +227,20 @@ const QrForge = () => {
                     </div>
 
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Error Shield</label>
+                      <div className="flex items-center gap-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Error Shield</label>
+                        <ControlHint
+                          label="QR error shield"
+                          title="Error Shield"
+                          description="Higher correction survives more damage, but makes the QR pattern denser."
+                          rows={[
+                            { label: "L", description: "Lowest density. Best for clean, simple codes." },
+                            { label: "M", description: "Balanced default for most uses." },
+                            { label: "Q", description: "More resilient for printed or styled codes." },
+                            { label: "H", description: "Maximum recovery. Best when adding logos or expecting wear." },
+                          ]}
+                        />
+                      </div>
                       <div className="grid grid-cols-4 gap-2 bg-zinc-950/40 p-1 rounded-2xl">
                         {['L', 'M', 'Q', 'H'].map((level) => (
                           <button

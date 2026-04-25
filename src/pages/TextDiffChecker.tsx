@@ -16,6 +16,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import { toast } from "sonner";
 import * as Diff from "diff";
 
@@ -282,6 +283,19 @@ const TextDiffChecker = () => {
                             align="end"
                             className="glass-morphism border-primary/20 min-w-[120px] bg-background/95 backdrop-blur-xl shadow-2xl rounded-2xl"
                           >
+                            <div className="flex items-center gap-2 px-3 py-2">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-primary">Diff Mode</span>
+                              <ControlHint
+                                label="Diff mode"
+                                title="Diff Mode"
+                                description="Choose how detailed the comparison should be."
+                                rows={[
+                                  { label: "Lines", description: "Fastest overview for documents and code blocks." },
+                                  { label: "Words", description: "Best for prose edits and sentence changes." },
+                                  { label: "Chars", description: "Most precise view for tiny token differences." },
+                                ]}
+                              />
+                            </div>
                             {["lines", "words", "chars"].map((mode) => (
                               <DropdownMenuItem
                                 key={mode}

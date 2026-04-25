@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { Moon, Sun, Search, X, Video, ImageIcon, Music, ShieldCheck, Wrench, Sparkles, Command, ChevronRight, Terminal, Type, Zap, Coffee, BookOpen, HelpCircle, MessageSquare } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { categoryConfig } from "@/config/categories";
 import { tools, Tool } from "@/components/ToolsGrid";
 import { searchTools } from "@/lib/search";
+import { overlayMotion } from "@/lib/motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,6 +50,7 @@ const Navbar = ({
   const [toolSearchQuery, setToolSearchQuery] = useState("");
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll();
 
   // Identify current category for tool pages
   const currentCategory = useMemo(() => {
@@ -106,27 +108,36 @@ const Navbar = ({
   // Removed redundant SEO logic - now handled by SEOHead.tsx component
 
   return (
-    <header className="global-navbar sticky top-0 z-[100] w-full transition-theme shadow-lg shadow-black/20 overflow-visible">
+    <>
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 z-[200] origin-left"
+        style={{
+          scaleX: scrollYProgress,
+          backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})`,
+          boxShadow: `0 0 10px hsl(${activeTheme?.hsl || 'var(--primary)'} / 0.5)`
+        }}
+      />
+      <header className="global-navbar sticky top-0 z-[100] w-full transition-theme shadow-lg shadow-black/10 overflow-visible">
       {/* 0. Authority Ribbon - Professional SaaS Tier (Desktop Only) */}
       <div className="hidden lg:flex w-full bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-1.5 px-8">
         <div className="container mx-auto max-w-[1500px] flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link to="/about" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">The Mission</Link>
-            <Link to="/technical-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Engine Architecture</Link>
-            <Link to="/security-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Security Protocols</Link>
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">The Mission</Link>
+            <Link to="/technical-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Engine Architecture</Link>
+            <Link to="/security-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Security Protocols</Link>
           </div>
           <div className="flex items-center gap-6">
-            <Link to="/faq" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Technical FAQ</Link>
-            <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors no-underline">Contact Support</Link>
+            <Link to="/faq" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Technical FAQ</Link>
+            <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Contact Support</Link>
           </div>
         </div>
       </div>
 
-      <div className="bg-background/80 backdrop-blur-xl border-b border-white/5 py-1.5 w-full">
+      <div className="bg-background/[0.82] backdrop-blur-xl border-b border-border/50 py-1.5 w-full">
         <div className="container mx-auto px-4 lg:px-8 max-w-[1500px] flex flex-col gap-2">
 
           {/* Tier 1: Brand & Absolute Center Actions */}
-          <div className="flex items-center justify-between gap-4 lg:gap-12 w-full h-[50px] lg:h-[65px] relative">
+          <div className="flex items-center justify-between gap-4 lg:gap-12 w-full h-[45px] lg:h-[55px] relative">
 
             {/* Left: Branding & Mobile Resource Trigger */}
             <div className="flex items-center gap-2 lg:gap-3 justify-start min-w-0">
@@ -136,7 +147,7 @@ const Navbar = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      aria-label="Engineering Hub Menu"
+                      aria-label="Dev/Code Hub Menu"
                       className="rounded-xl bg-primary/5 hover:bg-primary/10 border border-white/5 h-9 w-9 shadow-inner"
                     >
                       <BookOpen className="h-4 w-4 text-primary" />
@@ -146,7 +157,7 @@ const Navbar = ({
                     align="start"
                     className="w-56 bg-zinc-950/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 z-[110]"
                   >
-                    <div className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-primary/60 italic">Engineering Hub</div>
+                    <div className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-primary/60 italic">Dev/Code Hub</div>
                     <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
                       <Link to="/insights" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
                         <Zap className="h-3.5 w-3.5 text-primary" />
@@ -223,16 +234,16 @@ const Navbar = ({
                     }
                     setShowSearchOverlay(true);
                   }}
-                  className="h-11 w-full pl-11 pr-10 text-sm font-semibold bg-zinc-100 dark:bg-white/5 border-zinc-200/50 dark:border-white/5 text-muted-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-primary/20 transition-theme shadow-sm"
+                  className="premium-control h-11 w-full pl-11 pr-10 text-sm font-semibold text-muted-foreground placeholder:text-muted-foreground/40 focus-visible:ring-primary/20"
                 />
                 <AnimatePresence>
                   {showSearchOverlay && filteredSearchResults.length > 0 && (
                     <motion.div 
-                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute top-12 left-0 right-0 bg-card/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-[110]"
+                      variants={overlayMotion}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="absolute top-12 left-0 right-0 premium-surface bg-card/95 rounded-2xl overflow-hidden z-[110]"
                     >
                       <div className="p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
                         {filteredSearchResults.map(tool => (
@@ -240,10 +251,10 @@ const Navbar = ({
                             key={tool.to}
                             to={tool.to}
                             onClick={() => setShowSearchOverlay(false)}
-                            className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-theme text-left group/result border border-transparent hover:border-white/5 no-underline"
+                            className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-theme text-left group/result border border-transparent hover:border-primary/10 no-underline focus-premium"
                           >
                             <div
-                              className={`h-9 w-9 rounded-xl flex items-center justify-center group-hover/result:scale-110 transition-transform shadow-lg shadow-black/10 flex-shrink-0 bg-gradient-to-br ${categoryConfig[tool.category]?.gradient || "from-primary to-accent"}`}
+                              className={`h-9 w-9 rounded-xl flex items-center justify-center group-hover/result:scale-105 transition-theme shadow-md shadow-black/10 flex-shrink-0 bg-gradient-to-br ${categoryConfig[tool.category]?.gradient || "from-primary to-accent"}`}
                             >
                               <div className="h-5 w-5 flex items-center justify-center text-white">
                                 {tool.icon}
@@ -269,7 +280,7 @@ const Navbar = ({
                 href="https://ko-fi.com/privateutils"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-3 lg:px-4 h-9 lg:h-10 rounded-xl bg-primary text-primary-foreground font-black text-[9px] uppercase tracking-[0.15em] shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all outline-none"
+                className="flex items-center justify-center gap-2 px-3 lg:px-4 h-9 lg:h-10 rounded-xl bg-primary text-primary-foreground font-black text-[9px] uppercase tracking-[0.15em] shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:opacity-95 active:scale-95 transition-theme focus-premium"
                 title="Support the Project"
               >
                 <Coffee className="h-4 w-4 lg:animate-pulse" />
@@ -311,7 +322,7 @@ const Navbar = ({
                   }
                   setShowSearchOverlay(true);
                 }}
-                className="h-9 w-full pl-10 pr-10 text-xs font-semibold bg-zinc-100 dark:bg-white/5 border-zinc-200/50 dark:border-white/5 transition-theme rounded-xl"
+                className="premium-control h-9 w-full pl-10 pr-10 text-xs font-semibold"
               />
             </div>
 
@@ -333,18 +344,15 @@ const Navbar = ({
                             "--border-glow": `hsl(${theme.hsl} / 0.2)`,
                             backgroundColor: isActive ? `hsl(${theme.hsl})` : undefined
                           } as React.CSSProperties}
-                          className={`px-2 lg:px-3 py-1 rounded-lg font-black text-[8px] lg:text-[10px] uppercase tracking-tighter transition-all flex items-center gap-1 border whitespace-nowrap transition-theme h-6.5 lg:h-8 ${isActive
-                            ? "text-white shadow-md scale-105 border-white/20"
-                            : "text-muted-foreground hover:text-foreground bg-zinc-100 dark:bg-white/5 border-white/5 hover:border-[var(--border-glow)] hover:shadow-[0_0_15px_var(--glow-color)] shadow-sm"
+                          className={`relative overflow-hidden group/nav-btn px-2 lg:px-3 py-1 rounded-lg font-black text-[8px] lg:text-[10px] uppercase tracking-tighter flex items-center gap-1 border whitespace-nowrap transition-theme h-6.5 lg:h-8 focus-premium ${isActive
+                            ? "text-white shadow-md scale-[1.03] border-white/20"
+                            : "text-muted-foreground hover:text-foreground bg-zinc-100 dark:bg-white/5 border-white/5 hover:border-[var(--border-glow)] hover:shadow-[0_0_15px_-3px_var(--glow-color)] shadow-sm hover:-translate-y-0.5"
                             }`}
-                          onClick={() => {
-                            if (isHomePage && setSelectedCategory) {
-                              setSelectedCategory(category);
-                            }
-                          }}
+
                         >
-                          <Icon className="h-[clamp(9px,1.5vw,14px)] w-[clamp(9px,1.5vw,14px)]" style={{ color: isActive ? 'white' : `hsl(${theme.hsl})` }} />
-                          <span className="leading-none">{category}</span>
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[150%] group-hover/nav-btn:translate-x-[150%] transition-transform duration-700 ease-in-out" />
+                          <Icon className="h-[clamp(9px,1.5vw,14px)] w-[clamp(9px,1.5vw,14px)] relative z-10" style={{ color: isActive ? 'white' : `hsl(${theme.hsl})` }} />
+                          <span className="leading-none relative z-10">{category}</span>
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="center" className="w-[320px] bg-card/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 z-[110]">
@@ -373,6 +381,7 @@ const Navbar = ({
         </div>
       </div>
     </header>
+    </>
   );
 };
 

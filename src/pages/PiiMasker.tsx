@@ -11,6 +11,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
+import ControlHint from "@/components/ControlHint";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
@@ -343,7 +344,19 @@ const PiiMasker = () => {
                                 <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
                               </div>
                               <div className="shrink-0">
-                                <Label htmlFor="pii-blur-strength-slider" className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none hidden sm:block cursor-pointer">Intensity</Label>
+                                <div className="hidden sm:flex items-center gap-2">
+                                  <Label htmlFor="pii-blur-strength-slider" className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none cursor-pointer">Intensity</Label>
+                                  <ControlHint
+                                    label="Redaction intensity"
+                                    title="Redaction Intensity"
+                                    description="Controls how strongly selected image areas are hidden."
+                                    rows={[
+                                      { label: "Low", description: "Softer blur for non-critical visual cleanup." },
+                                      { label: "High", description: "Stronger privacy protection for faces, IDs, and text." },
+                                      { label: "Blackout", description: "Ignores blur intensity and fully blocks the region." },
+                                    ]}
+                                  />
+                                </div>
                                 <p className="text-[8px] lg:text-[9px] font-black text-muted-foreground uppercase opacity-40 leading-none mt-1.5 lg:mt-2">Redaction</p>
                               </div>
                               <div className="w-24 sm:w-32 lg:w-48 shrink-0">
@@ -371,6 +384,16 @@ const PiiMasker = () => {
                         </div>
 
                         {/* Mode Toggles (Blur / Blackout) */}
+                        <div className="flex items-center gap-2">
+                        <ControlHint
+                          label="Redaction style"
+                          title="Redaction Style"
+                          description="Choose whether selected regions are softened or fully blocked."
+                          rows={[
+                            { label: "Blur", description: "Hides detail while keeping the image visually natural." },
+                            { label: "Blackout", description: "Creates a solid block for maximum certainty." },
+                          ]}
+                        />
                         <div className="flex bg-black/40 p-1 lg:p-1.5 rounded-xl border border-white/10 shrink-0 shadow-inner group/mode">
                           {(["blur", "black"] as const).map(s => (
                             <Button
@@ -383,6 +406,7 @@ const PiiMasker = () => {
                               {s === "blur" ? "Blur" : "Blackout"}
                             </Button>
                           ))}
+                        </div>
                         </div>
                       </div>
 

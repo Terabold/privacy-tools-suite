@@ -287,11 +287,12 @@ const FrameExtractor = () => {
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                           onClick={() => inputRef.current?.click()}
-                          className="relative w-full h-full flex-1 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all duration-300 cursor-pointer bg-primary/5 hover:border-primary/40 hover:bg-primary/10 hover:scale-[1.02] shadow-inner"
+                          className="relative w-full h-full flex-1 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all duration-300 cursor-pointer bg-primary/5 hover:border-primary/40 hover:bg-primary/10 hover:scale-[1.01] shadow-inner group/dropzone overflow-hidden"
                         >
-                          <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 transition-transform">
-                            <CloudUpload className="h-8 w-8 text-primary" />
-                          </div>
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
+                        <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
+                      </div>
                           <div className="px-6 space-y-1">
                             <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
                             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40 italic">Drag master or click</p>
@@ -368,7 +369,7 @@ const FrameExtractor = () => {
                         <div className="w-full glass-morphism border-primary/10 bg-primary/5 p-3 md:p-4 rounded-2xl space-y-3 shadow-2xl studio-gradient border-border/20">
                           <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between gap-4">
-                              <div className="flex bg-background/40 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner">
+                              <div className="flex bg-background/40 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner group/dropzone overflow-hidden">
                                 <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.0333) }} className="h-10 w-10 text-muted-foreground hover:text-primary transition-colors">
                                   <ChevronLeft className="h-5 w-5" />
                                 </Button>
@@ -394,13 +395,13 @@ const FrameExtractor = () => {
                               <Button
                                 onClick={captureFrame}
                                 disabled={processing}
-                                className="flex-1 max-w-[200px] h-11 rounded-xl bg-secondary text-secondary-foreground font-bold italic uppercase tracking-tighter shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all gap-3 border-b-2 active:border-b-0 active:translate-y-0.5 relative overflow-x-clip group/btn px-4"
+                                className="flex-1 max-w-[200px] h-11 rounded-xl bg-secondary text-secondary-foreground font-bold italic uppercase tracking-tighter shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all gap-3 border-b-2 active:border-b-0 active:translate-y-0.5 relative overflow-x-clip group/btn px-4"
                               >
                                 <Scan className={`h-4 w-4 relative z-10 ${processing ? "animate-spin" : ""}`} />
                                 <span className="relative z-10">Capture Instance</span>
                               </Button>
 
-                              <div className="hidden sm:flex items-center gap-2 shrink-0 bg-background/40 px-3 py-2 rounded-xl border border-white/5 shadow-inner">
+                              <div className="hidden sm:flex items-center gap-2 shrink-0 bg-background/40 px-3 py-2 rounded-xl border border-white/5 shadow-inner group/dropzone overflow-hidden">
                                 <span className="text-lg font-bold italic tracking-tighter text-primary font-mono">{displayTime.toFixed(3)}s</span>
                               </div>
                             </div>
@@ -594,7 +595,7 @@ const FrameExtractor = () => {
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                       {frames.map((frame) => (
-                        <Card key={frame.id} className="relative group/card overflow-x-clip bg-card border border-white/5 hover:border-primary/50 transition-all shadow-2xl rounded-2xl flex flex-col h-full hover:scale-[1.02] duration-300">
+                        <Card key={frame.id} className="relative group/card overflow-x-clip bg-card border border-white/5 hover:border-primary/50 transition-all shadow-2xl rounded-2xl flex flex-col h-full hover:scale-[1.01] duration-300">
                           <div className="aspect-video relative overflow-x-clip shrink-0">
                             <img src={frame.url} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" alt={`Capture at ${frame.time}s`} />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover/card:opacity-100 transition-opacity pointer-events-none" />

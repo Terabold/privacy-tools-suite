@@ -8,6 +8,8 @@ import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import { motion } from "framer-motion";
+import { revealContainer, revealItem } from "@/lib/motion";
 
 
 interface IndexProps {
@@ -74,28 +76,34 @@ const Index = ({
         
         {/* Left Sponsor Sidebar */}
         <SponsorSidebars position="left" />
-        <main className="container mx-auto max-w-[1240px] px-6 pt-6 pb-10 lg:pt-8 lg:pb-16 grow overflow-visible">
+        <main className="container mx-auto max-w-[1240px] px-6 pt-2 pb-6 lg:pt-4 lg:pb-10 grow overflow-visible">
           {/* Compact Hero Section */}
-          <section id="hero" className="text-center mb-8 relative animate-in fade-in duration-1000">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full -z-10" />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground font-display mb-4 leading-[0.9]">
+          <motion.section
+            id="hero"
+            variants={revealContainer}
+            initial="hidden"
+            animate="visible"
+            className="text-center mb-4 relative"
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[96px] rounded-full -z-10" />
+            <motion.h1 variants={revealItem} className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter text-foreground font-display mb-4 leading-[0.9]">
               Private<span className="text-primary italic">Utils</span> <br className="hidden sm:block" /> 
               <span className="text-xl md:text-3xl opacity-30 uppercase tracking-[0.3em] font-sans not-italic">Universal Engineering Suite</span>
-            </h1>
-            <p className="mx-auto max-w-xl text-xs md:text-sm text-muted-foreground leading-relaxed font-medium">
+            </motion.h1>
+            <motion.p variants={revealItem} className="mx-auto max-w-xl text-xs md:text-sm text-muted-foreground leading-relaxed font-medium">
                Hardware-accelerated tools running 100% locally. No servers. No logs.
-            </p>
-          </section>
+            </motion.p>
+          </motion.section>
 
           {/* Dashboard Category Filters (Compact & Responsive) */}
-          <div className="sticky top-[80px] z-[40] bg-background/80 backdrop-blur-2xl border-y border-primary/10 -mx-6 px-6 py-2 mb-10 shadow-2xl shadow-black/5">
+          <div className="sticky top-[70px] z-[40] bg-background/[0.84] backdrop-blur-2xl border-y border-primary/10 -mx-6 px-6 py-2 mb-6 shadow-lg shadow-black/5">
             <div className="max-w-[1240px] mx-auto flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
               <button
                 onClick={() => setSelectedCategory(null)}
-                className={`whitespace-nowrap px-3 md:px-4 py-1.5 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] border transition-all flex items-center gap-1.5 md:gap-2 ${
+                className={`whitespace-nowrap px-3 md:px-4 py-1.5 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] border transition-theme focus-premium flex items-center gap-1.5 md:gap-2 ${
                   !selectedCategory 
                   ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 ring-1 ring-primary/20" 
-                  : "bg-primary/5 border-primary/10 text-primary/60 hover:bg-primary/10 hover:text-primary"
+                  : "bg-primary/5 border-primary/10 text-primary/60 hover:bg-primary/10 hover:text-primary hover:-translate-y-0.5"
                 }`}
               >
                 <LayoutGrid className="h-3 w-3 md:h-3.5 md:w-3.5 opacity-70" />
@@ -105,10 +113,10 @@ const Index = ({
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`whitespace-nowrap px-3 md:px-4 py-1.5 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] border transition-all flex items-center gap-1.5 md:gap-2 ${
+                  className={`whitespace-nowrap px-3 md:px-4 py-1.5 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] border transition-theme focus-premium flex items-center gap-1.5 md:gap-2 ${
                     selectedCategory === cat
                     ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 ring-1 ring-primary/20"
-                    : "bg-primary/5 border-primary/10 text-primary/60 hover:bg-primary/10 hover:text-primary"
+                    : "bg-primary/5 border-primary/10 text-primary/60 hover:bg-primary/10 hover:text-primary hover:-translate-y-0.5"
                   }`}
                 >
                   <span className="opacity-70">{getCategoryIcon(cat)}</span>
@@ -139,8 +147,15 @@ const Index = ({
           </div>
 
           {/* Privacy Manifesto Section (Universal Focal Point) */}
-          <section id="privacy-manifesto" className="py-28 px-12 rounded-[2rem] bg-muted/30 dark:bg-zinc-950 text-foreground border border-primary/20 shadow-[0_0_100px_-20px_rgba(var(--primary),0.15)] relative overflow-hidden group mb-32 hover-glow transition-all duration-700">
-             <div className="absolute top-0 right-0 p-12 opacity-[0.07] dark:opacity-[0.08] scale-150 rotate-12 group-hover:scale-[2] transition-transform duration-1000 text-primary pointer-events-none">
+          <motion.section
+            id="privacy-manifesto"
+            variants={revealItem}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-120px" }}
+            className="py-28 px-12 rounded-2xl premium-panel text-foreground relative overflow-hidden group mb-32"
+          >
+             <div className="absolute top-0 right-0 p-12 opacity-[0.06] dark:opacity-[0.07] scale-150 rotate-12 group-hover:scale-[1.75] transition-theme text-primary pointer-events-none">
                 <ShieldCheck className="h-60 w-60" />
               </div>
               
@@ -169,34 +184,41 @@ const Index = ({
                     </div>
                  </div>
               </div>
-           </section>
+           </motion.section>
 
           {/* Benefits Grid */}
-          <section id="benefits" className="grid grid-cols-1 md:grid-cols-3 gap-12 py-12 mb-16">
-            <div className="flex flex-col items-center text-center p-6 studio-gradient rounded-2xl hover-glow transition-all duration-300">
+          <motion.section
+            id="benefits"
+            variants={revealContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-12 py-12 mb-16"
+          >
+            <motion.div variants={revealItem} className="flex flex-col items-center text-center p-6 studio-gradient rounded-2xl interactive-lift">
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8 border border-primary/20">
                 <ShieldCheck className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold mb-4 tracking-tight uppercase">Air-Gapped Privacy</h3>
               <p className="text-muted-foreground text-sm leading-relaxed italic font-medium">Files remain in your local workspace</p>
-            </div>
+            </motion.div>
             
-            <div className="flex flex-col items-center text-center p-6 studio-gradient rounded-2xl hover-glow transition-all duration-300">
+            <motion.div variants={revealItem} className="flex flex-col items-center text-center p-6 studio-gradient rounded-2xl interactive-lift">
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8 border border-primary/20">
                 <Zap className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold mb-4 tracking-tight uppercase">GPU Accelerated</h3>
               <p className="text-muted-foreground text-sm leading-relaxed italic font-medium">Parallel hardware rendering</p>
-            </div>
+            </motion.div>
             
-            <div className="flex flex-col items-center text-center p-6 studio-gradient rounded-2xl hover-glow transition-all duration-300">
+            <motion.div variants={revealItem} className="flex flex-col items-center text-center p-6 studio-gradient rounded-2xl interactive-lift">
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8 border border-primary/20">
                 <Lock className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold mb-4 tracking-tight uppercase">Encrypted Exit</h3>
               <p className="text-muted-foreground text-sm leading-relaxed italic font-medium">Memory is wiped on session end</p>
-            </div>
-          </section>
+            </motion.div>
+          </motion.section>
           
           {/* Platform Navigation Hub: Quick-Access Footer Links */}
           <section id="platform-hub" className="mb-32 mt-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">

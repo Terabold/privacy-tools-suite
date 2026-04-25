@@ -164,11 +164,12 @@ const MetadataScrubber = () => {
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                             onClick={() => !processing && inputRef.current?.click()}
-                            className="relative w-full h-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/40 hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                            className="relative w-full h-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-background/40 hover:border-primary/40 hover:bg-primary/5 shadow-inner group/dropzone overflow-hidden"
                           >
-                            <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner group-hover/drop:scale-110 transition-transform">
-                              <CloudUpload className="h-10 w-10 text-primary" />
-                            </div>
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
+                        <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
+                      </div>
                             <div className="px-6 space-y-1">
                               <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Upload Photo</p>
                               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">Drag or click to browse</p>
@@ -313,7 +314,7 @@ const MetadataScrubber = () => {
                           <Button
                             onClick={scrubMetadata}
                             disabled={processing || scrubbed}
-                            className="w-full gap-3 h-16 text-xs font-black rounded-2xl shadow-xl shadow-primary/10 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase italic"
+                            className="w-full gap-3 h-16 text-xs font-black rounded-2xl shadow-xl shadow-primary/10 hover:scale-[1.01] active:scale-[0.98] transition-all uppercase italic"
                           >
                             {scrubbed ? <FileCheck className="h-4 w-4" /> : <ShieldX className="h-4 w-4" />}
                             {processing ? "Cleaning..." : scrubbed ? "Verified Clean" : "Remove Metadata"}
@@ -324,7 +325,7 @@ const MetadataScrubber = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-20 text-center bg-background/20 rounded-xl border border-dashed border-primary/10 shadow-inner">
+                      <div className="flex flex-col items-center justify-center py-20 text-center bg-background/20 rounded-xl border border-dashed border-primary/10 shadow-inner group/dropzone overflow-hidden">
                         <Smartphone className="h-10 w-10 text-primary mb-6 opacity-20" />
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 px-6">Load Photo</p>
                         <p className="text-[9px] mt-4 max-w-[200px] leading-relaxed opacity-30 uppercase font-black tracking-tighter italic px-6">Bit-draw bypasses EXIF/XMP/IPTC headers entirely.</p>

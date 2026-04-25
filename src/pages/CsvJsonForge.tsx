@@ -8,6 +8,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 
@@ -267,7 +268,20 @@ const CsvJsonForge = () => {
                      <div className="space-y-10">
                         {/* Control Bar */}
                         <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-border dark:border-white/10 p-4 rounded-2xl shadow-lg dark:shadow-2xl backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-                           <div className="flex gap-2.5">
+                           <div className="flex flex-col gap-2.5">
+                              <div className="flex items-center gap-2 px-1">
+                                 <span className="text-[9px] font-black uppercase tracking-widest text-primary">Conversion Direction</span>
+                                 <ControlHint
+                                    label="Conversion direction"
+                                    title="Conversion Direction"
+                                    description="Choose the parser and output serializer."
+                                    rows={[
+                                       { label: "CSV -> JSON", description: "Reads rows and headers, then creates structured records." },
+                                       { label: "JSON -> CSV", description: "Flattens objects into spreadsheet-friendly columns." },
+                                    ]}
+                                 />
+                              </div>
+                              <div className="flex gap-2.5">
                               <button
                                  onClick={() => setMode('csv2json')}
                                  className={`px-8 py-4 rounded-xl border transition-all font-black uppercase tracking-widest text-[10px] flex items-center gap-2.5 ${mode === 'csv2json' ? 'bg-primary text-primary-foreground border-primary shadow-xl dark:shadow-2xl shadow-primary/20 dark:shadow-primary/30 scale-105' : 'bg-muted dark:bg-black/40 border-transparent dark:border-white/5 text-muted-foreground hover:bg-muted/80 dark:hover:bg-white/5'
@@ -282,6 +296,7 @@ const CsvJsonForge = () => {
                               >
                                  <FileJson className="h-4 w-4" /> JSON to CSV
                               </button>
+                              </div>
                            </div>
 
                            <div className="flex gap-2">

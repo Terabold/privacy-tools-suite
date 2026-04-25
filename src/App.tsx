@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useEffect } from "react";
 import { preloadFFmpeg } from "@/lib/ffmpegSingleton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Routes, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +14,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { tools } from "./components/ToolsGrid";
 import { categoryConfig } from "./config/categories";
 import Navbar from "./components/Navbar";
+import PageTransition from "./components/PageTransition";
+import GlobalControlHelp from "./components/GlobalControlHelp";
 
 const queryClient = new QueryClient();
 
@@ -163,6 +165,7 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <GlobalControlHelp />
         <ScrollToTop />
         <RedirectHandler />
         <SEOHead />
@@ -181,560 +184,260 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
                 <AnimatePresence mode="wait">
                 <Routes location={location} key={location.pathname}>
                   <Route path="/" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <Index 
                         searchQuery={searchQuery}
                         setSearchQuery={handleSetSearchQuery}
                         selectedCategory={selectedCategory}
                         setSelectedCategory={handleSetCategory}
                       />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/universal-volume-booster" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Volume Booster"><UniversalVolumeBooster /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/text-case-formatter" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Text Case Formatter"><TextCaseFormatter /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/image-color-extractor" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Image Color Extractor"><ImageColorExtractor /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/universal-media-converter" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Media Converter"><UniversalMediaConverter /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/image-compressor" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Image Compressor"><ImageCompressor /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/perspective-tilter" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="3D Image Tilt"><PerspectiveTilter /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/youtube-thumbnail-hub" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="YouTube Thumbnail Hub"><YouTubeThumbnailHub /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/sprite-studio" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Sprite Studio"><SpriteStudio /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/audio-trimmer" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Audio Trimmer"><AudioTrimmer /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/metadata-scrubber" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Metadata Scrubber"><MetadataScrubber /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/video-to-gif" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Video to GIF"><VideoToGif /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/frame-extractor" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Frame Extractor"><FrameExtractor /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/video-aspect-studio" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Video Aspect Studio"><VideoAspectStudio /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/json-studio" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="JSON Formatter"><JsonForge /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/data-transformer" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Data Transformer"><CsvJsonForge /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/qr-forge" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="QR Forge"><QrForge /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/pii-masker" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="PII Masker"><PiiMasker /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/svg-optimizer" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="SVG Optimizer"><SvgOptimizer /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/svg-to-image" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="SVG to Image"><SvgToImage /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/image-to-pdf" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Image to PDF"><ImageToPdf /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/text-diff-checker" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Text Diff Checker"><TextDiffChecker /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/quick-clipboard" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Quick Clipboard"><QuickClipboardHub /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/clipboard" element={<Navigate to="/quick-clipboard" replace />} />
                   <Route path="/jwt-decoder" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="JWT Decoder"><JwtDecoder /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/encoder-decoder" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Encoder / Decoder"><EncoderDecoder /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/timestamp-converter" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Timestamp Converter"><TimestampConverter /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/regex-playground" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Regex Playground"><RegexPlayground /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/lorem-generator" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Lorem Generator"><LoremGenerator /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/password-generator" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Password Generator"><PasswordGenerator /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/palette-studio" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Palette Studio"><ColorPaletteGenerator /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/hash-lab" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Hash Lab"><HashLab /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/unit-converter" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Unit Converter"><UnitConverter /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/base64-image" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Image to Base64"><Base64Image /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/reverse-audio" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Reverse Audio"><ReverseAudio /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/binary-to-audio" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Binary to Audio"><BinaryToAudio /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/audio-mono-stereo" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Audio Mono / Stereo"><AudioMonoStereo /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/audio-bass-booster" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Audio Bass Booster"><BassBooster /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/privacy" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <PrivacyPolicy />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/terms" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <TermsOfUse />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/morse-code-master" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Morse Code Master"><MorseCodeMaster /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/slug-forge" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Slug Forge"><SlugForge /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/whitespace-scrubber" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Whitespace Scrubber"><WhitespaceScrubber /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/svg-to-ico" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="SVG to ICO"><SvgToIco /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/dice-lab" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <ErrorBoundary toolName="Dice Lab"><DiceLab /></ErrorBoundary>
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/security-architecture" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <SecurityArchitecture />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/technical-architecture" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <TechnicalArchitecture />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/about" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <AboutProject />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/contact" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <Contact />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/insights" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <Insights />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="/faq" element={
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="page-motion-wrapper"
-                    >
+                    <PageTransition>
                       <Faq />
-                    </motion.div>
+                    </PageTransition>
                   } />
                   <Route path="*" element={<NotFound />} />
                   <Route path="/word-counter" element={<WordCounter />} />

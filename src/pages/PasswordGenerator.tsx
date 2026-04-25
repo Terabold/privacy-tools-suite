@@ -8,6 +8,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 
 const CHARS = {
   upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -211,6 +212,21 @@ const PasswordGenerator = () => {
                       </div>
                     </div>
 
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Character Sets</p>
+                        <ControlHint
+                          label="Character sets"
+                          title="Character Sets"
+                          description="Choose which character pools the generator may use."
+                          rows={[
+                            { label: "Upper", description: "Adds A-Z letters. Often required by older password rules." },
+                            { label: "Lower", description: "Adds a-z letters. Good baseline readability." },
+                            { label: "Numbers", description: "Adds 0-9 digits. Improves entropy and compatibility." },
+                            { label: "Symbols", description: "Adds punctuation. Stronger, but some sites reject symbols." },
+                          ]}
+                        />
+                      </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {[
                         { key: 'upper', label: 'Uppercase', icon: <Type className="h-3 w-3" />, chars: 'A-Z' },
@@ -240,6 +256,7 @@ const PasswordGenerator = () => {
                           </div>
                         </button>
                       ))}
+                    </div>
                     </div>
                   </CardContent>
                 </Card>

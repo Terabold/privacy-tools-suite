@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { smoothSpring } from "@/lib/motion";
 
 interface ToolCardProps {
   title: string;
@@ -12,30 +13,31 @@ interface ToolCardProps {
 }
 
 const ToolCard = ({ title, description, icon, to, gradient = "from-primary to-accent", themeClass }: ToolCardProps) => {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
-    <Link to={to} className={`group/card-link block h-full select-none cursor-pointer ${themeClass}`}>
+    <Link to={to} className={`group/card-link block h-full select-none cursor-pointer rounded-2xl focus-premium ${themeClass}`}>
       <motion.div
-        whileHover={{ 
-          y: -8,
-          scale: 1.02,
-          transition: { duration: 0.3, ease: "easeOut" }
-        }}
-        whileTap={{ scale: 0.98 }}
-        className="h-full"
+        whileHover={prefersReducedMotion ? undefined : { y: -6, scale: 1.012 }}
+        whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
+        transition={smoothSpring}
+        className="h-full relative"
       >
-        <Card className={`h-full border-border/50 bg-white/5 dark:bg-zinc-900/60 hover:bg-white/10 dark:hover:bg-zinc-800/80 transition-theme rounded-xl overflow-hidden relative z-30 group-hover/card-link:border-primary/50 group-hover/card-link:shadow-glow opacity-95 hover:opacity-100 dark:backdrop-blur-md border dark:border-white/20 dark:ring-1 dark:ring-white/5`}>
+        <div className={`absolute -inset-0.5 bg-gradient-to-tr ${gradient} opacity-0 group-hover/card-link:opacity-20 blur-xl transition-all duration-500 rounded-[20px] -z-10`} />
+        <Card className="h-full overflow-hidden relative z-30 rounded-2xl opacity-95 group-hover/card-link:opacity-100 group-hover/card-link:border-primary/35 group-hover/card-link:bg-primary/[0.035] dark:ring-1 dark:ring-white/5">
+          <div className={`absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br ${gradient} opacity-0 blur-3xl transition-theme group-hover/card-link:opacity-20`} />
           <CardHeader className="pt-8 pb-6 px-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${gradient} text-white shadow-lg shadow-black/20 group-hover/card-link:scale-110 transition-transform duration-500`}>
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-white shadow-lg shadow-black/15 transition-theme group-hover/card-link:scale-105 group-hover/card-link:shadow-primary/20`}>
                 <div className="h-5 w-5 flex items-center justify-center">
                   {icon}
                 </div>
               </div>
-              <CardTitle className="text-lg font-black uppercase tracking-tight font-display text-foreground group-hover/card-link:text-[hsl(var(--primary))] group-hover/card-link:text-shadow-glow transition-all duration-300 line-clamp-2 min-h-[2.5rem] flex items-center">
+              <CardTitle className="text-lg font-black uppercase tracking-tight font-display text-foreground group-hover/card-link:text-[hsl(var(--primary))] transition-theme line-clamp-2 min-h-[2.5rem] flex items-center">
                 {title}
               </CardTitle>
             </div>
-            <CardDescription className="text-sm font-medium leading-relaxed opacity-80 italic group-hover/card-link:opacity-100 transition-opacity line-clamp-2 min-h-[2.8rem]">
+            <CardDescription className="text-sm font-medium leading-relaxed opacity-80 italic group-hover/card-link:opacity-100 transition-theme line-clamp-2 min-h-[2.8rem]">
               {description}
             </CardDescription>
           </CardHeader>

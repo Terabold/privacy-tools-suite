@@ -9,6 +9,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
@@ -395,7 +396,18 @@ const AudioMonoStereo = () => {
                   </div>
                   <CardContent className="p-8 space-y-8">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground leading-none">Mapping Mode</label>
+                      <div className="flex items-center gap-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground leading-none">Mapping Mode</label>
+                        <ControlHint
+                          label="Audio mapping mode"
+                          title="Mapping Mode"
+                          description="Choose how audio channels are rebuilt."
+                          rows={[
+                            { label: "Mono -> Stereo", description: "Copies one channel into left and right for wider compatibility." },
+                            { label: "Stereo -> Mono", description: "Combines left and right into one centered channel." },
+                          ]}
+                        />
+                      </div>
                       <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button

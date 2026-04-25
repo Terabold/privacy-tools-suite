@@ -14,6 +14,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 
 import JSZip from "jszip";
 import { usePasteFile } from "@/hooks/usePasteFile";
@@ -667,6 +668,15 @@ const SpriteStudio = () => {
 
                     <div className="p-5 pb-5 overflow-y-auto custom-scrollbar grow">
                       <div className="flex bg-primary/5 backdrop-blur-md p-2 rounded-xl border border-primary/10 gap-2 shadow-inner mb-4">
+                        <ControlHint
+                          label="Slice mode"
+                          title="Slice Mode"
+                          description="Choose how sprite regions are created."
+                          rows={[
+                            { label: "Manual", description: "Draw irregular regions by hand." },
+                            { label: "Grid", description: "Generate uniform slices from rows, columns, or pixel dimensions." },
+                          ]}
+                        />
                         <button onClick={() => setMode("manual")} className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-2xl transition-all ${mode === "manual" ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:bg-primary/10"}`}>Manual</button>
                         <button onClick={() => setMode("grid")} className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-2xl transition-all ${mode === "grid" ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:bg-primary/10"}`}>Grid</button>
                       </div>
@@ -693,6 +703,15 @@ const SpriteStudio = () => {
                         {mode === "grid" && (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 animate-in slide-in-from-top-4 duration-500">
                             <div className="flex bg-primary/5 backdrop-blur-md p-1.5 rounded-xl border border-primary/10 shadow-inner mb-2">
+                              <ControlHint
+                                label="Grid engine"
+                                title="Grid Engine"
+                                description="Choose how the grid calculates each sprite."
+                                rows={[
+                                  { label: "Fixed", description: "Uses row and column counts, then divides the image evenly." },
+                                  { label: "Pixel", description: "Uses exact cell width and height, then fits as many cells as possible." },
+                                ]}
+                              />
                               <button onClick={() => setGridMode("count")} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all ${gridMode === "count" ? "bg-primary text-white shadow-md font-bold" : "text-muted-foreground hover:text-primary"}`}>Fixed</button>
                               <button onClick={() => setGridMode("pixel")} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all ${gridMode === "pixel" ? "bg-primary text-white shadow-md font-bold" : "text-muted-foreground hover:text-primary"}`}>Pixel</button>
                             </div>

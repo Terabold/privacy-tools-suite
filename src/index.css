@@ -129,6 +129,13 @@
     --input: 240 10% 90%;
     --ring: 250 85% 60%;
     --radius: 0.75rem;
+    --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 160ms;
+    --duration-medium: 280ms;
+    --duration-slow: 520ms;
+    --shadow-premium: 0 18px 55px -34px hsl(var(--foreground) / 0.45);
+    --shadow-premium-hover: 0 26px 70px -36px hsl(var(--primary) / 0.42);
 
     /* Global Scroll-Lock Stability Override */
     /* Prevents libraries like Radix from adding padding-right by nullifying the detected scrollbar size */
@@ -261,7 +268,7 @@
     @apply bg-background text-foreground antialiased text-[16px] pb-20 md:pb-0;
     font-family: 'Outfit', sans-serif;
     width: 100% !important;
-    transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out, border-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    transition: background-color var(--duration-slow) var(--ease-standard), color var(--duration-slow) var(--ease-standard), border-color var(--duration-slow) var(--ease-standard), box-shadow var(--duration-slow) var(--ease-standard);
   }
 
   /* Absolute Layout stability for Radix Modals */
@@ -314,36 +321,66 @@
 
 @layer utilities {
   .glass-morphism {
-    @apply backdrop-blur-md bg-white/70 dark:bg-black/40 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 dark:shadow-none;
-    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    @apply backdrop-blur-md bg-white/75 dark:bg-black/35 border border-black/5 dark:border-white/5 shadow-lg shadow-black/5 dark:shadow-black/20;
+    transition: background-color var(--duration-medium) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium), transform var(--duration-medium) var(--ease-premium);
   }
 
   .studio-gradient {
     @apply bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 dark:border-primary/20;
-    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    transition: background-color var(--duration-medium) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium), transform var(--duration-medium) var(--ease-premium);
   }
 
   .transition-theme {
-    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out, opacity 0.4s ease-in-out !important;
+    transition: background-color var(--duration-medium) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium), opacity var(--duration-medium) var(--ease-premium), transform var(--duration-medium) var(--ease-premium) !important;
   }
 
   .text-shadow-glow {
-    text-shadow: 0 0 15px hsl(var(--primary) / 0.5);
-    /* Enhanced glow intensity */
+    text-shadow: 0 0 12px hsl(var(--primary) / 0.24);
   }
 
   .shadow-glow {
-    filter: drop-shadow(0 0 15px hsl(var(--primary) / 0.5));
+    filter: drop-shadow(0 10px 18px hsl(var(--primary) / 0.24));
   }
 
   .hover-glow:hover {
-    filter: drop-shadow(0 0 15px hsl(var(--primary) / 0.6));
-    transition: all 0.3s ease;
+    filter: drop-shadow(0 14px 24px hsl(var(--primary) / 0.26));
+    transition: filter var(--duration-medium) var(--ease-premium), transform var(--duration-medium) var(--ease-premium);
   }
 
   .text-hover-glow:hover {
-    text-shadow: 0 0 15px hsl(var(--primary) / 0.6);
-    transition: all 0.3s ease;
+    text-shadow: 0 0 12px hsl(var(--primary) / 0.28);
+    transition: text-shadow var(--duration-medium) var(--ease-premium), color var(--duration-medium) var(--ease-premium);
+  }
+
+  .premium-surface {
+    @apply border border-border/60 bg-card/80 dark:bg-zinc-950/55 backdrop-blur-xl shadow-sm;
+    box-shadow: var(--shadow-premium);
+    transition: transform var(--duration-medium) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), background-color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium);
+  }
+
+  .premium-surface:hover {
+    @apply border-primary/25;
+    box-shadow: var(--shadow-premium-hover);
+  }
+
+  .premium-panel {
+    @apply rounded-2xl border border-primary/10 bg-primary/[0.035] dark:bg-white/[0.035] backdrop-blur-md;
+    box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.05), var(--shadow-premium);
+    transition: transform var(--duration-medium) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), background-color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium);
+  }
+
+  .premium-control {
+    @apply rounded-xl border border-border/60 bg-background/70 dark:bg-white/[0.045] shadow-sm;
+    transition: transform var(--duration-fast) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), background-color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium), color var(--duration-medium) var(--ease-premium);
+  }
+
+  .premium-control:hover {
+    @apply border-primary/25 bg-primary/5;
+    box-shadow: 0 12px 28px -24px hsl(var(--primary) / 0.5);
+  }
+
+  .focus-premium {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
   /* Universal Premium Containers */
@@ -358,7 +395,9 @@
 
   /* Premium Slider System */
   .premium-slider-thumb {
-    @apply transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] !important;
+    @apply transition-all duration-300 !important;
+    transition-timing-function: var(--ease-premium) !important;
+    will-change: transform;
   }
 
   .premium-slider-thumb:hover {
@@ -372,11 +411,26 @@
 
   /* Micro-interactions for Interactive Elements */
   .interactive-lift {
-    @apply transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)];
+    transition: transform var(--duration-medium) var(--ease-premium), border-color var(--duration-medium) var(--ease-premium), background-color var(--duration-medium) var(--ease-premium), box-shadow var(--duration-medium) var(--ease-premium), opacity var(--duration-medium) var(--ease-premium);
   }
 
   .interactive-lift:hover {
-    @apply -translate-y-1.5 scale-[1.02] shadow-2xl;
+    @apply -translate-y-1 shadow-xl;
+  }
+
+  .interactive-lift:active {
+    @apply translate-y-0 scale-[0.99];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }
 
@@ -469,6 +523,55 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Native range controls used by older tool pages */
+input[type="range"] {
+  @apply h-2 cursor-pointer appearance-none rounded-full bg-secondary/70 accent-primary transition-theme;
+}
+
+input[type="range"]:hover {
+  @apply bg-secondary;
+}
+
+input[type="range"]:focus-visible {
+  @apply outline-none ring-2 ring-primary/35 ring-offset-2 ring-offset-background;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  @apply h-2 rounded-full bg-secondary/70 shadow-inner transition-theme;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  @apply -mt-1.5 h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md shadow-primary/20 transition-theme;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 8px 20px -10px hsl(var(--primary) / 0.65);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+input[type="range"]::-moz-range-track {
+  @apply h-2 rounded-full bg-secondary/70 shadow-inner transition-theme;
+}
+
+input[type="range"]::-moz-range-progress {
+  @apply h-2 rounded-full bg-primary;
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md shadow-primary/20 transition-theme;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 8px 20px -10px hsl(var(--primary) / 0.65);
 }
 
 /* Style native color pickers to match the premium rounded UI */

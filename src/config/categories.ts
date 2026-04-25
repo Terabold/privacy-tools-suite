@@ -29,7 +29,7 @@ export const categoryConfig: Record<string, { icon: any, gradient: string, theme
     tagColor: "#10b981",
     hsl: "142.1 76.2% 36.3%"
   },
-  "Engineering": { 
+  "Dev/Code": { 
     icon: Terminal, 
     gradient: "from-sky-400 to-blue-500", 
     themeClass: "theme-dev", 

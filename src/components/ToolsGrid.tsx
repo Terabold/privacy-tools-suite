@@ -422,18 +422,17 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
   }
 
   return (
-    <div className="space-y-32 relative">
+    <div className="space-y-16 relative">
       {isFiltering ? (
         <section id="search-results" className="animate-in fade-in duration-700">
-          <div className="flex items-center gap-6 mb-16 px-4">
-            <div className={`p-4 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-black/20`}>
+          <div className="flex items-center gap-4 mb-8 px-2">
+            <div className={`p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-md shadow-black/20`}>
               {(!selectedCategory && !searchQuery) ? <LayoutGrid className="h-8 w-8 text-white" /> : <Sparkles className="h-8 w-8 text-white" />}
             </div>
             <div className="flex flex-col">
-              <h2 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-4 pr-12 leading-tight`}>
+              <h2 className={`text-2xl md:text-3xl font-black tracking-tighter uppercase italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pr-4 leading-tight`}>
                 {searchQuery ? "Search" : (selectedCategory || "All")} <span className="opacity-80 font-display">{searchQuery ? "Results" : (selectedCategory ? "Tools" : "Artifacts")}</span>
               </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-primary/50 to-transparent rounded-full mt-1" />
             </div>
           </div>
 
@@ -441,7 +440,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             {filteredTools.map((tool) => (
               <motion.div 
@@ -449,7 +448,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                 variants={itemVariants}
                 className="relative group/card-wrapper w-full h-full"
               >
-                <div className={`absolute -inset-1 bg-gradient-to-tr ${categoryConfig[tool.category]?.gradient || "from-primary to-accent"} opacity-0 group-hover/card-wrapper:opacity-50 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110`} />
+                
                 <ToolCard {...tool} gradient={categoryConfig[tool.category]?.gradient} themeClass={categoryConfig[tool.category]?.themeClass} />
                 <div className="absolute top-2 right-2 flex gap-1.5 pointer-events-none z-50">
                   {tool.tags.map(tag => {
@@ -476,17 +475,15 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
 
           return (
             <section key={category} id={category.replace(/\s+/g, '-').toLowerCase()} className="animate-in fade-in duration-700">
-              <div className="flex items-center gap-6 mb-10 px-2">
-                <div className={`p-4 rounded-2xl bg-gradient-to-br ${config.gradient} shadow-lg shadow-black/20`}>
+              <div className="flex items-center gap-4 mb-8 px-2">
+                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${config.gradient} shadow-md shadow-black/20`}>
                   <Icon className="h-8 w-8 text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <h2 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent pb-4 pr-12 leading-tight`}>
+                  <h2 className={`text-2xl md:text-3xl font-black tracking-tighter uppercase italic bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent pr-4 leading-tight`}>
                     {category.split(' ')[0]} <span className="opacity-80 font-display">{category.split(' ')[1]}</span>
                   </h2>
-                  <div className={`h-1 w-24 bg-gradient-to-r ${config.gradient} opacity-50 rounded-full mt-2`} />
                 </div>
-                <div className="h-[1px] grow bg-border/40 opacity-20" />
               </div>
 
               <motion.div 
@@ -494,7 +491,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
-                className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3"
+                className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {tools
                   .filter(t => t.category === category)
@@ -504,7 +501,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                       variants={itemVariants}
                       className="relative group/card-wrapper w-full h-full"
                     >
-                      <div className={`absolute -inset-1 bg-gradient-to-tr ${config.gradient} opacity-0 group-hover/card-wrapper:opacity-50 blur-2xl transition-all duration-700 -z-10 group-hover/card-wrapper:scale-110`} />
+                      
                       <ToolCard {...tool} gradient={config.gradient} themeClass={config.themeClass} />
                       <div className="absolute top-1 right-1 flex gap-1.5 pointer-events-none z-50">
                         {tool.tags.map(tag => {
@@ -532,3 +529,5 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
 };
 
 export default ToolsGrid;
+
+

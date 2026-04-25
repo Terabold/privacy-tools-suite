@@ -12,6 +12,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
 
@@ -135,7 +136,19 @@ const YouTubeThumbnailHub = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-primary px-1 opacity-60 italic">Layout Mode</label>
+                <div className="flex items-center gap-2 px-1">
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-primary opacity-60 italic">Layout Mode</label>
+                  <ControlHint
+                    label="Layout mode"
+                    title="Layout Mode"
+                    description="Preview the thumbnail in different YouTube discovery contexts."
+                    rows={[
+                      { label: "Watch", description: "Main video page with recommendations beside the player." },
+                      { label: "Home", description: "Homepage card view where title and channel compete for attention." },
+                      { label: "Search", description: "Search result layout with smaller, scan-heavy thumbnails." },
+                    ]}
+                  />
+                </div>
                 <div className="flex bg-background/40 p-1 rounded-xl border border-white/10 h-11">
                   {(['watch', 'home', 'search'] as const).map(m => (
                     <button
@@ -150,7 +163,18 @@ const YouTubeThumbnailHub = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-primary px-1 opacity-60 italic">Simulation Theme</label>
+                <div className="flex items-center gap-2 px-1">
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-primary opacity-60 italic">Simulation Theme</label>
+                  <ControlHint
+                    label="Simulation theme"
+                    title="Simulation Theme"
+                    description="Check thumbnail contrast against common YouTube UI themes."
+                    rows={[
+                      { label: "Dark", description: "Best for spotting weak dark edges and low-contrast text." },
+                      { label: "Light", description: "Best for testing white backgrounds and pale artwork." },
+                    ]}
+                  />
+                </div>
                 <div className="flex bg-background/40 p-1 rounded-xl border border-white/10 h-11">
                   <button
                     onClick={() => setYtTheme('dark')}
@@ -180,7 +204,7 @@ const YouTubeThumbnailHub = () => {
                   className="relative w-full max-w-4xl aspect-video flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all duration-300 cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.02] shadow-inner group/upload"
                 >
                   <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover/upload:scale-110 transition-transform duration-300">
-                    <CloudUpload className="h-10 w-10 text-primary" />
+                    <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
                   </div>
                   <div className="px-6 space-y-2">
                     <p className="text-4xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>

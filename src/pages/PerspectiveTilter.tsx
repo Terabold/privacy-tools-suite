@@ -7,15 +7,35 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Footer from "@/components/Footer";
 import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 import { Label } from "@/components/ui/label";
+import ControlHint from "@/components/ControlHint";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
+
+const fitModes = [
+  {
+    value: "contain",
+    label: "Contain",
+    help: "Keeps the entire image visible inside the output. Best when you cannot crop any edges.",
+  },
+  {
+    value: "cover",
+    label: "Cover",
+    help: "Fills the output area and may crop edges. Best for thumbnails and polished previews.",
+  },
+  {
+    value: "fill",
+    label: "Fill",
+    help: "Stretches the image to the exact output shape. Useful for special effects, but it can distort proportions.",
+  },
+] as const;
 
 const PerspectiveTilter = () => {
   const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains("dark"));
@@ -185,13 +205,14 @@ const PerspectiveTilter = () => {
                       onClick={() => inputRef.current?.click()}
                       onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                       onDrop={(e) => { e.preventDefault(); e.stopPropagation(); handleFile(e.dataTransfer.files[0]); }}
-                      className="relative w-full aspect-video flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all duration-300 cursor-pointer bg-primary/5 hover:border-primary/40 hover:bg-primary/10 hover:scale-[1.02] shadow-inner group"
+                      className="relative w-full aspect-video flex flex-col items-center justify-center rounded-2xl transition-all duration-500 overflow-hidden group/dropzone bg-primary/5 hover:border-primary/40 hover:bg-primary/10 hover:scale-[1.01] shadow-inner cursor-pointer border-2 border-dashed border-primary/20"
                     >
-                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                        <CloudUpload className="h-10 w-10 text-primary" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
+                        <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
                       </div>
-                      <div className="px-6 space-y-1">
-                        <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Hub Artifact</p>
+                      <div className="px-6 space-y-2 relative z-10 text-center">
+                        <p className="text-4xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow group-hover/dropzone:scale-105 transition-transform">Deploy Hub Artifact</p>
                         <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-40">or click to browse</p>
                         <KbdShortcut />
                         <p className="mt-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-20">PNG, JPG, SVG, WEBP ARE SUPPORTED</p>
@@ -371,7 +392,12 @@ const PerspectiveTilter = () => {
                       {/* Right Column: Zoom, Fit & Shadow */}
                       <div className="space-y-3">
                         <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-primary leading-none block italic">Perspective & Fit</label>
+                          <div className="flex items-center gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary leading-none block italic">Perspective & Fit</label>
+                            <ControlHint label="Perspective and fit">
+                              Perspective controls the camera depth. Fit controls how the image is placed inside the final export frame.
+                            </ControlHint>
+                          </div>
                           <div>
                             <div className="flex justify-between items-end w-full mb-1 gap-4">
                               <label htmlFor="tilter-zoom-slider" className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap cursor-pointer">Zoom</label>
@@ -382,7 +408,12 @@ const PerspectiveTilter = () => {
 
                           <div>
                             <div className="flex justify-between items-end w-full mb-1 gap-4">
-                              <label htmlFor="tilter-depth-slider" className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap cursor-pointer">Depth</label>
+                              <div className="flex items-center gap-1.5">
+                                <label htmlFor="tilter-depth-slider" className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 whitespace-nowrap cursor-pointer">Depth</label>
+                                <ControlHint label="Depth" className="h-4 w-4">
+                                  Lower depth exaggerates the 3D tilt. Higher depth makes the projection flatter and more natural.
+                                </ControlHint>
+                              </div>
                               <span className="text-primary text-[10px] font-black">{perspective}px</span>
                             </div>
                             <Slider id="tilter-depth-slider" name="tilter-depth-slider" min={200} max={2000} step={1} value={[perspective]} onValueChange={([v]) => setPerspective(v)} className="py-1" />
@@ -390,16 +421,35 @@ const PerspectiveTilter = () => {
                         </div>
 
                         <div className="space-y-2 border-t border-primary/5 pt-1.5">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Fit Mode</label>
+                          <div className="flex items-center gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block">Fit Mode</label>
+                            <ControlHint
+                              label="Fit mode"
+                              title="Fit Mode"
+                              description="Choose how the source image sits inside the final export frame."
+                              rows={[
+                                { label: "Contain", description: "Shows the whole image. No cropping, may leave empty space." },
+                                { label: "Cover", description: "Fills the frame. Best for polished previews, may crop edges." },
+                                { label: "Fill", description: "Stretches to the frame. Useful for effects, may distort shape." },
+                              ]}
+                            />
+                          </div>
                           <div className="grid grid-cols-3 gap-2">
-                            {["contain", "cover", "fill"].map((m) => (
-                              <button
-                                key={m}
-                                onClick={() => setScalingMode(m as any)}
-                                className={`py-1 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${scalingMode === m ? "bg-primary border-primary text-white shadow-lg" : "border-border/50 hover:bg-primary/5 text-muted-foreground"}`}
-                              >
-                                {m}
-                              </button>
+                            {fitModes.map((mode) => (
+                              <Tooltip key={mode.value} delayDuration={450}>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    type="button"
+                                    onClick={() => setScalingMode(mode.value)}
+                                    className={`w-full py-1 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-theme focus-premium active:scale-[0.98] ${scalingMode === mode.value ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" : "border-border/50 hover:bg-primary/5 hover:-translate-y-0.5 text-muted-foreground"}`}
+                                  >
+                                    {mode.label}
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                                  {mode.help}
+                                </TooltipContent>
+                              </Tooltip>
                             ))}
                           </div>
                         </div>

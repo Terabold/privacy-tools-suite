@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { KbdShortcut } from "@/components/KbdShortcut";
 import VideoTimeline from "@/components/VideoTimeline";
+import ControlHint from "@/components/ControlHint";
 import { cn } from "@/lib/utils";
 import { fetchFile } from "@ffmpeg/util";
 import { getFFmpeg } from "@/lib/ffmpegSingleton";
@@ -196,10 +197,11 @@ const VideoAspectStudio = () => {
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                       onClick={() => inputRef.current?.click()}
-                      className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.02] shadow-inner duration-300 group/upload"
+                      className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.01] shadow-inner duration-300 group/upload"
                     >
-                      <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 transition-transform">
-                        <CloudUpload className="h-10 w-10 text-primary" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
+                        <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
                       </div>
                       <div className="px-6 space-y-1">
                         <p className="text-3xl font-black text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Deploy Artifact</p>
@@ -253,7 +255,7 @@ const VideoAspectStudio = () => {
                     <div className="w-full space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
                       <div className="glass-morphism border-primary/5 bg-primary/5 p-3 rounded-2xl space-y-3 shadow-2xl border-border/20">
                         <div className="flex items-center justify-between gap-4">
-                          <div className="flex bg-background/20 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner">
+                          <div className="flex bg-background/20 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shrink-0 shadow-inner group/dropzone overflow-hidden">
                             <Button variant="ghost" size="icon" onClick={() => { if (videoRef.current) videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.0333) }} className="h-9 w-9 text-muted-foreground hover:text-primary transition-colors">
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -276,7 +278,7 @@ const VideoAspectStudio = () => {
                             </Button>
                           </div>
 
-                          <div className="grow flex items-center justify-between bg-background/40 px-4 py-2 rounded-xl border border-white/5 shadow-inner">
+                          <div className="grow flex items-center justify-between bg-background/40 px-4 py-2 rounded-xl border border-white/5 shadow-inner group/dropzone overflow-hidden">
                             <div className="flex items-center gap-3">
                               <span className="text-2xl font-bold italic tracking-tighter text-primary font-mono">{displayTime.toFixed(3)}s</span>
                               <span className="text-[10px] font-bold text-muted-foreground/30 tracking-[0.2em] uppercase italic">/ {duration.toFixed(3)}s</span>
@@ -311,7 +313,19 @@ const VideoAspectStudio = () => {
                   </div>
                   <CardContent className="p-6 space-y-6">
                     <div className="space-y-4">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block px-1 italic">Target Aspect Ratio</p>
+                      <div className="flex items-center gap-2 px-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Target Aspect Ratio</p>
+                        <ControlHint
+                          label="Target aspect ratio"
+                          title="Target Aspect Ratio"
+                          description="Choose the final frame shape for export."
+                          rows={[
+                            { label: "16:9", description: "Standard widescreen for YouTube and desktop video." },
+                            { label: "9:16", description: "Vertical video for Shorts, Reels, and TikTok." },
+                            { label: "1:1", description: "Square posts, previews, and profile-safe crops." },
+                          ]}
+                        />
+                      </div>
                       <div className="grid grid-cols-2 gap-2">
                         {RATIOS.map(r => (
                           <button
@@ -332,7 +346,18 @@ const VideoAspectStudio = () => {
                     </div>
 
                     <div className="space-y-4">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block px-1 italic">Remapping Mode</p>
+                      <div className="flex items-center gap-2 px-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none block italic">Remapping Mode</p>
+                        <ControlHint
+                          label="Remapping mode"
+                          title="Remapping Mode"
+                          description="Choose what happens when the source video does not match the target shape."
+                          rows={[
+                            { label: "Padded", description: "Keeps the whole video visible and adds empty space." },
+                            { label: "Cropped", description: "Fills the frame and trims the outer edges." },
+                          ]}
+                        />
+                      </div>
                       <div className="flex gap-2">
                         <button
                           disabled={processing}

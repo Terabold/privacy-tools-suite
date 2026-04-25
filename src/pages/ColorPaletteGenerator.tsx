@@ -8,6 +8,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
+import ControlHint from "@/components/ControlHint";
 import { toast } from "sonner";
 import { usePasteFile } from "@/hooks/usePasteFile";
 
@@ -216,6 +217,20 @@ const ColorPaletteGenerator = () => {
                     </div>
 
                     <div className="pt-10 border-t border-white/5 flex flex-col xl:flex-row items-center justify-between gap-10">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">Harmony Mode</p>
+                        <ControlHint
+                          label="Harmony mode"
+                          title="Harmony Mode"
+                          description="Choose how generated colors relate to the seed color."
+                          rows={[
+                            { label: "Mono", description: "One hue with brightness variations. Calm and cohesive." },
+                            { label: "Analog", description: "Neighboring hues. Natural, soft, and brand-friendly." },
+                            { label: "Comp", description: "Opposite hue contrast. Strong call-to-action energy." },
+                            { label: "Triadic", description: "Three balanced hues. More playful and varied." },
+                          ]}
+                        />
+                      </div>
                       <div className="grid grid-cols-2 gap-3 bg-background/20 p-1.5 rounded-xl border border-white/5 w-full xl:w-[450px]">
                         {[
                           { id: 'monochromatic', icon: Sun },

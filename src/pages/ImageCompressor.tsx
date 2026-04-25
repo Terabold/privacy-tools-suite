@@ -10,6 +10,7 @@ import ToolExpertSection from "@/components/ToolExpertSection";
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
+import ControlHint from "@/components/ControlHint";
 import { usePasteFile } from "@/hooks/usePasteFile";
 import { toast } from "sonner";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -255,7 +256,19 @@ const ImageCompressor = () => {
                         <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
                       </div>
                       <div className="shrink-0">
-                        <h3 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none">Studio Workbench</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none">Studio Workbench</h3>
+                          <ControlHint
+                            label="Compression workbench"
+                            title="Compression Workbench"
+                            description="Tune the tradeoff between file size and visible image quality."
+                            rows={[
+                              { label: "Eco", description: "Smallest output, more visible compression." },
+                              { label: "Balanced", description: "Good default for web images." },
+                              { label: "Max", description: "Larger output with better visual fidelity." },
+                            ]}
+                          />
+                        </div>
                         <p className="text-[8px] lg:text-[9px] font-black text-muted-foreground uppercase opacity-40 leading-none mt-1.5 lg:mt-2">Intensity Optimization</p>
                       </div>
                     </div>
@@ -283,7 +296,19 @@ const ImageCompressor = () => {
 
                     {/* Format label + dropdown */}
                     <div className="flex items-center gap-3 shrink-0 lg:ml-4">
-                      <p className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none shrink-0 lg:block hidden">Format</p>
+                      <div className="items-center gap-2 shrink-0 lg:flex hidden">
+                        <p className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-primary italic leading-none">Format</p>
+                        <ControlHint
+                          label="Image format"
+                          title="Image Format"
+                          description="Choose the output codec."
+                          rows={[
+                            { label: "WebP", description: "Best default for modern web use and small files." },
+                            { label: "JPG", description: "Best compatibility for photos without transparency." },
+                            { label: "PNG", description: "Keeps transparency, but can stay larger." },
+                          ]}
+                        />
+                      </div>
                       <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button

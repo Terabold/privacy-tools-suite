@@ -213,11 +213,12 @@ const VideoToGif = () => {
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                         onClick={() => !processing && inputRef.current?.click()}
-                        className={`relative w-full h-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all duration-300 ${!processing ? "cursor-pointer py-48 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.02] shadow-inner" : "py-48 opacity-50"}`}
+                        className={`relative w-full h-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center transition-all duration-300 ${!processing ? "cursor-pointer py-48 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.01] shadow-inner group/dropzone overflow-hidden" : "py-48 opacity-50"}`}
                       >
-                        <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 transition-transform">
-                          <CloudUpload className="h-8 w-8 text-primary" />
-                        </div>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                      <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
+                        <CloudUpload className="h-10 w-10 text-primary group-hover/dropzone:animate-bounce" />
+                      </div>
                         <div className="px-6 space-y-1">
                           <p className="text-4xl font-bold text-foreground uppercase tracking-tighter italic leading-none text-shadow-glow">Upload Video</p>
                           <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] opacity-40 italic mt-2">MP4, MOV, WebM</p>
@@ -352,7 +353,7 @@ const VideoToGif = () => {
                     <Button
                       onClick={renderGif}
                       disabled={processing || !file}
-                      className="w-full h-12 text-md font-black rounded-xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary text-primary-foreground"
+                      className="w-full h-12 text-md font-black rounded-xl gap-3 shadow-2xl shadow-primary/20 italic uppercase tracking-tight hover:scale-[1.01] active:scale-[0.98] transition-all bg-primary text-primary-foreground"
                     >
                       {processing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Scissors className="h-4 w-4" />}
                       {processing ? `Converting ${progress}%` : "Download GIF"}
