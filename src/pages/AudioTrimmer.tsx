@@ -4,7 +4,7 @@ import { ArrowLeft, Play, Pause, Download, RotateCcw, CloudUpload, Scissors, Ref
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import { toast } from "sonner";
@@ -483,20 +483,7 @@ const AudioTrimmer = () => {
                 </Card>
               </aside>
             </div>
-            <ToolExpertSection
-              title="Precision Sample-Accurate Trimmer"
-              accent="blue"
-              overview="I architected the Precision Audio Trimmer to facilitate 'Temporal Sample Control' without external dependencies. Most audio tools rely on server-side processing that exposes your proprietary recordings; I built this to ensure that your audio artifacts stay within a strictly managed 'Sandbox Lifecycle'. It handles complex sample-rate conversions and bitstream partitioning entirely on your local hardware."
-              steps={[
-                "Deploy your high-fidelity audio master into the secure AudioBuffer registry.",
-                "The engine performs a 'Heuristic Decode' pass to generate the waveform without blocking the main thread.",
-                "Establish your 'Temporal Boundaries' with sample-accurate precision using the interactive seek-bar.",
-                "Initialize the WebAssembly-powered 'Sample Slice' to extract the target bitstream.",
-                "Download the sanitized audio artifact directly from the client-side buffers, vaporizing the remaining heap memory."
-              ]}
-              technicalImplementation="The technical backbone of this trimmer is a combination of the Web Audio API and a localized ffmpeg.wasm instance. When an audio file is staged, we create an AudioBuffer in the browser's memory management heap. To ensure performance, the waveform summary is generated via a sub-sampling algorithm that avoids heavy DOM manipulation. The actual trimming occurs in a dedicated WebWorker thread where SharedArrayBuffer facilitates multi-threaded PCM data manipulation. This architecture allows for near-native partitioning speeds while keeping the entire bitstream air-gapped from the network."
-              privacyGuarantee="My Privacy Guarantee is based on 'Volatile PCM Isolation'. Your audio data exists only as a series of floating-point samples in the browser's temporary memory management zone. We do not use persistent cache or local storage for the raw decoding data. Once the 'Sandbox Lifecycle' is terminated by closing the tab, the garbage collection cycle permanently purges the internal buffer, ensuring that your recordings are non-recoverable from any system logs."
-            />
+            <ToolBottomDescription toolId="/audio-trimmer" />
           </div>
         </main>
         <SponsorSidebars position="right" />

@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, FileJson, Table, RefreshCw, Zap, Table as Table
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -517,20 +517,7 @@ const CsvJsonForge = () => {
                   </div>
                </div>
                {/* SEO & Tool Guide Section */}
-                <ToolExpertSection
-                   title="Data Transformer Hub"
-                   accent="sky"
-                   overview="The Data Transformer Hub is a high-speed bi-directional translation workbench designed for data engineers, DevOps architects, and system integrators. I engineered this tool to provide a surgical path for mapping between spreadsheet-oriented CSV artifacts and developer-friendly JSON structures without the security risks of 'cloud parsers' that scrape your sensitive database exports and harvest your internal data schemas."
-                   steps={[
-                      "Stage your source artifact (CSV or JSON) into the 'Matrix Input' workspace.",
-                      "Toggle the 'Transformation Mode' to set your target output protocol (CSV to JSON or vice-versa).",
-                      "Utilize the 'Manual Signal Key' modules to edit the raw bitstream if necessary.",
-                      "Trigger the 'Transform Artifact' sequence to execute the local conversion logic.",
-                      "Extract the sanitized data artifact via the 'Export' link or copy directly to your clipboard."
-                   ]}
-                   technicalImplementation="I architected this hub using a Streaming Pattern Matcher and a Recursive Schema Flattener. The CSV parser utilizes a state-machine approach to handle escaped quotes and complex delimiters correctly. For JSON conversions, the engine automatically traverses nested dictionaries (up to 10 levels deep) to generate valid flat-header CSV structures. By executing all logic in the browser's native JavaScript thread, we achieve instantaneous results while keeping your data air-gapped from the public cloud."
-                   privacyGuarantee="The Security \u0026 Privacy model for the Transformer Lab is built on Schema Sovereignty. Your data artifacts—whether containing customer records, logs, or financial rows—exist strictly within your browser's private application state. We do not utilize any telemetry to monitor the schemas or volumes you are processing. All session data is ephemeral and is permanently purged from system RAM upon tab termination. Your databases stay private."
-                />
+                <ToolBottomDescription toolId="/data-transformer" />
             </main>
 
             <SponsorSidebars position="right" />

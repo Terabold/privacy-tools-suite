@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -614,20 +614,7 @@ const SvgToImage = () => {
               </aside>
             </div>
 
-            <ToolExpertSection
-              title="Svg to Image Converter"
-              accent="orange"
-              overview="This converter is a high-precision vector-to-raster rendering studio. I built this because many online 'SVG to PNG' converters are actually data collectors that index your uploaded vector assets. This tool provides a GPU-accelerated path to convert scalable graphics into production-ready images while keeping the source code local."
-              steps={[
-                "Paste your raw SVG code or upload a vector artifact to the workbench.",
-                "Set your target dimensions; our engine supports scaling up to 4x for high-DPI assets.",
-                "The engine generates a local hardware-accelerated Canvas surface for rendering.",
-                "Select your output format (PNG for transparency, JPG for photographs).",
-                "Extract the pixel data directly from your browser's heap memory to your disk."
-              ]}
-              technicalImplementation="I architected the rendering pipeline to utilize the native CanvasRenderingContext2D. The process involves non-blocking execution: we convert the SVG XML into a Blob URL, which is then loaded into an off-screen image element. Once the image is decoded by the browser's hardware-accelerated rasterizer, we paint it to a canvas. This approach ensures that we support complex CSS transforms and masks that are native to the browser's SVG engine."
-              privacyGuarantee="The Security & Privacy model for SvgToImage is grounded in Zero-Network Surface Area. No data is ever transmitted to a server. We utilize the Browser Sandbox Lifecycle for the entire rasterization process. By using URL.createObjectURL for temporary artifact staging, we ensure that files are purgeable immediately upon task completion, leaving no forensic trace on our infrastructure."
-            />
+            <ToolBottomDescription toolId="/svg-to-image" />
           </div>
         </main>
 

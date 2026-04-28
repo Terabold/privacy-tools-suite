@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
@@ -359,20 +359,7 @@ const MetadataScrubber = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Forensic Metadata Scrubber"
-              accent="emerald"
-              overview="I architected the Forensic Metadata Scrubber to address the critical 'Binary Leakage' problem inherent in digital photography. Most users don't realize that a single photo contains a hidden 'Sandbox Lifecycle' of its own, carrying GPS coordinates and device serials in non-pixel headers. This utility provides a surgical bypass of standard image processing to ensure total metadata annihilation."
-              steps={[
-                "Deploy your image master into the secure client-side buffer for immediate header inspection.",
-                "The engine initializes a binary traversal of the file structure, identifying APP1 and XMP markers without triggering DOM-based rendering.",
-                "Execute the 'Surgical Scrub' to strip non-pixel data while maintaining bit-perfect chromatic integrity.",
-                "Monitor the memory-mapped file system as the sanitized artifact is synthesized in a protected heap.",
-                "Download the sterilized asset directly from the internal sandbox, triggering an immediate garbage collection of the original data."
-              ]}
-              technicalImplementation="Technically, we avoid the standard 'Canvas Draw' approach for high-fidelity work, instead utilizing the DataView API for direct bitstream manipulation. By traversing the JPEG/WebP markers manually, we can identify and skip binary segments specifically designated for metadata (like EXIF APP1 or IPTC APP13) without re-encoding the image. This prevents the generational loss common in cloud-based tools and ensures that the garbage collection cycle clears every lingering byte of the original sensitive header data from the browser's volatile memory."
-              privacyGuarantee="My Privacy Guarantee revolves around 'Zero-Persistence Heap' architecture. Your source image never interacts with a persistent storage layer or any external API. The entire lifecycle—from binary traversal to sanitized synthesis—occurs in temporary client-side buffers that are vaporized the moment the tab is terminated. We've eliminated the 'network round-trip' entirely, ensuring your photographic footprint is erased at the source."
-            />
+            <ToolBottomDescription toolId="/metadata-scrubber" />
           </div>
         </main>
 

@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, Image as ImageIcon, FileCode, Zap, Trash2, Shie
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -233,20 +233,7 @@ const Base64Image = () => {
             </div>
 
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Base64 Image Studio"
-              accent="orange"
-              overview="This encoder is a specialized front-end utility designed for sub-millisecond conversion of image artifacts into portable Data URLs. I developed this tool because I found it absurd that developers were uploading private UI assets to third-party 'Base64 converters'—effectively handing over their graphical intellectual property to unknown telemetry databases."
-              steps={[
-                "Deploy your image artifact (JPG, PNG, SVG, or WebP) to the studio workspace.",
-                "The engine initiates a local FileReader stream to parse the binary data blocks.",
-                "Observe the real-time 'String Weight' metric to assess the impact on your final payload.",
-                "Review the visual preview to ensure the bit-to-text transformation is computationally accurate.",
-                "Copy the resulting Base64 string directly to your clipboard for instant embedding."
-              ]}
-              technicalImplementation="I architected this encoder using the native FileReader API and the readAsDataURL method, which performs a Base64 encoding according to RFC 4648. By utilizing the browser's internal C++ implementation for binary-to-text transformation, we achieve near-native performance even with high-density images. The logic uses volatile Blob staging for the preview window, ensuring that massive encoded strings do not compromise main-thread responsiveness."
-              privacyGuarantee="The Privacy & Security model for this converter is absolute: zero-server persistence. Your raw pixels and their resulting encoded strings exist only within the Browser Sandbox Lifecycle. Because our logic is entirely client-side, there is no network overhead or risk of data exfiltration. Once you clear the workbench or close the tab, the volatile RAM used to store your artifact is immediately purged."
-            />
+            <ToolBottomDescription toolId="/base64-image" />
           </div>
         </main>
 

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
@@ -421,20 +421,7 @@ const UniversalVolumeBooster = () => {
                 </Card>
               </aside>
             </div>
-            <ToolExpertSection
-              title="Universal Volume \u0026 Gain Booster"
-              accent="blue"
-              overview="The Universal Volume \u0026 Gain Booster is a hardware-accelerated digital signal processing (DSP) workbench designed for content creators, transcribers, and audio engineers. I architected this studio to provide a surgical path for amplifying weak audio artifacts or muted video streams—ensuring that your private meetings, recordings, and media drafts remain entirely offline without the security threat posed by 'cloud volume fixers' that capture your acoustic telemetry."
-              steps={[
-                "Stage your media artifact (MP4, MP3, WAV, WebM) into the Gain Booster workspace.",
-                "Utilize the 'Hyper-Gain' slider to establish your target amplification level (up to 500%).",
-                "Monitor the 'Static Waveform' and 'Live Registry' to assess the acoustic impact of the gain.",
-                "Initiate the 'Offline Render' sequence to bake the amplified bitstream.",
-                "Download the high-fidelity powered artifact directly from the browser's secure memory heap."
-              ]}
-              technicalImplementation="I engineered this booster using the Web Audio API GainNode for real-time monitoring and a high-performance OfflineAudioContext for the export phase. The engine performs mathematical sample scaling on a 32-bit float bitstream, allowing for massive gain increases without the immediate bit-crushing typically found in low-precision integer-based processing. The final export is handled by a local WAV encoder that bypasses the need for server-side transcoding."
-              privacyGuarantee="The Security \u0026 Privacy model for the Volume Studio is built on Local Acoustic Sovereignty. Your media artifacts are decoded and reconstructed strictly within your browser's private application state. At no point is the raw bitstream or the amplified media transmitted across any network interface. All processing data is volatile and is permanently purged from system RAM once the session is terminated. Your data stays at the source."
-            />
+            <ToolBottomDescription toolId="/universal-volume-booster" />
           </div>
         </main>
 

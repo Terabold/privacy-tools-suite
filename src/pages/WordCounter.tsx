@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 import Footer from "@/components/Footer";
@@ -95,20 +95,7 @@ const WordCounter = () => {
               </aside>
             </div>
 
-            <ToolExpertSection
-              title="Word Counter Engine"
-              accent="indigo"
-              overview="The Word Counter Engine is a professional-grade text analysis utility designed for high-fidelity content auditing entirely in your local browser environment. I engineered this tool to provide mission-critical statistics—from character density to reading time estimation—without ever transmitting your text to a third-party server."
-              steps={[
-                "Ingest your text content into the centralized input registry.",
-                "Monitor the 'Live Telemetry' dashboard for real-time statistical updates.",
-                "Utilize the character density and reading time metrics for content optimization.",
-                "Extract your finalized text via the 'Copy Artifact' module.",
-                "Purge the local memory bank after your session is complete."
-              ]}
-              technicalImplementation="I built this engine using high-performance string tokenization and recursive regex matching. By offloading the analysis to your local CPU, we achieve sub-millisecond latency for massive text blocks (up to 10MB) while maintaining a zero-network footprint. The reading time is calculated based on a standardized 200 WPM (words per minute) benchmark for technical documents."
-              privacyGuarantee="Your privacy is air-gapped by design. Unlike online counters that log your text for 'AI training' or behavioral profiling, PrivateUtils processes your content strictly within your browser's volatile application state. No metadata is stored, no telemetry is tracked, and all data is permanently vaporized the moment you close the tab."
-            />
+            <ToolBottomDescription toolId="/word-counter" />
           </div>
         </main>
         <SponsorSidebars position="right" />

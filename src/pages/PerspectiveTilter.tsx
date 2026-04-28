@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -520,20 +520,7 @@ const PerspectiveTilter = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="3D Perspective Studio"
-              accent="emerald"
-              overview="This tilter is a high-fidelity 3D transformation engine designed for digital architects and presentation designers. I built this tool to provide a browser-native path for generating depth-oriented UI mockups—eliminating the need for heavy desktop design software or privacy-compromising SaaS 'mockup generators' that often store your unreleased product shots."
-              steps={[
-                "Upload your flat UI artifact or application screenshot to the 3D studio stage.",
-                "Adjust the 'Pitch' and 'Yaw' sliders to establish the target angular orientation.",
-                "Calibrate the 'Perspective Depth' to simulate the focal distance and lens distortion.",
-                "Enable the 'Shadow Engine' to anchor your artifact with a realistic ambient occlusion field.",
-                "Extract the localized projection artifact directly from your device's hardware-accelerated GPU compositor."
-              ]}
-              technicalImplementation="I architected this engine using the CSS3 Transform-3D matrix specification, which offloads the intensive rotation math to the local GPU. The capture phase utilizes a specialized DOM-to-PNG engine that reconciles the 3D transformation matrix during the rasterization process. By calculating a recursive pixel-ratio multiplier based on the target dimensions, we ensure that the resulting artifact maintains sharp edges and high fidelity even at 4K production resolutions."
-              privacyGuarantee="The Security & Privacy guarantee for this studio is absolute: zero-upload transformation. All 3D math and final pixel rasterization occur within your browser's secure sandbox. We do not utilize any cloud-side rendering farms. Since the engine is powered by your local hardware, your sensitive product designs remain entirely offline and are purged from the volatile memory upon closing the session."
-            />
+            <ToolBottomDescription toolId="/perspective-tilter" />
           </div>
         </main>
 

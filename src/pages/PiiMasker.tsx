@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
@@ -642,20 +642,7 @@ const PiiMasker = () => {
               )}
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Irreversible PII Masking Studio"
-              accent="violet"
-              overview="I architected the PII Masking Studio to provide a foolproof 'Sanitization Lifecycle' for sensitive visual artifacts. The core problem with most redaction tools is that they merely place a layer over the data; I built this to ensure that Personally Identifiable Information is mathematically vaporized from the underlying pixel stream before it even leaves the browser's internal sandbox."
-              steps={[
-                "Deploy your sensitive document or image master into the isolated client-side buffer.",
-                "Initialize the 'Coordinate-Based Mask' to establish the geometric boundaries of the target PII data.",
-                "Execute the 'High-Entropy Gaussian Cipher' or the 'Solid Block Destruction' to overwrite the bitstream.",
-                "Monitor the live rasterization pass to confirm that the sensitive coordinate planes are structurally destroyed.",
-                "Extract the irreversible artifact from volatile RAM, triggering an instant garbage collection of the unmasked origin data."
-              ]}
-              technicalImplementation="The technical implementation utilizes a non-reversible Canvas composite stack. Instead of simply drawing an overlay, the engine modifies the underlying ImageData buffer at the pixel level. For blurring, we apply a high-entropy Gaussian kernel directly to the target RGBA arrays. For blackouts, we perform a total value-overwrite within the specified coordinate matrix. This 'raster destruction' approach ensures that even with advanced forensic software, there is no 'underlying' data to recover—the memory management cycle ensures that the original, unmasked buffers are purged from system heap immediately after the export lifecycle."
-              privacyGuarantee="My Privacy Guarantee is rooted in 'Bitstream Isolation'. Unlike cloud-based redaction services that might retain 'originals' for their logs, our studio exists entirely within your browser's private application state. No network ingress or egress occurs during the masking phase. The lifecycle of your sensitive data is ephemeral—once the tab is vaporized, every remaining byte in the temporary client-side buffer is permanently lost."
-            />
+            <ToolBottomDescription toolId="/pii-masker" />
           </div>
         </main>
 

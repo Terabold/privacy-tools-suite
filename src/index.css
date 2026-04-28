@@ -260,14 +260,14 @@
   }
 
   html {
-    scrollbar-gutter: stable !important;
-    overflow-y: scroll !important;
+    @apply h-full antialiased overflow-hidden;
   }
 
   body {
-    @apply bg-background text-foreground antialiased text-[16px] pb-20 md:pb-0;
+    @apply bg-background text-foreground antialiased text-[16px] pb-0 overflow-hidden;
     font-family: 'Outfit', sans-serif;
     width: 100% !important;
+    height: 100% !important;
     transition: background-color var(--duration-slow) var(--ease-standard), color var(--duration-slow) var(--ease-standard), border-color var(--duration-slow) var(--ease-standard), box-shadow var(--duration-slow) var(--ease-standard);
   }
 

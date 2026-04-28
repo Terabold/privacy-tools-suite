@@ -15,7 +15,7 @@ import { Progress } from "@/components/ui/progress";
 
 import Footer from "@/components/Footer";
 
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 
 import SponsorSidebars from "@/components/SponsorSidebars";
 
@@ -673,20 +673,7 @@ const SvgOptimizer = () => {
 
             {/* SEO & Tool Guide Section */}
 
-            <ToolExpertSection
-              title="Vector SVG Optimizer"
-              accent="emerald"
-              overview="I designed the Vector SVG Optimizer to be an industrial-grade minification suite for front-end architects. Unlike basic 'code compressors', this tool treats SVG as a Living DOM object. It performs an aggressive 'Sandbox Lifecycle' audit on the XML structure, pruning redundant namespaces and editor-specific bloat that often serves as a vector for hidden tracking scripts."
-              steps={[
-                "Stage your raw SVG XML artifact into the source workbench for immediate AST parsing.",
-                "Initialize the recursive 'Multipass' engine to traverse the coordinate plane and collapse redundant path commands.",
-                "Execute decimal precision rounding to optimize the bitstream while preserving visual rendering fidelity.",
-                "Perform a 'Namespace Scour' to identify and purge non-standard metadata clusters from the XML tree.",
-                "Extract the sanitized vector directly from the client-side buffer, ensuring no persistent trace remains in the browser heap."
-              ]}
-              technicalImplementation="The optimization pipeline is architected around a localized version of SVGO, execution within a dedicated web worker to prevent main-thread DOM manipulation lag. The engine converts the XML input into an Abstract Syntax Tree (AST), where the garbage collection of unused definitions and the minification of coordinate floats occur. By utilizing sophisticated regular expression ciphers and recursive tree-shaking, we reduce transfer weights by up to 80% without ever exposing the proprietary design geometry to a network-based API."
-              privacyGuarantee="Privacy in this optimizer is fundamentally tied to 'Memory Management' and 'Air-Gapped Parsing'. Traditional optimizers act as data-collection sinks; here, the entire XML transformation occurs in a volatile RAM segment. We do not use persistent identifiers, and the local file system access is limited to the initial read/write cycle. Once the optimization lifecycle is complete and you close the session, the internal buffer is evaporated."
-            />
+            <ToolBottomDescription toolId="/svg-optimizer" />
 
           </div>
 

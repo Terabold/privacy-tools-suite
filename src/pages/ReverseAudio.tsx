@@ -4,7 +4,7 @@ import { ArrowLeft, RefreshCw, Download, Play, Pause, Music, Zap, CloudUpload, R
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -404,20 +404,7 @@ const ReverseAudio = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Backwards Audio Laboratory"
-              accent="blue"
-              overview="The Backwards Audio Laboratory is a specialized temporal phase inversion workbench designed for sound designers, forensic phoneticists, and creative musicians. I engineered this tool to provide a surgical path for flipping audio artifacts in reverse without the privacy risk of 'cloud-based audio flippers' that listen to your private recordings and cache your phonetic data on insecure remote clusters."
-              steps={[
-                "Stage your audio master (MP3, WAV, or OGG) into the Inversion Studio workspace.",
-                "Trigger the 'Phase Inversion' sequence to mathematically flip the samples within the buffer.",
-                "utilize the 'Temporal Registry' and 'Live Preview' to monitor the reversed soundscape.",
-                "Extract the high-fidelity WAV artifact directly from your device's browser sandbox.",
-                "Download the inverted asset for use in your production or phonetic analysis suite."
-              ]}
-              technicalImplementation="I architected this laboratory using the Web Audio API and a TypedArray Sample Inversion algorithm. When the inversion is triggered, the engine creates a new AudioBuffer and copies the channel data from the source, reversing the sample index order mathematically (L - 1 - i). By performing this loop-based transformation within the browser's execution thread, we achieve instantaneous results without any server-side round-trips or network latency."
-              privacyGuarantee="The Security \u0026 Privacy model for the Reversed Lab is defined by Sample Air-Gapping. Your audio artifacts and their reversed counterparts exist strictly within your browser's private memory heap. We do not use any telemetry to monitor the phonetic content of your files. All data is ephemeral and is permanently purged from your machine's volatile RAM upon session closure. Your recordings remain entirely yours."
-            />
+            <ToolBottomDescription toolId="/reverse-audio" />
           </div>
         </main>
 

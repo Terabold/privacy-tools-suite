@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, Fingerprint, ShieldCheck, Zap, AlertTriangle, R
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -328,20 +328,7 @@ const HashLab = () => {
                 </Card>
               </aside>
             </div>
-            <ToolExpertSection
-              title="Cryptographic Hash Lab"
-              accent="violet"
-              overview="This lab is a high-performance cryptographic workbench designed for generating deterministic digital fingerprints. I built this tool because I noticed a dangerous trend of developers uploading sensitive binaries or proprietary code to insecure cloud check-summers, effectively leaking internal file signatures to third-party scrapers."
-              steps={[
-                "Enter raw text into the workspace or deploy a large file artifact via drag-and-drop.",
-                "Select your target hashing algorithm from the NIST-compliant matrix (SHA-256, SHA-384, or SHA-512).",
-                "The engine initiates a local worker thread to calculate the digest without impacting UI responsiveness.",
-                "Monitor real-time progress for massive files processed via the specialized Null-RAM Stream engine.",
-                "Copy the resulting hexadecimal bitstream directly for local verification and integrity auditing."
-              ]}
-              technicalImplementation="The architecture follows a dual-execution strategy. For standard text-based inputs, we utilize the native Web Crypto API (SubtleCrypto) for hardware-accelerated throughput. For large-scale binary files, I implemented a custom IncrementalSHA256 engine combined with the Streams API. This architecture pipes data in 64KB chunks directly into the cryptographic function, maintaining a near-zero heap memory footprint regardless of file density. All byte-level operations are performed on Uint8Array buffers to bypass JavaScript's string encoding limitations."
-              privacyGuarantee="Privacy is maintained through absolute client-side isolation. Our Zero-Server Persistence model means that no part of your file ever touches a network interface. We utilize the Browser Sandbox Lifecycle to ensure that once the digest is calculated and the session is closed, all traces of the raw data are purged from your machine's volatile RAM. Your security audit remains local, private, and deterministic."
-            />
+            <ToolBottomDescription toolId="/hash-lab" />
           </div>
         </main>
 

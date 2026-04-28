@@ -9,7 +9,7 @@ const NotFound = () => {
 
   useEffect(() => {
     console.error("404 Error: Non-existent route:", location.pathname);
-    document.title = "404 - Forge Not Found | PrivateUtils";
+    document.title = "Page not found — PrivateUtils";
   }, [location.pathname]);
 
   return (
@@ -40,10 +40,10 @@ const NotFound = () => {
 
         <div className="space-y-4">
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground italic uppercase italic select-none">
-            Forge <span className="not-italic text-primary">Offline</span>
+            Page <span className="not-italic text-primary">not found</span>
           </h1>
           <p className="text-muted-foreground text-sm font-medium leading-relaxed max-w-sm mx-auto">
-            The requested module at <code className="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono text-[11px] font-black">{location.pathname}</code> does not exist in our hardware manifest.
+            The page at <code className="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono text-[11px] font-black">{location.pathname}</code> doesn't exist.
           </p>
         </div>
 
@@ -51,7 +51,7 @@ const NotFound = () => {
           <Button asChild size="lg" className="h-14 px-8 rounded-2xl font-black italic uppercase tracking-tighter shadow-2xl hover:scale-105 transition-all w-full sm:w-auto">
             <Link to="/" className="flex items-center gap-3">
               <ArrowLeft className="h-4 w-4" />
-              Return to Control Panel
+              Go back home
             </Link>
           </Button>
           
@@ -63,9 +63,6 @@ const NotFound = () => {
           </Button>
         </div>
 
-        <div className="pt-8 text-[10px] uppercase font-black tracking-[0.4em] text-muted-foreground/30 select-none">
-            PrivateUtils Studio — Secure Forge Node v1.0.4
-        </div>
       </motion.div>
     </div>
   );

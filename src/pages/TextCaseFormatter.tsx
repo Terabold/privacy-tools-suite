@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, Type, Hash, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -196,20 +196,7 @@ const TextCaseFormatter = () => {
 
             {/* SEO & Tool Guide Section */}
             <div className="max-w-[1240px] w-full mt-10">
-              <ToolExpertSection
-                title="Text Case Transformer"
-                accent="emerald"
-                overview="The Case Transformer is a professional-grade string manipulation lab designed for software engineers, database architects, and technical writers. I built this tool to provide a surgical path for standardizing text across different naming conventions—ensuring that your environment variables, URL slugs, and documentation remain consistent without the privacy risk of 'cloud converters' that scrape your input data."
-                steps={[
-                  "Paste your raw string, list, or code segment into the Transformer Workspace.",
-                  "Choose a 'Standard Case' (UPPERCASE, lowercase, Title Case, or Sentence Case).",
-                  "Selecting a 'Code naming convention' (snake_case, kebab-case, or CONSTANT_CASE) for development artifacts.",
-                  "Review the 'Text Analysis' suite to audit word count and character weight.",
-                  "Extract the transformed result directly to your clipboard for instant integration into your codebase."
-                ]}
-                technicalImplementation="I architected the transformation engine using regular expression (RegEx) lookahead and lookbehind assertions. The 'Snake' and 'Kebab' modules utilize a multi-pass strategy to identify word boundaries at camelCase transitions, numbers, and symbols, ensuring accurate delimiting. To maintain system stability, I implemented a 10MB Stability Gate that prevents the browser's main thread from saturating during extremely large string allocations."
-                privacyGuarantee="The Security \u0026 Privacy model for the Transformer is defined by Zero-Telemetry Isolation. All string arithmetic and mapping occurs strictly within your browser's private V8 execution context. Your text scripts, variables, and drafts never touch a network interface. All state is strictly ephemeral and is cleared from the volatile heap once the session ends."
-              />
+              <ToolBottomDescription toolId="/text-case-formatter" />
             </div>
           </div>
         </main>

@@ -9,139 +9,139 @@ import { motion, Variants } from "framer-motion";
 const toolsData = [
   {
     title: "Media Converter",
-    description: "Convert video and audio formats in your browser with zero server-side processing.",
+    description: "Convert video and audio files directly in your browser without uploading to a server.",
     icon: <Video className="h-5 w-5" />,
     to: "/universal-media-converter",
     category: "Video",
-    tags: ["ULTIMATE", "NATIVE"]
+    tags: []
   },
   {
     title: "YouTube Thumbnail Preview",
-    description: "Simulate and verify how your thumbnails look on a realistic YouTube interface.",
+    description: "Preview how your thumbnails look on YouTube to optimize click-through rates.",
     icon: <Layout className="h-5 w-5" />,
     to: "/youtube-thumbnail-hub",
     category: "Video",
-    tags: ["SAFE-ZONES", "SIM"]
+    tags: []
   },
   {
     title: "3D Image Tilt",
-    description: "Apply 3D perspective and professional angled tilts to any image instantly.",
+    description: "Apply 3D angles and perspective distortion to any image.",
     icon: <Layers className="h-5 w-5" />,
     to: "/perspective-tilter",
     category: "Graphics",
-    tags: ["3D", "WYSIWYG"]
+    tags: []
   },
   {
     title: "Remove Photo Metadata",
-    description: "Strip EXIF data like GPS and camera info from your photos locally for total security.",
+    description: "Erase hidden location data and camera details from photos for privacy.",
     icon: <ShieldX className="h-5 w-5" />,
     to: "/metadata-scrubber",
     category: "Security",
-    tags: ["EXIF", "SCRUB"]
+    tags: []
   },
   {
-    title: "Split Image (Sprites)",
-    description: "Slice images into a precise grid and export them as a ZIP file buffer instantly.",
+    title: "Split Image into Grid",
+    description: "Slice a single image into multiple pieces and download them as a ZIP.",
     icon: <Scissors className="h-5 w-5" />,
     to: "/sprite-studio",
     category: "Graphics",
-    tags: ["SPRITES", "ZIP"]
+    tags: []
   },
   {
     title: "Trim Audio",
-    description: "Cut and clip audio files to a specific timeframe with local-first precision editing.",
+    description: "Cut your audio files to exact lengths without any server uploads.",
     icon: <Music className="h-5 w-5" />,
     to: "/audio-trimmer",
     category: "Audio",
-    tags: ["TRIM", "WAV"]
+    tags: []
   },
   {
     title: "Volume Booster",
-    description: "Amplify or reduce volume for media files with high-fidelity gain control.",
+    description: "Increase or decrease the volume of your audio and video files.",
     icon: <Volume2 className="h-5 w-5" />,
     to: "/universal-volume-booster",
     category: "Audio",
-    tags: ["GAIN", "MP4"]
+    tags: []
   },
   {
     title: "Get Image Colors",
-    description: "Extract color palettes from images and copy hex codes for brand-matching design.",
+    description: "Extract the exact color palette from any uploaded image.",
     icon: <Pipette className="h-5 w-5" />,
     to: "/image-color-extractor",
     category: "Graphics",
-    tags: ["DESIGN", "PRO"]
+    tags: []
   },
   {
     title: "Video to GIF",
-    description: "Create optimized GIFs from video clips. Fully client-side conversion for total privacy.",
+    description: "Convert your video clips into optimized GIFs locally.",
     icon: <RefreshCw className="h-5 w-5" />,
     to: "/video-to-gif",
     category: "Video",
-    tags: ["GIF", "NATIVE"]
+    tags: []
   },
   {
     title: "Save Video Frames",
-    description: "Extract high-fidelity PNG snapshots from any local video file instantly.",
+    description: "Extract high-quality still images from your videos.",
     icon: <Camera className="h-5 w-5" />,
     to: "/frame-extractor",
     category: "Video",
-    tags: ["PNG", "EXTRACT"]
+    tags: []
   },
   {
     title: "Change Aspect Ratio",
-    description: "Resize videos to any aspect ratio with padding or cropping",
+    description: "Crop or pad your videos to fit different screen sizes like TikTok or YouTube.",
     icon: <Monitor className="h-5 w-5" />,
     to: "/video-aspect-studio",
     category: "Video",
-    tags: ["RESIZE", "PRO"]
+    tags: []
   },
   {
-    title: "JSON Formatter",
-    description: "Validate and format complex JSON structures with high-fidelity syntax highlighting.",
+    title: "Format JSON",
+    description: "Format and validate complex JSON data easily.",
     icon: <FileJson className="h-5 w-5" />,
     to: "/json-studio",
-    category: "Engineering",
-    tags: ["DEV", "JSON", "PRO"]
+    category: "Dev/Code",
+    tags: []
   },
   {
-    title: "CSV / JSON Converter",
-    description: "Convert between CSV and JSON formats instantly. Handles complex nested data structures.",
+    title: "Convert CSV & JSON",
+    description: "Quickly convert data between CSV and JSON formats.",
     icon: <Database className="h-5 w-5" />,
     to: "/data-transformer",
-    category: "Engineering",
-    tags: ["CONVERT", "CSV", "JSON"]
+    category: "Dev/Code",
+    tags: []
   },
   {
     title: "QR Code Generator",
-    description: "Create custom QR codes fully offline with high-density encoding and error correction.",
+    description: "Generate custom, offline QR codes securely.",
     icon: <QrCode className="h-5 w-5" />,
     to: "/qr-forge",
     category: "Security",
-    tags: ["SECURE", "QR"]
+    tags: []
   },
   {
-    title: "Blur/Redact Image",
-    description: "Mask sensitive PII, credentials, or faces from images before sharing for maximum privacy.",
+    title: "Blur & Redact Images",
+    description: "Blur faces or sensitive text in images before sharing them.",
     icon: <ShieldX className="h-5 w-5" />,
     to: "/pii-masker",
     category: "Security",
-    tags: ["REDACT", "BLUR"]
+    tags: []
   },
   {
-    title: "Minify SVG",
-    description: "Optimize SVG files by removing unnecessary markup for faster web rendering speeds.",
+    title: "Optimize SVG",
+    description: "Compress your SVG files to make websites load faster.",
     icon: <Zap className="h-5 w-5" />,
     to: "/svg-optimizer",
     category: "Graphics",
-    tags: ["SVG", "FAST"]
+    tags: []
   },
   {
     title: "SVG to Image",
-    description: "Convert SVG files to PNG or JPG with high-fidelity rasterization for all assets.",
+    description: "Convert scalable vector graphics into standard PNG or JPG formats.",
     icon: <ImageIcon className="h-5 w-5" />,
     to: "/svg-to-image",
     category: "Graphics",
-    tags: ["RASTER", "PNG"]
+    tags: []
   },
   {
     "title": "SVG to ICO Icon",
@@ -153,195 +153,195 @@ const toolsData = [
   },
   {
     title: "Image to PDF",
-    description: "Merge multiple images into a single PDF file with local-first secure compilation.",
+    description: "Combine multiple images into a single PDF document.",
     icon: <FileStack className="h-5 w-5" />,
     to: "/image-to-pdf",
     category: "Graphics",
-    tags: ["PDF", "COMPILE"]
+    tags: []
   },
   {
     title: "Change Text Case",
-    description: "Convert text between camelCase, snake_case, and more for technical documentation.",
+    description: "Convert text into camelCase, UPPERCASE, and other formats instantly.",
     icon: <Type className="h-5 w-5" />,
     to: "/text-case-formatter",
     category: "Editor",
-    tags: ["QUICK"]
+    tags: []
   },
   {
     title: "Clipboard to File",
-    description: "Paste and download clipboard content as a file. Extract binary assets from your buffer.",
+    description: "Save your copied text or images directly as a file.",
     icon: <ClipboardCopy className="h-5 w-5" />,
     to: "/quick-clipboard",
     category: "Utilities",
-    tags: ["EXTRACT", "ZAP"]
+    tags: []
   },
   {
     title: "Compare Text",
-    description: "Check differences between text blocks with instant additions and removals highlighting.",
+    description: "Highlight the exact differences between two pieces of text.",
     icon: <Split className="h-5 w-5" />,
     to: "/text-diff-checker",
     category: "Editor",
-    tags: ["COMPARE", "PRO"]
+    tags: []
   },
   {
     title: "JWT Decoder",
-    description: "Inspect JWT headers and payloads securely on your device without leaking tokens.",
+    description: "Read the contents of JSON Web Tokens without sending them to a server.",
     icon: <KeyRound className="h-5 w-5" />,
     to: "/jwt-decoder",
-    category: "Engineering",
-    tags: ["DEV", "AUTH"]
+    category: "Dev/Code",
+    tags: []
   },
   {
-    title: "Encoder / Decoder",
-    description: "Convert text between Base64, URL, HTML, and Hex using comprehensive local tools.",
+    title: "Encode / Decode Text",
+    description: "Translate text into Base64, Hex, or URL encoding.",
     icon: <Binary className="h-5 w-5" />,
     to: "/encoder-decoder",
-    category: "Engineering",
-    tags: ["BASE64", "HEX"]
+    category: "Dev/Code",
+    tags: []
   },
   {
-    title: "Timestamp Converter",
-    description: "Convert Unix timestamps to readable dates with support for multiple time formats.",
+    title: "Convert Timestamps",
+    description: "Turn Unix numbers into readable dates and times.",
     icon: <Clock className="h-5 w-5" />,
     to: "/timestamp-converter",
-    category: "Engineering",
-    tags: ["UNIX", "ISO"]
+    category: "Dev/Code",
+    tags: []
   },
   {
-    title: "Test Regex",
-    description: "Validate regular expressions with live highlighting against custom test strings.",
+    title: "Test Regular Expressions",
+    description: "Test and validate regex patterns securely in your browser.",
     icon: <SearchCode className="h-5 w-5" />,
     to: "/regex-playground",
-    category: "Engineering",
-    tags: ["DEV", "LIVE"]
+    category: "Dev/Code",
+    tags: []
   },
   {
-    title: "Lorem Ipsum Generator",
-    description: "Generate placeholder text for your designs with custom paragraph and sentence counts.",
+    title: "Placeholder Text Generator",
+    description: "Create random Lorem Ipsum text for your design mockups.",
     icon: <FileText className="h-5 w-5" />,
     to: "/lorem-generator",
     category: "Editor",
-    tags: ["CONTENT", "DEV"]
+    tags: []
   },
   {
     title: "Password Generator",
-    description: "Create secure random passwords locally. Fully offline generation for maximum privacy.",
+    description: "Generate highly secure random passwords that stay on your device.",
     icon: <ShieldCheck className="h-5 w-5" />,
     to: "/password-generator",
     category: "Security",
-    tags: ["SECURE", "PRIVACY"]
+    tags: []
   },
   {
-    title: "Generate Color Palettes",
-    description: "Create brand schemes like Monochromatic and Triadic for UI designers and developers.",
+    title: "Color Palette Generator",
+    description: "Create matching color schemes for your design projects.",
     icon: <Palette className="h-5 w-5" />,
     to: "/palette-studio",
     category: "Graphics",
-    tags: ["DESIGN", "COLOR"]
+    tags: []
   },
   {
-    title: "Hash Generator",
-    description: "Create SHA-256, SHA-512, or MD5 hashes locally for verified cryptographic integrity.",
+    title: "File Hash Generator",
+    description: "Create MD5, SHA-256, or SHA-512 hashes to verify file integrity.",
     icon: <Fingerprint className="h-5 w-5" />,
     to: "/hash-lab",
     category: "Security",
-    tags: ["CRYPTO", "SECURE"]
+    tags: []
   },
   {
     title: "Unit Converter",
-    description: "Convert weight, area, and speed measurements with high-precision engineering tools.",
+    description: "Convert measurements like weight, length, and temperature.",
     icon: <Ruler className="h-5 w-5" />,
     to: "/unit-converter",
     category: "Utilities",
-    tags: ["QUICK", "MATH"]
+    tags: []
   },
   {
     title: "Image to Base64",
-    description: "Convert images to Base64 strings for CSS and code without external dependencies.",
+    description: "Convert an image into a text string you can use directly in code.",
     icon: <FileStack className="h-5 w-5" />,
     to: "/base64-image",
     category: "Graphics",
-    tags: ["EXTRACT", "DEV"]
+    tags: []
   },
   {
     title: "Reverse Audio",
-    description: "Play audio files backwards for sound design and experimental media production.",
+    description: "Play your audio files backward.",
     icon: <RefreshCw className="h-5 w-5" />,
     to: "/reverse-audio",
     category: "Audio",
-    tags: ["FLIP", "WAV"]
+    tags: []
   },
   {
-    title: "Convert Data to Audio",
-    description: "Turn raw file bytes into experimental audio and explore acoustic digital fingerprints.",
+    title: "Data to Audio",
+    description: "Turn any computer file into strange glitchy sounds.",
     icon: <Binary className="h-5 w-5" />,
     to: "/binary-to-audio",
     category: "Audio",
-    tags: ["GLITCH", "PCM"]
+    tags: []
   },
   {
-    title: "Channel Converter",
-    description: "Change audio between Mono and Stereo with surgical control over spatial fields.",
+    title: "Convert Audio Channels",
+    description: "Change your audio from Mono to Stereo or vice versa.",
     icon: <Layers className="h-5 w-5" />,
     to: "/audio-mono-stereo",
     category: "Audio",
-    tags: ["CHANNELS", "PRO"]
+    tags: []
   },
   {
-    title: "Boost Bass",
-    description: "Increase low-end frequencies with pro-grade reconstruction for high-fidelity output.",
+    title: "Boost Audio Bass",
+    description: "Enhance the low frequencies of any audio track.",
     icon: <Zap className="h-5 w-5" />,
     to: "/audio-bass-booster",
     category: "Audio",
-    tags: ["EQ", "BASS"]
+    tags: []
   },
   {
-    title: "Image Compressor",
-    description: "Reduce image file size locally with secure optimization for privacy-conscious users.",
+    title: "Compress Images",
+    description: "Reduce the file size of images without losing visible quality.",
     icon: <Zap className="h-5 w-5" />,
     to: "/image-compressor",
     category: "Graphics",
-    tags: ["COMPRESS", "WEB"]
+    tags: []
   },
   {
     title: "Morse Code Translator",
-    description: "Translate text to Morse code with live audio synthesis and visual transmission signals.",
+    description: "Translate text to Morse code and play it out loud.",
     icon: <Radio className="h-5 w-5" />,
     to: "/morse-code-master",
     category: "Editor",
-    tags: ["TRANS", "AUDIO"]
+    tags: []
   },
   {
     title: "URL Slug Generator",
-    description: "Create clean, SEO-friendly slugs from text for technical content distribution.",
+    description: "Create clean, readable web addresses from any text.",
     icon: <Hash className="h-5 w-5" />,
     to: "/slug-forge",
-    category: "Engineering",
-    tags: ["SEO", "URL"]
+    category: "Dev/Code",
+    tags: []
   },
   {
     title: "Clean Text",
-    description: "Remove hidden characters and whitespace from messy documentation and code files.",
+    description: "Remove extra spaces and invisible characters from text.",
     icon: <Eraser className="h-5 w-5" />,
     to: "/whitespace-scrubber",
     category: "Editor",
-    tags: ["CLEAN", "TEXT"]
+    tags: []
   },
   {
-    title: "Dice Roller",
-    description: "Secure physics-based randomization for games and security with dice and coin flips.",
+    title: "Dice & Coin Flipper",
+    description: "Roll virtual dice or flip coins for true randomization.",
     icon: <Dices className="h-5 w-5" />,
     to: "/dice-lab",
     category: "Utilities",
-    tags: ["SECURE", "ROLL"]
+    tags: []
   },
   {
-    title: "Word Counter Engine",
-    description: "Analyze character density, word count, and reading time entirely in your browser.",
+    title: "Word Counter",
+    description: "Count words, characters, and estimate reading time.",
     icon: <FileText className="h-5 w-5" />,
     to: "/word-counter",
     category: "Editor",
-    tags: ["ANALYSIS", "SEO"]
+    tags: []
   },
 ];
 
@@ -412,10 +412,10 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
         <div className="h-24 w-24 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-10 border border-primary/20 shadow-2xl">
           <Zap className="h-10 w-10 text-primary animate-pulse" />
         </div>
-        <h3 className="text-4xl font-black uppercase italic tracking-tighter mb-4">No artifacts found</h3>
-        <p className="text-muted-foreground font-medium mb-10 max-w-md mx-auto opacity-60 italic">Your search criteria didn't match any of our local processing tools.</p>
+        <h3 className="text-4xl font-black uppercase italic tracking-tighter mb-4">No tools found</h3>
+        <p className="text-muted-foreground font-medium mb-10 max-w-md mx-auto opacity-60 italic">Nothing matched your search. Try different words or clear the filter.</p>
         <Button onClick={onClearFilters} variant="outline" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs border-primary/20 bg-primary/5 hover:bg-primary/20 dark:bg-white/5 dark:hover:bg-white/10 transition-all">
-          Clear Calibration
+          Clear search
         </Button>
       </div>
     );
@@ -431,7 +431,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
             </div>
             <div className="flex flex-col">
               <h2 className={`text-2xl md:text-3xl font-black tracking-tighter uppercase italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pr-4 leading-tight`}>
-                {searchQuery ? "Search" : (selectedCategory || "All")} <span className="opacity-80 font-display">{searchQuery ? "Results" : (selectedCategory ? "Tools" : "Artifacts")}</span>
+                {searchQuery ? "Search" : (selectedCategory || "All")} <span className="opacity-80 font-display">{searchQuery ? "Results" : (selectedCategory ? "Tools" : "Tools")}</span>
               </h2>
             </div>
           </div>
@@ -451,7 +451,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                 
                 <ToolCard {...tool} gradient={categoryConfig[tool.category]?.gradient} themeClass={categoryConfig[tool.category]?.themeClass} />
                 <div className="absolute top-2 right-2 flex gap-1.5 pointer-events-none z-50">
-                  {tool.tags.map(tag => {
+                  {(tool.tags || []).map(tag => {
                     const tagColor = categoryConfig[tool.category]?.tagColor || '#a78bfa';
                     return (
                       <span
@@ -504,7 +504,7 @@ const ToolsGrid = ({ searchQuery = "", selectedCategory = null, onClearFilters }
                       
                       <ToolCard {...tool} gradient={config.gradient} themeClass={config.themeClass} />
                       <div className="absolute top-1 right-1 flex gap-1.5 pointer-events-none z-50">
-                        {tool.tags.map(tag => {
+                        {(tool.tags || []).map(tag => {
                           const tagColor = config.tagColor;
                           return (
                             <span

@@ -122,13 +122,13 @@ const Navbar = ({
       <div className="hidden lg:flex w-full bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-1.5 px-8">
         <div className="container mx-auto max-w-[1500px] flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link to="/about" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">The Mission</Link>
-            <Link to="/technical-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Engine Architecture</Link>
-            <Link to="/security-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Security Protocols</Link>
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">About</Link>
+            <Link to="/technical-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">How it works</Link>
+            <Link to="/security-architecture" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Security</Link>
           </div>
           <div className="flex items-center gap-6">
-            <Link to="/faq" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Technical FAQ</Link>
-            <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Contact Support</Link>
+            <Link to="/faq" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">FAQ</Link>
+            <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-primary transition-colors no-underline">Contact</Link>
           </div>
         </div>
       </div>
@@ -141,7 +141,7 @@ const Navbar = ({
 
             {/* Left: Branding & Mobile Resource Trigger */}
             <div className="flex items-center gap-2 lg:gap-3 justify-start min-w-0">
-              <div className="lg:hidden flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5">
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -157,7 +157,7 @@ const Navbar = ({
                     align="start"
                     className="w-56 bg-zinc-950/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 z-[110]"
                   >
-                    <div className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-primary/60 italic">Dev/Code Hub</div>
+                    <div className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-primary/60 italic">Dev & Code</div>
                     <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
                       <Link to="/insights" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
                         <Zap className="h-3.5 w-3.5 text-primary" />
@@ -167,20 +167,20 @@ const Navbar = ({
                     <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
                       <Link to="/technical-architecture" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
                         <Terminal className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider italic">Architecture</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">How it works</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-white/5" />
                     <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
                       <Link to="/about" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
                         <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider italic">The Mission</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">About</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/10">
                       <Link to="/contact" className="flex items-center gap-3 w-full p-2 no-underline text-foreground">
                         <MessageSquare className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider italic">Contact Support</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider italic">Contact</span>
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -223,7 +223,7 @@ const Navbar = ({
                   id="navbar-search"
                   name="navbar-search"
                   aria-label="Search tools"
-                  placeholder="Search for artifacts..."
+                  placeholder="Search tools..."
                   value={isHomePage ? searchQuery : toolSearchQuery}
                   onFocus={() => setShowSearchOverlay(true)}
                   onChange={(e) => {
@@ -276,16 +276,7 @@ const Navbar = ({
 
             {/* Right: Actions (Standard Technical Sizing) */}
             <div className="flex items-center gap-2 lg:gap-3 justify-end shrink-0">
-              <a
-                href="https://ko-fi.com/privateutils"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-3 lg:px-4 h-9 lg:h-10 rounded-xl bg-primary text-primary-foreground font-black text-[9px] uppercase tracking-[0.15em] shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:opacity-95 active:scale-95 transition-theme focus-premium"
-                title="Support the Project"
-              >
-                <Coffee className="h-4 w-4 lg:animate-pulse" />
-                <span className="hidden sm:inline">Support</span>
-              </a>
+              
 
               <Button
                 variant="ghost"

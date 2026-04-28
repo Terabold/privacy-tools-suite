@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -295,20 +295,7 @@ const SvgToIco = () => {
                 </Card>
               </aside>
             </div>
-            <ToolExpertSection
-              title="SVG to ICO Icon Generator"
-              accent="orange"
-              overview="This generator is a client-side binary packer designed to transform scalable vectors into standard ICO favicons. I built this tool to provide a fast, offline alternative to cloud converters that often add unnecessary pixel metadata to your production icons. It ensures your branding assets remain strictly confidential and sharp."
-              steps={[
-                "Paste your SVG XML code or upload a vector artifact to the generator workbench.",
-                "Select your target resolution from the standard sizing matrix (16px to 256px).",
-                "The engine renders a high-DPI raster image to an off-screen canvas surface.",
-                "Review the live preview to verify orientation and color accuracy.",
-                "Download the binary .ico container directly from your browser's managed heap."
-              ]}
-              technicalImplementation="I engineered this packer to perform two distinct operations. First, it uses the Canvas API to rasterize the SVG at the selected bit-depth. Second, I implemented a specialized ICO binary packer that manually constructs the IconDirectory and IconDirectoryEntry structures according to specification. This allows us to wrap a PNG-encoded image into an ICO container directly in-memory, bypassing the need for server-side binary processors."
-              privacyGuarantee="The Security & Privacy model for the ICO Generator is built on Deterministic Execution. Every byte of the ICO file is constructed in your local browser's volatile memory. By utilizing TypedArrays (Uint8Array) for binary construction, we bypass the need for external network calls or cloud-based image processors. Once the tab is purged, your memory is cleared and the session data is vaporized."
-            />
+            <ToolBottomDescription toolId="/svg-to-ico" />
           </div>
         </main>
         <SponsorSidebars position="right" />

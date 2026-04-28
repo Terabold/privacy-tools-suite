@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -269,20 +269,7 @@ const QrForge = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Secure QR Forge"
-              accent="violet"
-              overview="The Secure QR Forge is a high-speed data encoding utility designed to generate ISO/IEC 18004 compliant QR codes for URLs, text, and encrypted protocols. I architected this forge to provide a surgical path for generating direct, non-tracking redirects without the security risks of 'online generators' that log your URLs, track your users, and redirect through intermediate proxy servers."
-              steps={[
-                "Stage your target 'Redirection Data' into the central input registry.",
-                "Configure your 'Level' (L, M, Q, H) to establish the necessary error correction density.",
-                "Monitor the 'Real-time Generation' to ensure your artifact is visually balanced.",
-                "Utilize the 'Print' or 'Clipboard' modules to extract your sanitized QR artifact.",
-                "Download the high-fidelity PNG or SVG asset for use in physical or digital media."
-              ]}
-              technicalImplementation="I engineered this forge using a Reed-Solomon Error Correction Engine and a local QR matrix generator. The logic calculates the optimal polynomial depth for your payload size, ensuring that even partially obscured codes (due to physical damage or low contrast) remain decodable. Because the entire bit-masking and matrix-rendering process occurs within your browser's local sandbox, your redirection strings remain strictly air-gapped from the network."
-              privacyGuarantee="The Security \u0026 Privacy model for the QR Forge is built on Redirection Sovereignty. Your source payloads—whether containing access credentials, private URLs, or plain text—exist strictly within your browser's private application state. We do not utilize any telemetry to monitor the content of the codes you generate. All session metadata is ephemeral and is permanently purged from system RAM upon tab termination. Your links stay private."
-            />
+            <ToolBottomDescription toolId="/qr-forge" />
           </div>
         </main>
 

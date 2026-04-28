@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
@@ -839,20 +839,7 @@ const SpriteStudio = () => {
             </div>
             {/* SEO & Tool Guide Section */}
             <div className="max-w-[1240px] w-full mt-10">
-              <ToolExpertSection
-                title="Sprite Sheet Studio"
-                accent="emerald"
-                overview="This studio is a high-precision asset partitioning engine designed for game developers and UI architects. I built this tool to provide a pixel-perfect workflow for slicing texture atlases and sprite sheets without the security risks of uploading unreleased game assets to cloud-based 'slicers' that might store your artistic masterworks."
-                steps={[
-                  "Upload your texture atlas or sprite sheet master to the drafting stage workspace.",
-                  "Select between 'Manual Drafting' for irregular slices or 'Grid Schema' for uniform tiles.",
-                  "Calibrate the grid coordinates using the 'Fixed Count' or 'Pixel Density' engines.",
-                  "Review your 'Partition Stack' to ensure every node is correctly bounded and named.",
-                  "Bake and download the entire asset library as a locally-compressed ZIP archive."
-                ]}
-                technicalImplementation="I engineered the studio core using an off-screen Canvas API 2D surface for bit-perfect raster extraction. The drafting interface utilizes a Virtual Coordinate System that reconciles zoom and pan offsets against the actual bitmap resolution, allowing for sub-pixel precision. The final export phase leverages JSZip to perform client-side binary compression, wrapping the individual PNG blobs into a single ZIP container without a single network call."
-                privacyGuarantee="The Security & Privacy model for Sprite Studio is centered on Zero-Upload Partitioning. All image manipulation, pixel sampling, and archive generation occur within your browser's local heap. We circumvent the entire network stack for data processing. Your proprietary master textures remain strictly offline and are obliterated from the browser's temporary storage the moment the tab is closed."
-              />
+              <ToolBottomDescription toolId="/sprite-studio" />
             </div>
           </div>
         </main>

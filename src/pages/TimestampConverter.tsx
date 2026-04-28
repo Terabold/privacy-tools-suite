@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -289,20 +289,7 @@ const TimestampConverter = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Universal Epoch \u0026 Timestamp Studio"
-              accent="indigo"
-              overview="The Universal Epoch \u0026 Timestamp Studio is a high-precision temporal translation workbench designed for backend developers, systems architect, and site reliability engineers. I built this tool to provide a surgical path for mapping between Unix Epoch seconds, milliseconds, and ISO-8601 artifacts without the security risks of 'online time fixers' that can log your operational metadata and track your server maintenance windows."
-              steps={[
-                "Stage your temporal artifact (Unix TS, ISO, or UTC string) into the Input Registry.",
-                "Select your target 'Timezone' to localize the artifact for specific regional operations.",
-                "Monitor the 'Live Formats' grid to compare relative, human-readable, and RFC-compliant strings.",
-                "utilize the 'Live Clock' module to capture real-time Epoch snapshots for debugging.",
-                "Copy the sanitized temporal artifact directly to your clipboard for deployment scripts."
-              ]}
-              technicalImplementation="I architected this studio using a native EcmaScript Date Object Engine and the Intl.DateTimeFormat API. The conversion logic utilizes a heuristic pattern matcher to differentiate between Unix seconds and milliseconds based on bit-length thresholds. By executing the localization and relative-time calculations inside the browser's V8 sandbox, we ensure microsecond precision without the latency of cloud-based time APIs."
-              privacyGuarantee="The Security \u0026 Privacy model for the Timestamp Lab is built on Temporal metadata souverignty. Your operational timestamps and deployment schedules are processed strictly within your browser's private application state. At no point are your inputs or the resulting localized strings transmitted to a remote server. The tool is entirely air-gapped, ensuring that your server's temporal metadata remains strictly confidential."
-            />
+            <ToolBottomDescription toolId="/timestamp-converter" />
           </div>
         </main>
 

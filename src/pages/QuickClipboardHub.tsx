@@ -4,7 +4,7 @@ import { ArrowLeft, Zap, ClipboardCopy, Download, FileCheck, ShieldCheck, Histor
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -215,20 +215,7 @@ const QuickClipboardHub = () => {
               </div>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Quick Clipboard Hub"
-              accent="rose"
-              overview="The Quick Clipboard Hub is a high-speed extraction utility designed to bridge the gap between your system buffer and the local filesystem. I architected this hub to provide a surgical path for converting binary clipboard contents (images, PDF snippets, or data fragments) into downloadable file artifacts—eliminating the 'Copy-Paste middleman' and the privacy risks of uploading your clipboard to 'cloud converters'."
-              steps={[
-                "Initialize the 'Clipboard Hook' by interaction with the main workspace.",
-                "Stage your binary artifact by copying it from an external source (Slack, Browser, etc.).",
-                "Monitor the 'Live Detection' registry as the hub identifies the MIME type of your buffer.",
-                "Review the 'Extraction Metadata' to verify the file size and encoding format.",
-                "Trigger the 'Local Download' to package the bitstream into a sanitized file artifact."
-              ]}
-              technicalImplementation="I engineered this hub using the native Async Clipboard API and the DataTransfer interface. The logic utilizes a recursive MIME-detection algorithm to identify binary headers within the 'clipboard-read' stream, effectively extracting raw bytes from the system's memory heap. By utilizing Local Blob URLs, we can present a high-fidelity preview and trigger downloads without ever transmitting a single byte across the network interface."
-              privacyGuarantee="The Security \u0026 Privacy model for the Clipboard Hub is built on Buffer Isolation. Your clipboard contents—which often contain sensitive credentials or proprietary assets—are intercepted and processed strictly within your browser's private execution thread. We do not utilize telemetry to monitor what you copy. All extraction data is strictly volatile and is permanently purged from system memory upon tab closure. Your clipboard remains strictly your own."
-            />
+            <ToolBottomDescription toolId="/quick-clipboard" />
           </div>
         </main>
 

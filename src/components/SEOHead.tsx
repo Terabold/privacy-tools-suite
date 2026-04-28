@@ -5,9 +5,9 @@ import toolsMetadata from "@/data/toolsMetadata.json";
 const BASE_URL = "https://privateutils.com";
 
 const HOME_META = {
-  title: "PrivateUtils — Private Browser Tools",
+  title: "PrivateUtils — Free Private Browser Tools, No Upload Required",
   description:
-    "Simple browser tools for media and code. 100% private, no uploads. Everything runs locally on your device.",
+    "A professional collection of client-side developer and media tools. Process video, images, and sensitive data entirely in your browser. No server uploads, no tracking, 100% private.",
 };
 
 /**
@@ -29,6 +29,12 @@ const SEOHead = () => {
     normalizedPath === "/"
       ? HOME_META
       : toolsMetadata.find((m: any) => m.to === normalizedPath);
+
+    const noIndexPages = [
+    "/about", "/insights", "/faq", "/contact", 
+    "/technical-architecture", "/security-architecture"
+  ];
+  const shouldNoIndex = noIndexPages.includes(normalizedPath);
 
   const title = meta?.title ?? meta?.seoTitle ?? HOME_META.title;
   const description =
@@ -58,6 +64,7 @@ const SEOHead = () => {
       "@type": "Organization",
       name: "PrivateUtils",
       url: BASE_URL,
+      logo: `${BASE_URL}/apple-touch-icon.png`
     },
   };
 
@@ -65,6 +72,7 @@ const SEOHead = () => {
     <Helmet>
       {/* Basic Meta Tags */}
       <title>{title}</title>
+      {shouldNoIndex && <meta name="robots" content="noindex, follow" />}
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />
 

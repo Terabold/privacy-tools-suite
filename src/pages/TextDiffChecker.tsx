@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch"; // assuming you have this from shadcn
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -374,20 +374,7 @@ const TextDiffChecker = () => {
               </div>
             </div>
 
-            <ToolExpertSection
-              title="Forensic Text Comparison Studio"
-              accent="violet"
-              overview="The Forensic Diff Studio is a professional-grade analysis suite designed for software developers, legal content reviewers, and security researchers. I built this tool to provide a surgical path for performing private 1:1 artifact comparisons—ensuring that your sensitive code diffs, contract revisions, or configuration changes are analyzed strictly within a local, air-gapped sandbox without the risk of leaking internal deviations to third-party 'diff' services."
-              steps={[
-                "Paste your 'Original Artifact' into the primary workspace.",
-                "Paste the 'Modified Version' into the adjacent forensic pane.",
-                "Enable 'Live Mode' for real-time delta tracking or trigger a manual 'Run Forensic Diff'.",
-                "Select your comparison granularity (Lines, Words, or Characters) to audit specific deviations.",
-                "Review the 'Diff Result' for high-contrast additions and removals before extracting the final report."
-              ]}
-              technicalImplementation="I architected the comparison engine using the Myers Diff Algorithm, implemented locally for high-precision delta calculation. The UI utilizes a virtualized rendering strategy for the diff output, ensuring that multi-thousand-line comparisons remain fluid. To prevent UI thread fatigue during massive artifact analysis, I implemented a debounced state synchronization that reconciled the two input buffers before triggering the comparison function."
-              privacyGuarantee="The Security \u0026 Privacy model for the Diff Studio is based on Runtime Isolation. Unlike online comparison sites that may capture 'Before \u0026 After' snapshots of your sensitive data, our engine executes all arithmetic within your browser's private application state. Your artifacts remain 100% offline, and all comparison state is strictly ephemeral—purged from the volatile heap once the session ends. Your internal revisions stay internal."
-            />
+            <ToolBottomDescription toolId="/text-diff-checker" />
           </div>
         </main>
 

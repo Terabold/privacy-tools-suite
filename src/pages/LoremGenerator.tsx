@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, RefreshCw, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -246,20 +246,7 @@ const LoremGenerator = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Lorem Ipsum \u0026 AI Content Lab"
-              accent="emerald"
-              overview="The Lorem Ipsum \u0026 AI Content Lab is a high-speed placeholder text reconstruction workbench designed for UI/UX designers, front-end architects, and content strategists. I engineered this tool to provide a surgical path for generating varied placeholder artifacts (Classic, Corporate, or Hipster) without the privacy risks of 'online generators' that track your layout patterns and monetize your design workflows via cookie-syncing."
-              steps={[
-                "Select your target 'Matrix Style' (Classic Latin, Corporate Buzzword, or Hipster).",
-                "Define your 'Atomic Unit' (Words, Sentences, or Paragraphs) for the generation batch.",
-                "Set the 'Quantity' coefficient to calibrate the volume of the text artifact.",
-                "Toggle the 'Lorem Start' switch to include the traditional Latin initializer.",
-                "Trigger the 'Generate Stream' and extract the sanitized text directly from the UI."
-              ]}
-              technicalImplementation="I architected this lab using a Local Pseudo-Random Linguistic Engine. The system pulls from three air-gapped dictionaries stored as local memory constants. The generation algorithm utilizes weighted randomization to assemble sentences with varying lengths and structures, simulating natural language flow. Because the entire assembly happens in the browser's execution thread, results are instantaneous and zero network packets are exchanged."
-              privacyGuarantee="The Security \u0026 Privacy model for the Content Lab is centered on Architectural Isolation. Your generation patterns—including styles, lengths, and frequency—exist strictly within your browser's private application state. We do not utilize any telemetry to monitor the types of mockups you are building. All session data is ephemeral and is permanently purged from RAM upon tab closure. Your design workflow stays strictly private."
-            />
+            <ToolBottomDescription toolId="/lorem-generator" />
           </div>
         </main>
 

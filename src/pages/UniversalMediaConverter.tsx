@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
 import ControlHint from "@/components/ControlHint";
@@ -594,20 +594,7 @@ const UniversalMediaConverter = () => {
               </aside>
             </div>
 
-            <ToolExpertSection
-              title="Universal Media Engine"
-              accent="blue"
-              overview="When I designed the Universal Media Engine, my goal was to break the 'Upload to Transcode' cycle. This tool provides an industrial-grade interface for converting complex video and audio artifacts without relying on an external server cluster. It is built to maintain confidentiality for proprietary media workflows."
-              steps={[
-                "Upload your source media artifact (Video or Audio) to the local conversion engine.",
-                "Select your target container format and codec parameters from the rendering matrix.",
-                "The engine initializes a dedicated WebAssembly instance to handle the media stream.",
-                "Download your converted file directly from the browser's heap memory once the progress bar reaches 100%.",
-                "Your original and converted files are purged from RAM immediately upon closing the session."
-              ]}
-              technicalImplementation="The architecture of this converter is powered by ffmpeg.wasm, a direct WebAssembly port of the FFmpeg source code. I built a singleton orchestrator to manage the WASM lifecycle, preventing memory leaks and ensuring efficient resource allocation. By utilizing the SharedArrayBuffer API, the engine performs multi-threaded transcoding, bringing near-native processing speeds to the Browser Sandbox. The output is generated as a local Blob URL, bypassing the need for any backend storage."
-              privacyGuarantee="The Privacy & Security Guarantee for this tool is absolute: zero network ingress or egress for your media data. I implemented this because traditional converters often log your filenames and metadata. Here, the entire transcode happens in your volatile hardware RAM. Once you exit the tab, the heap is garbage-collected, and the temporary virtual file system is vaporized."
-            />
+            <ToolBottomDescription toolId="/universal-media-converter" />
           </div>
         </main>
 

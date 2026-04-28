@@ -21,16 +21,13 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Premium, 100% private browser-based utilities.
-              The most secure way to process media and data—completely offline on your device.
+              Free tools that run entirely in your browser. No uploads, no accounts, no tracking.
             </p>
             <div className="mt-4 flex items-center gap-3">
               <a href="mailto:hello@privateutils.com" className="text-xs font-bold text-primary hover:underline transition-all">
                 hello@privateutils.com
               </a>
-              <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black tracking-widest uppercase">
-                v1.0
-              </span>
+              
             </div>
           </div>
 
@@ -44,11 +41,11 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="font-semibold text-foreground">Privacy Architecture</h3>
+            <h3 className="font-semibold text-foreground">Privacy</h3>
             <ul className="text-sm text-muted-foreground space-y-2">
-              <li><Link to="/security-architecture" className="hover:text-primary transition-colors font-medium">Security Deep-Dive</Link></li>
-              <li><Link to="/faq" className="hover:text-primary transition-colors font-medium">Technical FAQ</Link></li>
-              <li><Link to="/contact" className="hover:text-primary transition-colors font-medium">Contact Support</Link></li>
+              <li><Link to="/security-architecture" className="hover:text-primary transition-colors font-medium">Security</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors font-medium">FAQ</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors font-medium">Contact</Link></li>
               <li><Link to="/privacy" className="hover:text-primary transition-colors font-medium">Privacy Policy</Link></li>
             </ul>
           </div>
@@ -99,7 +96,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-widest font-semibold pb-20 md:pb-8">
-          <p className="text-muted-foreground">© 2026 PRIVATEUTILS</p>
+          <p className="text-muted-foreground">© 2026 PrivateUtils</p>
           <div className="flex items-center gap-6 text-foreground/70">
             <Link to="/privacy" className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</Link>
             <div className="h-1 w-1 rounded-full bg-border" />

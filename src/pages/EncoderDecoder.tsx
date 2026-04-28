@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, Code2, RefreshCw, AlertTriangle, Trash2, AlertC
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import ToolAdBanner from "@/components/ToolAdBanner";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -333,20 +333,7 @@ const EncoderDecoder = () => {
                   </div>
                </div>
                {/* SEO & Tool Guide Section */}
-               <ToolExpertSection
-                  title="Universal Encoder & Decoder"
-                  accent="sky"
-                  overview="The Universal Encoder & Decoder is a multi-protocol data architect designed for developers, penetration testers, and security researchers. I built this tool to provide a surgical path for translating between Base64, URL percent-encoding, HTML entities, and Hexadecimal—all while ensuring that sensitive tokens and payloads are never leaked to third-party conversion logs."
-                  steps={[
-                     "Select your target encoding or decoding protocol (e.g., Base64, URL, Hex).",
-                     "Input the raw text or artifact artifact into the source workspace.",
-                     "Observe the real-time 'Analyzed Bitstream' as the conversion occurs in the background.",
-                     "Review the 'Size Ratio' to understand the data expansion or contraction from the original state.",
-                     "Copy the resulting bitstream directly or 'Swap' it back to the input for multi-pass encoding."
-                  ]}
-                  technicalImplementation="I architected the conversion engine using a combination of native browser APIs (like btoa, atob, and encodeURIComponent) and custom Uint8Array-based buffer logic for Hex and HTML processing. To prevent thread-lock during the processing of massive payloads, I implemented a debounced worker-simulated delay, ensuring the UI remains responsive. The Base64 module uses Unicode-safe normalization to ensure that multi-byte characters are preserved without corruption during the binary-to-string transition."
-                  privacyGuarantee="The Security & Privacy model for the Encoder/Decoder is built on Isolation by Default. Unlike 'online' decoders that might capture your JWT secrets or API keys for analysis, this tool processes every byte within your local browser sandbox. We enforce a hard 5MB security threshold to prevent browser memory exhaustion, and within that limit, your data remains 100% offline and is instantly cleared from the heap upon session termination."
-               />
+               <ToolBottomDescription toolId="/encoder-decoder" />
             </main>
 
             <SponsorSidebars position="right" />

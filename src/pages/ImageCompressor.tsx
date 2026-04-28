@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import ToolAdBanner from "@/components/ToolAdBanner";
@@ -529,20 +529,7 @@ const ImageCompressor = () => {
             </Card>
 
             {/* SEO section */}
-            <ToolExpertSection
-              title="Image Compressor & Optimizer"
-              accent="orange"
-              overview="This compressor is a professional-grade quantization engine designed for high-efficiency asset reduction. I built this tool to provide a localized alternative to data-harvesting 'Free Online Compressors' that often profile your metadata and photographic content. My goal was to create a workbench where architectural fidelity is maintained without external transmission."
-              steps={[
-                "Deploy your image artifact (WebP, JPG, or PNG) to the studio workspace.",
-                "Adjust the 'Intensity Optimization' slider to determine the target quantization level.",
-                "Select your target production format; I recommend WebP for maximum web performance.",
-                "The engine initializes a local transcode via the browser's hardware-accelerated Canvas engine.",
-                "Download the optimized artifact directly from your device's managed heap memory."
-              ]}
-              technicalImplementation="I architected this optimizer using a hybrid dual-engine pipeline. For standard JPG and WebP encoding, we utilize the hardware-accelerated toBlob() method of the Canvas API. For advanced PNG quantization, I integrated ffmpeg.wasm to perform palette generation and dithering, achieving significant size reductions that native encoders cannot match. The interface remains responsive by offloading heavy quantization tasks to background threads, preventing main thread blocking during large image crunching."
-              privacyGuarantee="The Privacy & Security Guarantee for this compressor is absolute: zero-server round-trips. Your original and optimized pixels remain within the volatile Browser Sandbox Lifecycle. We utilize localized Blob URLs for temporary artifact generation, ensuring that no unencrypted data ever touches our network. Once you close the tab, the memory is purged and the optimization session is vaporized."
-            />
+            <ToolBottomDescription toolId="/image-compressor" />
           </div>
         </main>
 

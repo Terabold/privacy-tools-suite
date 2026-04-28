@@ -4,7 +4,7 @@ import { ArrowLeft, Copy, Check, RefreshCw, Palette, Zap, Database, Code, FileJs
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
 import StickyAnchorAd from "@/components/StickyAnchorAd";
@@ -290,20 +290,7 @@ const ColorPaletteGenerator = () => {
             </div>
 
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="HSL Color Palette Generator"
-              accent="emerald"
-              overview="This generator is a professional-grade color architecture tool engineered for UI/UX developers and digital artists. I built this tool to provide a mathematical approach to color harmony—allowing you to generate coherent palettes from a seed HSL value or an image artifact without the data-mining typical of online 'color picker' sites."
-              steps={[
-                "Set your seed 'Hue,' 'Saturation,' and 'Lightness' using the precision studio sliders.",
-                "Select a 'Harmony Mode' (Monochromatic, Analogous, Complementary, or Triadic) to calculate the palette.",
-                "Optionally, deploy an image artifact to the workbench to seed the palette from its center-pixel sample.",
-                "Observe the real-time preview of the calculated harmony in the workbench column.",
-                "Export your palette directly as raw Hex lists, CSS Variables, or a JSON object for development."
-              ]}
-              technicalImplementation="I architected the 'Harmony Engine' using functional color theory algorithms. The engine performs real-time matrix shifts on the HSL (Hue, Saturation, Lightness) color space, which is more perceptually uniform for developers than raw RGB. When seeding from an image, we utilize the Canvas API to rasterize the artifact locally and sample the pixel buffer directly. This ensures that the entire palette generation pipeline is non-blocking and zero-latency."
-              privacyGuarantee="The Security & Privacy model for the Palette Generator is built on Context Isolation. All mathematical transformations and image sampling occur strictly within your browser's private V8 execution context. We do not use external telemetry or cloud-side processing hubs. Your design experiments and seed assets remain entirely offline and are purged from the machine memory once the session ends."
-            />
+            <ToolBottomDescription toolId="/palette-studio" />
           </div>
         </main>
 

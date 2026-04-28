@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import Footer from "@/components/Footer";
-import ToolExpertSection from "@/components/ToolExpertSection";
+import ToolBottomDescription from '@/components/ToolBottomDescription';
 
 import SponsorSidebars from "@/components/SponsorSidebars";
 import AdBox from "@/components/AdBox";
@@ -435,20 +435,7 @@ const VideoAspectStudio = () => {
               </aside>
             </div>
             {/* SEO & Tool Guide Section */}
-            <ToolExpertSection
-              title="Video Aspect Ratio Studio"
-              accent="blue"
-              overview="The Video Aspect Ratio Studio is a specialized social media reformatting workbench designed for influencers, content architects, and digital marketing managers. I built this tool to provide a surgical path for remapping video artifacts to vertical (9:16), square (1:1), or cinematic (16:9) formats—ensuring that your unreleased content remains private and never touches a third-party 'remixer' server that could scrape your unposted drafts."
-              steps={[
-                "Deploy your video artifact (MP4, MOV, or WebM) to the 'Mapping System' workspace.",
-                "Select your target 'Aspect Ratio' (e.g., 9:16 for TikTok/Reels or 1:1 for Instagram).",
-                "Choose your 'Remapping Mode': 'Padded' for letterboxing or 'Cropped' for full-frame isolation.",
-                "Trigger the 'Export Asset' sequence to initiate the local libx264 transcoding engine.",
-                "Download the social-ready MP4 artifact directly from the browser's secure memory heap."
-              ]}
-              technicalImplementation="I architected this studio using a FFmpeg WASM (WebAssembly) Pipeline to perform real-time video re-encoding. The engine utilizes custom FFmpeg Filtergraphs to calculate padding or cropping coordinates based on the source and target aspect ratios. By leveraging YUV420p pixel formatting and the libx264 codec inside the WASM sandbox, we ensure maximum compatibility with social media ingestion systems while maintaining high-fidelity bitrates entirely on your local CPU."
-              privacyGuarantee="The Security \u0026 Privacy model for the Aspect Studio is built on Local Transcoding Sovereignty. Unlike online 'video resizers' that may capture your unreleased footage, our engine executes all arithmetic within your browser's private application state. Your video artifacts are processed in a volatile, air-gapped Virtual File System (VFS) and are permanently purged from RAM once the workbench session is terminated. Your content drafts stay off the cloud."
-            />
+            <ToolBottomDescription toolId="/video-aspect-studio" />
           </div>
         </main>
 

@@ -20,7 +20,6 @@ import GlobalControlHelp from "./components/GlobalControlHelp";
 const queryClient = new QueryClient();
 
 // --- SSR-AWARE LAZY HELPER ---
-// Uses Vite's glob import to force synchronous loading on the server, while keeping code-splitting on the client.
 const eagerPages = import.meta.env.SSR ? import.meta.glob('./pages/*.tsx', { eager: true }) : {};
 
 const ssrLazy = (filename: string, importFn: () => Promise<any>) => {
@@ -84,7 +83,6 @@ const Contact = ssrLazy("Contact.tsx", () => import("./pages/Contact.tsx"));
 const Insights = ssrLazy("Insights.tsx", () => import("./pages/Insights.tsx"));
 const NotFound = ssrLazy("NotFound.tsx", () => import("./pages/NotFound.tsx"));
 
-
 const LoadingArtifact = () => (
   <div className="flex h-screen w-screen items-center justify-center bg-background">
     <div className="flex flex-col items-center gap-6 animate-pulse">
@@ -114,51 +112,52 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
   }, [location.pathname]);
 
   return (
-    <div className={`min-h-screen flex flex-col bg-background transition-theme duration-700 ${themeClass}`}>
+    <div className={`h-screen w-full flex flex-col bg-background transition-theme duration-700 overflow-hidden ${themeClass}`}>
       {children}
     </div>
   );
 };
 
-  const App = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+import { useDarkMode } from "@/hooks/useDarkMode";
 
-    // Global search and category state
-    const params = React.useMemo(() => new URLSearchParams(location.search), [location.search]);
-    const [searchQuery, setSearchQuery] = React.useState(() => (location.pathname === "/" ? params.get("search") ?? "" : ""));
-    const [selectedCategory, setSelectedCategory] = React.useState<string | null>(() => (location.pathname === "/" ? params.get("category") ?? null : null));
+const App = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { darkMode, toggleDark } = useDarkMode();
 
-    // Sync state when on home page
-    React.useEffect(() => {
-      if (location.pathname === "/") {
-        setSearchQuery(params.get("search") ?? "");
-        const cat = params.get("category");
-        setSelectedCategory(cat === "All" ? null : cat);
-      }
-    }, [location.pathname, params]);
+  // Global search and category state
+  const params = React.useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const [searchQuery, setSearchQuery] = React.useState(() => (location.pathname === "/" ? params.get("search") ?? "" : ""));
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(() => (location.pathname === "/" ? params.get("category") ?? null : null));
 
-    const handleSetSearchQuery = React.useCallback((q: string) => {
-      setSearchQuery(q);
-      if (location.pathname === "/") {
-        const p = new URLSearchParams(location.search);
-        if (q) p.set("search", q); else p.delete("search");
-        navigate(`/?${p.toString()}`, { replace: true });
-      } else if (q) {
-        navigate(`/?search=${encodeURIComponent(q)}`);
-      }
-    }, [navigate, location.pathname, location.search]);
+  // Sync state when on home page
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setSearchQuery(params.get("search") ?? "");
+      const cat = params.get("category");
+      setSelectedCategory(cat === "All" ? null : cat);
+    }
+  }, [location.pathname, params]);
 
-    const handleSetCategory = React.useCallback((cat: string | null) => {
-      setSelectedCategory(cat);
-      if (location.pathname === "/") {
-        const p = new URLSearchParams(location.search);
-        if (cat) p.set("category", cat); else p.delete("category");
-        navigate(`/?${p.toString()}`, { replace: true });
-      } else if (cat) {
-        navigate(`/?category=${encodeURIComponent(cat)}`);
-      }
-    }, [navigate, location.pathname, location.search]);
+  const handleSetSearchQuery = React.useCallback((q: string) => {
+    setSearchQuery(q);
+    if (location.pathname === "/") {
+      const p = new URLSearchParams(location.search);
+      if (q) p.set("search", q); else p.delete("search");
+      navigate(`/?${p.toString()}`, { replace: true });
+    } else if (q) {
+      navigate(`/?search=${encodeURIComponent(q)}`);
+    }
+  }, [navigate, location.pathname, location.search]);
+
+  const handleSetCategory = React.useCallback((cat: string | null) => {
+    setSelectedCategory(cat);
+    if (location.pathname === "/") {
+      const p = new URLSearchParams(location.search);
+      if (cat) p.set("category", cat); else p.delete("category");
+      navigate(`/?${p.toString()}`, { replace: true });
+    }
+  }, [navigate, location.pathname, location.search]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -172,278 +171,87 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
         <ErrorBoundary>
           <ThemeOrchestrator>
             <Navbar 
-              darkMode={undefined as any} 
-              onToggleDark={undefined as any} 
+              darkMode={darkMode}
+              onToggleDark={toggleDark}
               searchQuery={searchQuery}
               setSearchQuery={handleSetSearchQuery}
               selectedCategory={selectedCategory}
               setSelectedCategory={handleSetCategory}
             />
-            <main className="flex-grow flex flex-col">
+            <main id="app-main-scroll" className="flex-grow overflow-y-auto overflow-x-hidden relative scroll-smooth">
               <Suspense fallback={<LoadingArtifact />}>
                 <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                  <Route path="/" element={
-                    <PageTransition>
-                      <Index 
-                        searchQuery={searchQuery}
-                        setSearchQuery={handleSetSearchQuery}
-                        selectedCategory={selectedCategory}
-                        setSelectedCategory={handleSetCategory}
-                      />
-                    </PageTransition>
-                  } />
-                  <Route path="/universal-volume-booster" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Volume Booster"><UniversalVolumeBooster /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/text-case-formatter" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Text Case Formatter"><TextCaseFormatter /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/image-color-extractor" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Image Color Extractor"><ImageColorExtractor /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/universal-media-converter" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Media Converter"><UniversalMediaConverter /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/image-compressor" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Image Compressor"><ImageCompressor /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/perspective-tilter" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="3D Image Tilt"><PerspectiveTilter /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/youtube-thumbnail-hub" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="YouTube Thumbnail Hub"><YouTubeThumbnailHub /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/sprite-studio" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Sprite Studio"><SpriteStudio /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/audio-trimmer" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Audio Trimmer"><AudioTrimmer /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/metadata-scrubber" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Metadata Scrubber"><MetadataScrubber /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/video-to-gif" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Video to GIF"><VideoToGif /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/frame-extractor" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Frame Extractor"><FrameExtractor /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/video-aspect-studio" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Video Aspect Studio"><VideoAspectStudio /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/json-studio" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="JSON Formatter"><JsonForge /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/data-transformer" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Data Transformer"><CsvJsonForge /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/qr-forge" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="QR Forge"><QrForge /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/pii-masker" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="PII Masker"><PiiMasker /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/svg-optimizer" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="SVG Optimizer"><SvgOptimizer /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/svg-to-image" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="SVG to Image"><SvgToImage /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/image-to-pdf" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Image to PDF"><ImageToPdf /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/text-diff-checker" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Text Diff Checker"><TextDiffChecker /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/quick-clipboard" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Quick Clipboard"><QuickClipboardHub /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/clipboard" element={<Navigate to="/quick-clipboard" replace />} />
-                  <Route path="/jwt-decoder" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="JWT Decoder"><JwtDecoder /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/encoder-decoder" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Encoder / Decoder"><EncoderDecoder /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/timestamp-converter" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Timestamp Converter"><TimestampConverter /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/regex-playground" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Regex Playground"><RegexPlayground /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/lorem-generator" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Lorem Generator"><LoremGenerator /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/password-generator" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Password Generator"><PasswordGenerator /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/palette-studio" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Palette Studio"><ColorPaletteGenerator /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/hash-lab" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Hash Lab"><HashLab /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/unit-converter" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Unit Converter"><UnitConverter /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/base64-image" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Image to Base64"><Base64Image /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/reverse-audio" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Reverse Audio"><ReverseAudio /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/binary-to-audio" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Binary to Audio"><BinaryToAudio /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/audio-mono-stereo" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Audio Mono / Stereo"><AudioMonoStereo /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/audio-bass-booster" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Audio Bass Booster"><BassBooster /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/privacy" element={
-                    <PageTransition>
-                      <PrivacyPolicy />
-                    </PageTransition>
-                  } />
-                  <Route path="/terms" element={
-                    <PageTransition>
-                      <TermsOfUse />
-                    </PageTransition>
-                  } />
-                  <Route path="/morse-code-master" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Morse Code Master"><MorseCodeMaster /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/slug-forge" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Slug Forge"><SlugForge /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/whitespace-scrubber" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Whitespace Scrubber"><WhitespaceScrubber /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/svg-to-ico" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="SVG to ICO"><SvgToIco /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/dice-lab" element={
-                    <PageTransition>
-                      <ErrorBoundary toolName="Dice Lab"><DiceLab /></ErrorBoundary>
-                    </PageTransition>
-                  } />
-                  <Route path="/security-architecture" element={
-                    <PageTransition>
-                      <SecurityArchitecture />
-                    </PageTransition>
-                  } />
-                  <Route path="/technical-architecture" element={
-                    <PageTransition>
-                      <TechnicalArchitecture />
-                    </PageTransition>
-                  } />
-                  <Route path="/about" element={
-                    <PageTransition>
-                      <AboutProject />
-                    </PageTransition>
-                  } />
-                  <Route path="/contact" element={
-                    <PageTransition>
-                      <Contact />
-                    </PageTransition>
-                  } />
-                  <Route path="/insights" element={
-                    <PageTransition>
-                      <Insights />
-                    </PageTransition>
-                  } />
-                  <Route path="/faq" element={
-                    <PageTransition>
-                      <Faq />
-                    </PageTransition>
-                  } />
-                  <Route path="*" element={<NotFound />} />
-                  <Route path="/word-counter" element={<WordCounter />} />
-            </Routes>
-              </AnimatePresence>
-            </Suspense>
+                  <Routes location={location} key={location.pathname}>
+                    <Route path="/" element={
+                      <PageTransition>
+                        <Index 
+                          searchQuery={searchQuery}
+                          setSearchQuery={handleSetSearchQuery}
+                          selectedCategory={selectedCategory}
+                          setSelectedCategory={handleSetCategory}
+                        />
+                      </PageTransition>
+                    } />
+                    
+                    {/* Tool Routes */}
+                    <Route path="/universal-volume-booster" element={<PageTransition><ErrorBoundary toolName="Volume Booster"><UniversalVolumeBooster /></ErrorBoundary></PageTransition>} />
+                    <Route path="/text-case-formatter" element={<PageTransition><ErrorBoundary toolName="Text Case"><TextCaseFormatter /></ErrorBoundary></PageTransition>} />
+                    <Route path="/image-color-extractor" element={<PageTransition><ErrorBoundary toolName="Image Colors"><ImageColorExtractor /></ErrorBoundary></PageTransition>} />
+                    <Route path="/universal-media-converter" element={<PageTransition><ErrorBoundary toolName="Media Converter"><UniversalMediaConverter /></ErrorBoundary></PageTransition>} />
+                    <Route path="/image-compressor" element={<PageTransition><ErrorBoundary toolName="Image Compressor"><ImageCompressor /></ErrorBoundary></PageTransition>} />
+                    <Route path="/perspective-tilter" element={<PageTransition><ErrorBoundary toolName="Perspective Tilt"><PerspectiveTilter /></ErrorBoundary></PageTransition>} />
+                    <Route path="/youtube-thumbnail-hub" element={<PageTransition><ErrorBoundary toolName="YouTube Thumbnail"><YouTubeThumbnailHub /></ErrorBoundary></PageTransition>} />
+                    <Route path="/sprite-studio" element={<PageTransition><ErrorBoundary toolName="Sprite Studio"><SpriteStudio /></ErrorBoundary></PageTransition>} />
+                    <Route path="/metadata-scrubber" element={<PageTransition><ErrorBoundary toolName="Metadata Scrubber"><MetadataScrubber /></ErrorBoundary></PageTransition>} />
+                    <Route path="/audio-trimmer" element={<PageTransition><ErrorBoundary toolName="Audio Trimmer"><AudioTrimmer /></ErrorBoundary></PageTransition>} />
+                    <Route path="/video-to-gif" element={<PageTransition><ErrorBoundary toolName="Video to GIF"><VideoToGif /></ErrorBoundary></PageTransition>} />
+                    <Route path="/frame-extractor" element={<PageTransition><ErrorBoundary toolName="Frame Extractor"><FrameExtractor /></ErrorBoundary></PageTransition>} />
+                    <Route path="/video-aspect-studio" element={<PageTransition><ErrorBoundary toolName="Video Aspect"><VideoAspectStudio /></ErrorBoundary></PageTransition>} />
+                    <Route path="/json-studio" element={<PageTransition><ErrorBoundary toolName="JSON Studio"><JsonForge /></ErrorBoundary></PageTransition>} />
+                    <Route path="/data-transformer" element={<PageTransition><ErrorBoundary toolName="Data Transformer"><CsvJsonForge /></ErrorBoundary></PageTransition>} />
+                    <Route path="/qr-forge" element={<PageTransition><ErrorBoundary toolName="QR Forge"><QrForge /></ErrorBoundary></PageTransition>} />
+                    <Route path="/pii-masker" element={<PageTransition><ErrorBoundary toolName="PII Masker"><PiiMasker /></ErrorBoundary></PageTransition>} />
+                    <Route path="/svg-optimizer" element={<PageTransition><ErrorBoundary toolName="SVG Optimizer"><SvgOptimizer /></ErrorBoundary></PageTransition>} />
+                    <Route path="/svg-to-image" element={<PageTransition><ErrorBoundary toolName="SVG to Image"><SvgToImage /></ErrorBoundary></PageTransition>} />
+                    <Route path="/image-to-pdf" element={<PageTransition><ErrorBoundary toolName="Image to PDF"><ImageToPdf /></ErrorBoundary></PageTransition>} />
+                    <Route path="/text-diff-checker" element={<PageTransition><ErrorBoundary toolName="Text Diff"><TextDiffChecker /></ErrorBoundary></PageTransition>} />
+                    <Route path="/quick-clipboard" element={<PageTransition><ErrorBoundary toolName="Quick Clipboard"><QuickClipboardHub /></ErrorBoundary></PageTransition>} />
+                    <Route path="/jwt-decoder" element={<PageTransition><ErrorBoundary toolName="JWT Decoder"><JwtDecoder /></ErrorBoundary></PageTransition>} />
+                    <Route path="/encoder-decoder" element={<PageTransition><ErrorBoundary toolName="Encoder/Decoder"><EncoderDecoder /></ErrorBoundary></PageTransition>} />
+                    <Route path="/timestamp-converter" element={<PageTransition><ErrorBoundary toolName="Timestamp Converter"><TimestampConverter /></ErrorBoundary></PageTransition>} />
+                    <Route path="/regex-playground" element={<PageTransition><ErrorBoundary toolName="Regex Playground"><RegexPlayground /></ErrorBoundary></PageTransition>} />
+                    <Route path="/lorem-generator" element={<PageTransition><ErrorBoundary toolName="Lorem Generator"><LoremGenerator /></ErrorBoundary></PageTransition>} />
+                    <Route path="/password-generator" element={<PageTransition><ErrorBoundary toolName="Password Generator"><PasswordGenerator /></ErrorBoundary></PageTransition>} />
+                    <Route path="/palette-studio" element={<PageTransition><ErrorBoundary toolName="Palette Studio"><ColorPaletteGenerator /></ErrorBoundary></PageTransition>} />
+                    <Route path="/hash-lab" element={<PageTransition><ErrorBoundary toolName="Hash Lab"><HashLab /></ErrorBoundary></PageTransition>} />
+                    <Route path="/unit-converter" element={<PageTransition><ErrorBoundary toolName="Unit Converter"><UnitConverter /></ErrorBoundary></PageTransition>} />
+                    <Route path="/base64-image" element={<PageTransition><ErrorBoundary toolName="Base64 Image"><Base64Image /></ErrorBoundary></PageTransition>} />
+                    <Route path="/reverse-audio" element={<PageTransition><ErrorBoundary toolName="Reverse Audio"><ReverseAudio /></ErrorBoundary></PageTransition>} />
+                    <Route path="/binary-to-audio" element={<PageTransition><ErrorBoundary toolName="Binary to Audio"><BinaryToAudio /></ErrorBoundary></PageTransition>} />
+                    <Route path="/audio-mono-stereo" element={<PageTransition><ErrorBoundary toolName="Mono/Stereo"><AudioMonoStereo /></ErrorBoundary></PageTransition>} />
+                    <Route path="/audio-bass-booster" element={<PageTransition><ErrorBoundary toolName="Bass Booster"><BassBooster /></ErrorBoundary></PageTransition>} />
+                    <Route path="/morse-code-master" element={<PageTransition><ErrorBoundary toolName="Morse Code"><MorseCodeMaster /></ErrorBoundary></PageTransition>} />
+                    <Route path="/slug-forge" element={<PageTransition><ErrorBoundary toolName="Slug Forge"><SlugForge /></ErrorBoundary></PageTransition>} />
+                    <Route path="/whitespace-scrubber" element={<PageTransition><ErrorBoundary toolName="Whitespace Scrubber"><WhitespaceScrubber /></ErrorBoundary></PageTransition>} />
+                    <Route path="/svg-to-ico" element={<PageTransition><ErrorBoundary toolName="SVG to ICO"><SvgToIco /></ErrorBoundary></PageTransition>} />
+                    <Route path="/dice-lab" element={<PageTransition><ErrorBoundary toolName="Dice Lab"><DiceLab /></ErrorBoundary></PageTransition>} />
+                    <Route path="/word-counter" element={<PageTransition><ErrorBoundary toolName="Word Counter"><WordCounter /></ErrorBoundary></PageTransition>} />
+
+                    {/* Info Pages */}
+                    <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+                    <Route path="/terms" element={<PageTransition><TermsOfUse /></PageTransition>} />
+                    <Route path="/security-architecture" element={<PageTransition><SecurityArchitecture /></PageTransition>} />
+                    <Route path="/faq" element={<PageTransition><Faq /></PageTransition>} />
+                    <Route path="/about" element={<PageTransition><AboutProject /></PageTransition>} />
+                    <Route path="/technical-architecture" element={<PageTransition><TechnicalArchitecture /></PageTransition>} />
+                    <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+                    <Route path="/insights" element={<PageTransition><Insights /></PageTransition>} />
+                    
+                    <Route path="/404" element={<NotFound />} />
+                    <Route path="*" element={<Navigate to="/404" replace />} />
+                  </Routes>
+                </AnimatePresence>
+              </Suspense>
             </main>
           </ThemeOrchestrator>
         </ErrorBoundary>
@@ -453,4 +261,3 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default App;
-
