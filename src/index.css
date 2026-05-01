@@ -260,14 +260,16 @@
   }
 
   html {
-    @apply h-full antialiased overflow-hidden;
+    @apply antialiased;
+    height: 100dvh;
+    overflow: hidden;
   }
 
   body {
     @apply bg-background text-foreground antialiased text-[16px] pb-0 overflow-hidden;
     font-family: 'Outfit', sans-serif;
     width: 100% !important;
-    height: 100% !important;
+    height: 100dvh !important;
     transition: background-color var(--duration-slow) var(--ease-standard), color var(--duration-slow) var(--ease-standard), border-color var(--duration-slow) var(--ease-standard), box-shadow var(--duration-slow) var(--ease-standard);
   }
 

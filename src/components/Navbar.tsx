@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { Moon, Sun, Search, X, Video, ImageIcon, Music, ShieldCheck, Wrench, Sparkles, Command, ChevronRight, Terminal, Type, Zap, Coffee, BookOpen, HelpCircle, MessageSquare } from "lucide-react";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,7 +50,7 @@ const Navbar = ({
   const [toolSearchQuery, setToolSearchQuery] = useState("");
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll();
+
 
   // Identify current category for tool pages
   const currentCategory = useMemo(() => {
@@ -109,14 +109,6 @@ const Navbar = ({
 
   return (
     <>
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 z-[200] origin-left"
-        style={{
-          scaleX: scrollYProgress,
-          backgroundColor: `hsl(${activeTheme?.hsl || 'var(--primary)'})`,
-          boxShadow: `0 0 10px hsl(${activeTheme?.hsl || 'var(--primary)'} / 0.5)`
-        }}
-      />
       <header className="global-navbar sticky top-0 z-[100] w-full transition-theme shadow-lg shadow-black/10 overflow-visible">
       {/* 0. Authority Ribbon - Professional SaaS Tier (Desktop Only) */}
       <div className="hidden lg:flex w-full bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-1.5 px-8">

@@ -119,7 +119,7 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
   }, [location.pathname]);
 
   return (
-    <div className={`h-screen w-full flex flex-col bg-background transition-theme duration-700 overflow-hidden ${themeClass}`}>
+    <div className={`h-[100dvh] w-full flex flex-col bg-background transition-theme duration-700 overflow-hidden ${themeClass}`}>
       {children}
     </div>
   );

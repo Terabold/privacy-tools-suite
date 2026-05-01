@@ -145,13 +145,13 @@ const Index = ({
             variants={revealContainer}
             initial="hidden"
             animate="visible"
-            className="mb-16 mt-16 relative flex flex-col items-center text-center group/hero"
+            className="mb-8 mt-8 md:mb-14 md:mt-14 relative flex flex-col items-center text-center group/hero"
           >
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full -z-10 group-hover/hero:bg-primary/20 transition-all duration-1000" />
 
             <motion.h1
               variants={revealItem}
-              className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-foreground font-display mb-6 leading-[0.85] uppercase italic drop-shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)] group-hover/hero:drop-shadow-[0_0_60px_rgba(var(--primary-rgb),0.4)] transition-all duration-700 cursor-default"
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black tracking-tighter text-foreground font-display mb-4 md:mb-6 leading-[0.85] uppercase italic drop-shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)] group-hover/hero:drop-shadow-[0_0_60px_rgba(var(--primary-rgb),0.4)] transition-all duration-700 cursor-default"
             >
               Free tools that <br />
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent filter drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">never see your files.</span>
@@ -159,7 +159,7 @@ const Index = ({
 
             <motion.p
               variants={revealItem}
-              className="mx-auto max-w-2xl text-base md:text-xl text-muted-foreground leading-relaxed font-medium opacity-60 group-hover/hero:opacity-100 group-hover/hero:text-foreground transition-all duration-500 drop-shadow-[0_0_10px_rgba(var(--primary-rgb),0.1)]"
+              className="mx-auto max-w-2xl text-sm md:text-base lg:text-xl text-muted-foreground leading-relaxed font-medium opacity-60 group-hover/hero:opacity-100 group-hover/hero:text-foreground transition-all duration-500 drop-shadow-[0_0_10px_rgba(var(--primary-rgb),0.1)]"
             >
               Everything runs in your browser.
               <span className="block mt-1">No uploads. No accounts. No tracking.</span>

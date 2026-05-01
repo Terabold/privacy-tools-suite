@@ -440,7 +440,7 @@ const UniversalMediaConverter = () => {
                       </Button>
                     )}
                   </div>
-                  <CardContent className="p-6 lg:p-10 relative h-[530px] flex flex-col">
+                  <CardContent className="p-6 lg:p-10 relative flex flex-col" style={{ height: 'min(530px, 55vh)', minHeight: '260px' }}>
                     <AnimatePresence mode="wait" initial={false}>
                       {!file ? (
                         <>
@@ -453,7 +453,7 @@ const UniversalMediaConverter = () => {
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
                             onClick={() => !processing && inputRef.current?.click()}
-                            className="relative w-full h-[450px] flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.01] shadow-inner transition-all duration-300 group/upload"
+                            className="relative w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/20 text-center cursor-pointer bg-primary/5 hover:bg-primary/10 hover:border-primary/40 hover:scale-[1.01] shadow-inner transition-all duration-300 group/upload" style={{ height: 'min(450px, 45vh)', minHeight: '200px' }}
                           >
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.12),transparent_70%)] opacity-0 group-hover/dropzone:opacity-100 transition-opacity duration-700 pointer-events-none" />
                       <div className="h-20 w-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-10 shadow-inner group-hover/dropzone:scale-110 group-hover/dropzone:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] group-hover/dropzone:ring-2 ring-primary/40 relative z-10 transition-all duration-700">
@@ -474,7 +474,7 @@ const UniversalMediaConverter = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.4 }}
-                          className="relative group w-full bg-background/40 p-10 rounded-xl border border-primary/10 shadow-inner overflow-x-clip min-h-[450px] flex flex-col items-center justify-center studio-gradient backdrop-blur-3xl"
+                          className="relative group w-full bg-background/40 p-10 rounded-xl border border-primary/10 shadow-inner overflow-x-clip flex flex-col items-center justify-center studio-gradient backdrop-blur-3xl" style={{ minHeight: 'min(450px, 45vh)' }}
                         >
                           {processing ? (
                             <div className="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 duration-500">
