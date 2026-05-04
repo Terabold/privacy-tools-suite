@@ -121,7 +121,7 @@ const ThemeOrchestrator = ({ children }: { children: React.ReactNode }) => {
   const isArticlePage = ["/privacy-policy", "/terms-of-use", "/insights", "/faq", "/contact", "/about", "/technical-architecture", "/security-architecture", "/privacy", "/terms"].includes(location.pathname);
 
   return (
-    <div className={`h-[100dvh] w-full flex flex-col ${isArticlePage ? "" : "lg:flex-row"} bg-background transition-theme duration-700 overflow-hidden ${themeClass}`}>
+    <div className={`fixed inset-0 w-full flex flex-col ${isArticlePage ? "" : "lg:flex-row"} bg-background transition-theme duration-700 overflow-hidden ${themeClass}`}>
       {children}
     </div>
   );

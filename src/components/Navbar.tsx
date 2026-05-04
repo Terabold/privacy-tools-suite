@@ -27,6 +27,7 @@ interface NavbarProps {
   setSelectedCategory?: (category: string | null) => void;
   categories?: string[];
   activeSection?: string | null;
+  className?: string;
 }
 
 const Navbar = ({
@@ -37,7 +38,8 @@ const Navbar = ({
   selectedCategory,
   setSelectedCategory,
   categories = [],
-  activeSection
+  activeSection,
+  className = ""
 }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -117,7 +119,7 @@ const Navbar = ({
 
   return (
     <>
-    <header className="global-navbar sticky top-0 z-[100] w-full lg:w-[280px] lg:h-screen lg:flex-shrink-0 transition-theme shadow-lg shadow-black/10 lg:shadow-none border-b lg:border-b-0 lg:border-r border-border/50 bg-background/[0.82] lg:bg-background/95 backdrop-blur-xl flex flex-col overflow-visible">
+    <header className={`global-navbar sticky top-0 z-[100] w-full lg:w-[280px] lg:h-screen lg:flex-shrink-0 transition-theme shadow-lg shadow-black/10 lg:shadow-none border-b lg:border-b-0 lg:border-r border-border/50 bg-background/[0.82] lg:bg-background/95 backdrop-blur-xl flex flex-col overflow-visible ${className}`}>
       {/* Sidebar Branding - Top Section */}
       <div className="p-4 lg:p-5 flex items-center lg:items-start justify-between gap-4">
         <Link
